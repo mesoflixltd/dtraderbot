@@ -124,6 +124,21 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                 setFormVisibility(true);
             },
         },
+        {
+            id: 'classes',
+            icon: (
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="10" width="36" height="28" rx="4" fill="#ff444f" fillOpacity="0.1" stroke="#ff444f" strokeWidth="2.5"/>
+                    <path d="M20 18L32 24L20 30V18Z" fill="#ff444f"/>
+                    <path d="M10 38H38" stroke="#ff444f" strokeWidth="3" strokeLinecap="round"/>
+                    <rect x="14" y="6" width="20" height="4" rx="2" fill="#ff444f"/>
+                </svg>
+            ),
+            content: <Localize i18n_default_text='Classes' />,
+            callback: () => {
+                setActiveTab(DBOT_TABS.CLASSES);
+            },
+        },
     ];
 
     return React.useMemo(

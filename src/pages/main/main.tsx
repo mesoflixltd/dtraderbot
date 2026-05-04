@@ -32,6 +32,7 @@ import {
 import {
     LabelPairedChartLineCaptionRegularIcon,
     LabelPairedObjectsColumnCaptionRegularIcon,
+    LabelPairedPlayCaptionBoldIcon,
     LabelPairedPuzzlePieceTwoCaptionBoldIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { LegacyGuide1pxIcon } from '@deriv/quill-icons/Legacy';
@@ -47,6 +48,7 @@ const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 const DCircles = lazy(() => import('../dcircles'));
 const FreeBots = lazy(() => import('../freebots'));
 const AIHub = lazy(() => import('../ai-hub'));
+const Classes = lazy(() => import('../classes'));
 const RiskCalculator = lazy(() => import('../risk-calculator'));
 const Tutorial = lazy(() => import('../tutorials'));
 
@@ -81,7 +83,7 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'chart', 'dcircles', 'freebots', 'ai-hub', 'risk-calculator', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'chart', 'dcircles', 'freebots', 'ai-hub', 'classes', 'risk-calculator', 'tutorial'];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -485,6 +487,25 @@ const AppWrapper = observer(() => {
                                     fallback={<ChunkLoader message={localize('Please wait, loading AI Hub...')} />}
                                 >
                                     <AIHub />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedPlayCaptionBoldIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Classes' />
+                                    </>
+                                }
+                                id='id-classes'
+                            >
+                                <Suspense
+                                    fallback={<ChunkLoader message={localize('Please wait, loading Classes...')} />}
+                                >
+                                    <Classes />
                                 </Suspense>
                             </div>
                             <div
