@@ -1,0 +1,478 @@
+/* ═══════════════════════════════════════════════════════════════════
+   DCircles — Professional Digit Intelligence Dashboard
+   ═══════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600;700;800&display=swap');
+
+.dcircles-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 2rem 2rem 6rem;  // extra bottom pad so last panel is never cut
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  background: var(--general-main-1);
+  color: var(--text-prominent);
+  overflow-y: auto;   // page itself scrolls
+  overflow-x: hidden;
+
+  > * {
+    width: 100%;
+    max-width: 1080px;
+    flex-shrink: 0;   // prevent children from being squashed
+  }
+
+  /* ─────────────────── HEADER ─────────────────── */
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--general-section-1);
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    margin: 0 0 0.3rem;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-less-prominent);
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  &__price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    &-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-less-prominent);
+    }
+
+    &-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'Roboto Mono', monospace;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  &__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+
+    &--connected  { background: rgba(0, 230, 118, 0.1); color: #00e676; }
+    &--connecting { background: rgba(255, 193, 7, 0.1); color: #ffca28; }
+    &--closed,
+    &--error      { background: rgba(255, 82, 82, 0.1); color: #ff5252; }
+  }
+
+  &__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    .dcircles-page__status--connected & {
+      animation: dc-pulse 2s ease-in-out infinite;
+    }
+  }
+
+  /* ─────────────────── CONTROLS ─────────────────── */
+  &__controls {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .dcircles-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-less-prominent);
+    }
+
+    select,
+    input[type='number'] {
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--general-section-1);
+      background: var(--general-main-2);
+      color: var(--text-prominent);  // always visible
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus { border-color: #7f5cff; }
+
+      // Dark mode select option fallback
+      option { background: var(--general-main-2); color: var(--text-prominent); }
+    }
+
+    input[type='number'] { width: 100px; }
+  }
+
+  &__select-wrap {
+    position: relative;
+
+    select {
+      width: 100%;
+      min-width: 220px;
+      padding-right: 2.4rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+    }
+  }
+
+  &__spinner {
+    position: absolute;
+    right: 2.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(127, 92, 255, 0.2);
+    border-top-color: #7f5cff;
+    border-radius: 50%;
+    animation: dc-spin 0.6s linear infinite;
+  }
+
+  /* Summary badges inline next to controls */
+  &__summary-inline {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+
+  .dcircles-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    background: var(--general-main-2);
+    border: 1px solid var(--general-section-1);
+    min-width: 56px;
+
+    > span:first-child { font-size: 1.1rem; }
+    > span:nth-child(2) {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-less-prominent);
+    }
+    > strong {
+      font-size: 1.2rem;
+      font-weight: 800;
+      font-family: 'Roboto Mono', monospace;
+    }
+  }
+
+  /* ─────────────────── OFFLINE ─────────────────── */
+  &__offline {
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    background: rgba(255, 82, 82, 0.1);
+    color: #ff5252;
+    font-size: 0.85rem;
+  }
+
+  /* ─────────────────── DIGIT GRID ─────────────────── */
+  .dcircles-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 0.8rem;
+    padding: 1.4rem;
+    border-radius: 14px;
+    background: var(--general-main-2);
+    border: 1px solid var(--general-section-1);
+  }
+
+  /* ─────────────────── CARD ─────────────────── */
+  .dcircles-card {
+    position: relative;
+    background: var(--general-main-1);
+    border: 1px solid var(--general-section-1);
+    border-radius: 12px;
+    padding: 0.8rem 0.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+
+    &:hover { transform: translateY(-3px); border-color: #7f5cff; }
+
+    &--hot     { --ring-color: #ff9100; }
+    &--warm    { --ring-color: #ffc400; }
+    &--neutral { --ring-color: #448aff; }
+    &--cold    { --ring-color: #90caf9; }
+
+    &--highest {
+      border-color: #00e676;
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.25);
+      .dcircles-card__arc  { stroke: #00e676 !important; }
+      .dcircles-card__pct-pill { color: #00e676; }
+    }
+
+    &--lowest {
+      border-color: #ff5252;
+      box-shadow: 0 0 12px rgba(255, 82, 82, 0.25);
+      .dcircles-card__arc  { stroke: #ff5252 !important; }
+      .dcircles-card__pct-pill { color: #ff5252; }
+    }
+
+    &--flash .dcircles-card__ring { animation: dc-flash 0.4s ease-out; }
+
+    &__cursor {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      color: #00b4ff;
+      text-shadow: 0 0 6px rgba(0, 180, 255, 0.9);
+      animation: dc-bounce 0.5s infinite alternate ease-in-out;
+      z-index: 5;
+    }
+
+    &__ring {
+      width: 60px;
+      height: 60px;
+      position: relative;
+    }
+
+    &__svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    &__track {
+      stroke: var(--general-section-1);
+      stroke-width: 7;
+      fill: none;
+    }
+
+    &__arc {
+      stroke: var(--ring-color);
+      stroke-width: 7;
+      stroke-linecap: round;
+      fill: none;
+      transition: stroke-dashoffset 0.4s ease;
+    }
+
+    &__num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      font-family: 'Roboto Mono', monospace;
+      color: var(--text-prominent);  // explicit — visible on both light & dark
+    }
+
+    &__pct-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Roboto Mono', monospace;
+      color: var(--text-less-prominent);
+    }
+
+    // Override pct-pill color for highest/lowest — these are set per-card
+    &--highest &__pct-pill { color: #00e676; }
+    &--lowest  &__pct-pill { color: #ff5252; }
+  }
+
+  /* ─────────────────── ANALYSIS BLOCKS ─────────────────── */
+  .dcircles-analysis-block {
+    background: var(--general-main-2);
+    border: 1px solid var(--general-section-1);
+    border-radius: 14px;
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-less-prominent);
+      text-align: center;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--general-section-1);
+    }
+
+    &__bars {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    &__trail-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-less-prominent);
+    }
+
+    &__trail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      max-height: 120px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 0.2rem;
+
+      /* Custom scrollbar */
+      &::-webkit-scrollbar        { width: 4px; }
+      &::-webkit-scrollbar-track  { background: transparent; }
+      &::-webkit-scrollbar-thumb  { background: var(--general-section-1); border-radius: 4px; }
+    }
+  }
+
+  /* ─────────────────── BIG BARS ─────────────────── */
+  .dcircles-bar {
+    flex: 1;
+    border-radius: 10px;
+    padding: 1.2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+
+    strong {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'Roboto Mono', monospace;
+      line-height: 1;
+    }
+
+    span {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.7;
+    }
+
+    &--even {
+      background: rgba(0, 230, 118, 0.08);
+      border-color: rgba(0, 230, 118, 0.35);
+      color: #00e676;
+    }
+
+    &--odd {
+      background: rgba(255, 82, 82, 0.08);
+      border-color: rgba(255, 82, 82, 0.35);
+      color: #ff5252;
+    }
+
+    &--rise {
+      background: rgba(0, 230, 118, 0.08);
+      border-color: rgba(0, 230, 118, 0.35);
+      color: #00e676;
+    }
+
+    &--fall {
+      background: rgba(255, 82, 82, 0.08);
+      border-color: rgba(255, 82, 82, 0.35);
+      color: #ff5252;
+    }
+  }
+
+  /* ─────────────────── TRAIL BADGES ─────────────────── */
+  .dcircles-badge-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 0.62rem;
+    font-weight: 800;
+    font-family: 'Roboto Mono', monospace;
+
+    &--even { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid rgba(0,230,118,0.3); }
+    &--odd  { background: rgba(255, 82, 82, 0.15);  color: #ff5252; border: 1px solid rgba(255,82,82,0.3); }
+    &--rise { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid rgba(0,230,118,0.3); }
+    &--fall { background: rgba(255, 82, 82, 0.15);  color: #ff5252; border: 1px solid rgba(255,82,82,0.3); }
+  }
+}
+
+/* ─────────────────── RESPONSIVE ─────────────────── */
+@media (max-width: 900px) {
+  .dcircles-page {
+    .dcircles-grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .dcircles-page {
+    padding: 1rem 1rem 3rem;
+    gap: 1.2rem;
+
+    &__header { flex-direction: column; align-items: flex-start; }
+    &__header-right { flex-wrap: wrap; }
+    &__controls { flex-direction: column; align-items: flex-start; }
+    &__summary-inline { margin-left: 0; }
+
+    .dcircles-grid { grid-template-columns: repeat(5, 1fr); gap: 0.5rem; padding: 0.8rem; }
+    .dcircles-card__ring { width: 48px; height: 48px; }
+    .dcircles-card__num  { font-size: 1.1rem; }
+
+    .dcircles-analysis-block__bars { flex-direction: column; }
+  }
+}
+
+/* ─────────────────── ANIMATIONS ─────────────────── */
+@keyframes dc-spin  { to { transform: rotate(360deg); } }
+@keyframes dc-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.75); } }
+@keyframes dc-flash { 0% { transform: scale(1.08); filter: brightness(1.4); } 100% { transform: scale(1); filter: brightness(1); } }
+@keyframes dc-bounce { 0% { transform: translateX(-50%) translateY(0); } 100% { transform: translateX(-50%) translateY(-4px); } }

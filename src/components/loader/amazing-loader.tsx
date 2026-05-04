@@ -1,0 +1,62 @@
+import React from 'react';
+import './amazing-loader.scss';
+
+interface AmazingLoaderProps {
+    message?: string;
+}
+
+const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message }) => {
+    return (
+        <div className="amazing-loader">
+            <div className="amazing-loader__background">
+                <div className="amazing-loader__aurora amazing-loader__aurora--1"></div>
+                <div className="amazing-loader__aurora amazing-loader__aurora--2"></div>
+                <div className="amazing-loader__aurora amazing-loader__aurora--3"></div>
+                <div className="amazing-loader__grid-overlay"></div>
+            </div>
+
+            <div className="amazing-loader__container">
+                <div className="amazing-loader__glass-card">
+                    <div className="amazing-loader__logo-section">
+                        <div className="amazing-loader__brand-mark">
+                            <span className="amazing-loader__m-letter">M</span>
+                            <div className="amazing-loader__ring"></div>
+                            <div className="amazing-loader__ring amazing-loader__ring--outer"></div>
+                            <div className="amazing-loader__scan-line"></div>
+                        </div>
+                    </div>
+                    
+                    <div className="amazing-loader__content">
+                        <div className="amazing-loader__brand-wrapper">
+                            <h2 className="amazing-loader__brand-name">MESOFLIX</h2>
+                            <span className="amazing-loader__brand-suffix">BOT PLATFORM</span>
+                        </div>
+                        
+                        <div className="amazing-loader__status-container">
+                            <div className="amazing-loader__shimmer-text">
+                                {message || 'Initializing quantum trade engine...'}
+                            </div>
+                            <div className="amazing-loader__progress-wrapper">
+                                <div className="amazing-loader__progress-track">
+                                    <div className="amazing-loader__progress-indicator">
+                                        <div className="amazing-loader__progress-glow"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="amazing-loader__security-badge">
+                                <span className="amazing-loader__dot"></span>
+                                <span>SSL SECURE CONNECTION</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="amazing-loader__footer">
+                    <span className="amazing-loader__tagline">Mesoflix · AI-Powered Trading Infrastructure</span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default AmazingLoader;

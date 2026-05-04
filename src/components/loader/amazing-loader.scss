@@ -1,0 +1,326 @@
+.amazing-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #020617; // Deep dark slate
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    &__background {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    &__grid-overlay {
+        position: absolute;
+        inset: 0;
+        background-image: 
+            linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+        background-size: 50px 50px;
+        mask-image: radial-gradient(circle at center, black, transparent 80%);
+    }
+
+    &__aurora {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.3;
+        mix-blend-mode: screen;
+        animation: aurora-move 20s infinite alternate ease-in-out;
+
+        &--1 {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+            top: -200px;
+            left: -200px;
+        }
+
+        &--2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -5s;
+        }
+
+        &--3 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+            top: 40%;
+            left: 30%;
+            animation-delay: -10s;
+        }
+    }
+
+    &__container {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+
+    &__glass-card {
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 40px;
+        padding: 56px 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 420px;
+        box-shadow: 
+            0 30px 60px -12px rgba(0, 0, 0, 0.6),
+            inset 0 0 30px rgba(99, 102, 241, 0.05);
+        animation: card-appear 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.03),
+                transparent
+            );
+            transform: skewX(-25deg);
+            animation: card-shimmer 4s infinite;
+        }
+    }
+
+    &__logo-section {
+        margin-bottom: 40px;
+    }
+
+    &__brand-mark {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__m-letter {
+        color: #ffffff;
+        font-size: 54px;
+        font-weight: 900;
+        z-index: 2;
+        text-shadow: 0 0 25px rgba(99, 102, 241, 0.8);
+        animation: float 4s ease-in-out infinite;
+        letter-spacing: -2px;
+    }
+
+    &__ring {
+        position: absolute;
+        inset: 0;
+        border: 2px solid rgba(99, 102, 241, 0.4);
+        border-radius: 28px;
+        transform: rotate(45deg);
+        animation: rotate-ring 10s linear infinite;
+
+        &--outer {
+            inset: -15px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            animation: rotate-ring 15s linear infinite reverse;
+        }
+    }
+
+    &__scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #6366f1, transparent);
+        box-shadow: 0 0 15px #6366f1;
+        opacity: 0.5;
+        animation: scan-vertical 3s ease-in-out infinite;
+        z-index: 3;
+    }
+
+    &__brand-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    &__brand-name {
+        color: white;
+        font-size: 32px;
+        font-weight: 900;
+        letter-spacing: 8px;
+        text-align: center;
+        background: linear-gradient(to bottom, #fff 30%, #64748b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
+        line-height: 1;
+    }
+
+    &__brand-suffix {
+        color: #6366f1;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 12px;
+        margin-top: 8px;
+        margin-right: -12px; // Offset letter-spacing for centering
+        text-transform: uppercase;
+        opacity: 0.8;
+    }
+
+    &__status-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    &__shimmer-text {
+        color: #94a3b8;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background: linear-gradient(90deg, #64748b 0%, #fff 50%, #64748b 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 3s linear infinite;
+    }
+
+    &__progress-wrapper {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 100px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &__progress-indicator {
+        position: absolute;
+        height: 100%;
+        width: 60%;
+        background: linear-gradient(90deg, transparent, #6366f1, #8b5cf6, #3b82f6, transparent);
+        border-radius: 100px;
+        animation: progress-slide-premium 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    }
+
+    &__progress-glow {
+        position: absolute;
+        inset: 0;
+        filter: blur(4px);
+        background: inherit;
+    }
+
+    &__security-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: rgba(148, 163, 184, 0.4);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    &__dot {
+        width: 6px;
+        height: 6px;
+        background: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #10b981;
+        animation: pulse-green 2s infinite;
+    }
+
+    &__footer {
+        animation: fade-in 2.5s ease-out;
+    }
+
+    &__tagline {
+        color: rgba(148, 163, 184, 0.3);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+    }
+}
+
+@keyframes aurora-move {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.1); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes rotate-ring {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes scan-vertical {
+    0%, 100% { top: 0%; opacity: 0; }
+    50% { top: 100%; opacity: 0.5; }
+}
+
+@keyframes shimmer {
+    to { background-position: 200% center; }
+}
+
+@keyframes card-shimmer {
+    0% { left: -100%; }
+    20%, 100% { left: 200%; }
+}
+
+@keyframes progress-slide-premium {
+    0% { left: -60%; }
+    100% { left: 160%; }
+}
+
+@keyframes pulse-green {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+@keyframes card-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

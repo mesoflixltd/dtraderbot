@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en" dir="auto" class="light">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+        <meta name="title" content="Automate Your Trades | Mesoflix" />
+        <meta
+            name="description"
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Mesoflix."
+        />
+        <meta property="og:title" content="Mesoflix" />
+        <meta
+            property="og:description"
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Mesoflix."
+        />
+        <title>Automate Your Trades | Mesoflix</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                font-size: 62.5%;
+                --meso-purple: #7c3aed;
+                --meso-violet: #5b21b6;
+                --meso-pink: #db2777;
+                --meso-indigo: #4f46e5;
+                --meso-glow: rgba(124, 58, 237, 0.6);
+            }
+            *, *::before, *::after { box-sizing: border-box; }
+            body {
+                margin: 0;
+                padding: 0;
+                background: #050510;
+                font-family: 'Outfit', sans-serif;
+                overflow: hidden;
+            }
+
+            /* ── Splash Screen ── */
+            #splash-screen {
+                position: fixed;
+                inset: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #050510;
+                z-index: 9999;
+                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            #splash-screen.hidden {
+                opacity: 0;
+                transform: scale(1.04);
+                pointer-events: none;
+            }
+
+            /* ── Cosmic Background ── */
+            .splash-bg {
+                position: absolute;
+                inset: 0;
+                overflow: hidden;
+            }
+            .splash-bg__nebula {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(100px);
+                animation: nebula-drift 18s ease-in-out infinite alternate;
+            }
+            .splash-bg__nebula--1 {
+                width: 700px; height: 700px;
+                background: radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%);
+                top: -200px; left: -150px;
+                animation-delay: 0s;
+            }
+            .splash-bg__nebula--2 {
+                width: 500px; height: 500px;
+                background: radial-gradient(circle, rgba(219,39,119,0.25) 0%, transparent 70%);
+                bottom: -100px; right: -100px;
+                animation-delay: -6s;
+            }
+            .splash-bg__nebula--3 {
+                width: 400px; height: 400px;
+                background: radial-gradient(circle, rgba(79,70,229,0.3) 0%, transparent 70%);
+                top: 40%; left: 35%;
+                animation-delay: -12s;
+            }
+            .splash-bg__grid {
+                position: absolute;
+                inset: 0;
+                background-image:
+                    linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+                background-size: 60px 60px;
+                mask-image: radial-gradient(ellipse 80% 80% at center, black, transparent);
+            }
+            /* Floating particles */
+            .splash-bg__particles {
+                position: absolute;
+                inset: 0;
+            }
+            .particle {
+                position: absolute;
+                width: 3px; height: 3px;
+                background: var(--meso-purple);
+                border-radius: 50%;
+                box-shadow: 0 0 6px var(--meso-purple);
+                animation: particle-float linear infinite;
+                opacity: 0;
+            }
+
+            /* ── Main Card ── */
+            .splash-card {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0;
+                padding: 52px 56px 44px;
+                width: min(440px, 90vw);
+                background: linear-gradient(145deg, rgba(18,10,40,0.9) 0%, rgba(10,8,30,0.95) 100%);
+                border: 1px solid rgba(124,58,237,0.2);
+                border-radius: 32px;
+                backdrop-filter: blur(30px);
+                box-shadow:
+                    0 0 0 1px rgba(124,58,237,0.1),
+                    0 40px 80px -20px rgba(0,0,0,0.8),
+                    inset 0 1px 0 rgba(255,255,255,0.05);
+                animation: card-rise 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+            }
+            /* Animated border glow */
+            .splash-card::before {
+                content: '';
+                position: absolute;
+                inset: -1px;
+                border-radius: 33px;
+                background: linear-gradient(135deg, var(--meso-purple), var(--meso-pink), var(--meso-indigo), var(--meso-purple));
+                background-size: 300% 300%;
+                animation: border-rotate 4s linear infinite;
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                padding: 1px;
+                opacity: 0.6;
+            }
+
+            /* ── Logo Mark ── */
+            .splash-logo-area {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 32px;
+            }
+            .splash-logo-ring-wrap {
+                position: relative;
+                width: 96px; height: 96px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 24px;
+            }
+            .splash-logo-ring {
+                position: absolute;
+                inset: 0;
+                border-radius: 28px;
+                border: 2px solid transparent;
+                background: linear-gradient(135deg, var(--meso-purple), var(--meso-pink)) border-box;
+                -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                animation: spin-ring 8s linear infinite;
+            }
+            .splash-logo-ring--outer {
+                inset: -14px;
+                border-radius: 38px;
+                border: 1px solid transparent;
+                background: linear-gradient(225deg, var(--meso-indigo), var(--meso-pink)) border-box;
+                animation: spin-ring 12s linear infinite reverse;
+                opacity: 0.4;
+            }
+            .splash-logo-mark {
+                width: 60px; height: 60px;
+                background: linear-gradient(135deg, var(--meso-purple) 0%, var(--meso-pink) 100%);
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 0 30px var(--meso-glow), 0 8px 24px rgba(0,0,0,0.4);
+                animation: logo-pulse 3s ease-in-out infinite;
+                z-index: 2;
+            }
+            .splash-logo-mark svg {
+                width: 34px; height: 34px;
+                fill: white;
+                filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+            }
+
+            /* ── Brand Name ── */
+            .splash-brand {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+            }
+            .splash-brand__name {
+                font-size: 38px;
+                font-weight: 900;
+                letter-spacing: 3px;
+                line-height: 1;
+                background: linear-gradient(135deg, #e0d7ff 0%, #c4b5fd 40%, #f9a8d4 80%, #e0d7ff 100%);
+                background-size: 200% 200%;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                animation: shimmer-brand 4s ease-in-out infinite;
+                margin: 0;
+            }
+            .splash-brand__tagline {
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 5px;
+                text-transform: uppercase;
+                color: rgba(196, 181, 253, 0.5);
+                margin-top: 4px;
+            }
+
+            /* ── Status ── */
+            .splash-status {
+                width: 100%;
+                margin-top: 28px;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+            .splash-status__text {
+                text-align: center;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: rgba(196, 181, 253, 0.4);
+                animation: text-fade 2s ease-in-out infinite alternate;
+            }
+
+            /* ── Progress Bar ── */
+            .splash-progress {
+                position: relative;
+                width: 100%;
+                height: 3px;
+                background: rgba(255,255,255,0.04);
+                border-radius: 100px;
+                overflow: visible;
+            }
+            .splash-progress__track {
+                position: absolute;
+                inset: 0;
+                border-radius: 100px;
+                overflow: hidden;
+            }
+            .splash-progress__fill {
+                position: absolute;
+                height: 100%;
+                width: 45%;
+                background: linear-gradient(90deg, transparent, var(--meso-purple), #c084fc, var(--meso-pink), transparent);
+                border-radius: 100px;
+                animation: bar-slide 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            .splash-progress__glow {
+                position: absolute;
+                top: -4px;
+                height: 11px;
+                width: 45%;
+                background: linear-gradient(90deg, transparent, var(--meso-purple), var(--meso-pink), transparent);
+                border-radius: 100px;
+                filter: blur(6px);
+                animation: bar-slide 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                opacity: 0.7;
+            }
+            /* Moving light dot on the bar */
+            .splash-progress__dot {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 8px; height: 8px;
+                background: white;
+                border-radius: 50%;
+                box-shadow: 0 0 12px 4px var(--meso-purple), 0 0 20px 6px var(--meso-pink);
+                animation: dot-slide 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+
+            /* ── Security Badge ── */
+            .splash-badge {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                color: rgba(148,163,184,0.3);
+                font-size: 9px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+            }
+            .splash-badge__dot {
+                width: 5px; height: 5px;
+                background: #10b981;
+                border-radius: 50%;
+                box-shadow: 0 0 8px #10b981;
+                animation: dot-pulse 2s infinite;
+            }
+
+            /* ── Footer tagline ── */
+            .splash-footer {
+                position: absolute;
+                bottom: 32px;
+                color: rgba(148,163,184,0.2);
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                animation: fade-in 2s ease 1s both;
+            }
+
+            /* ═══════════ KEYFRAMES ═══════════ */
+            @keyframes nebula-drift {
+                0% { transform: translate(0, 0) scale(1); }
+                100% { transform: translate(40px, 30px) scale(1.12); }
+            }
+            @keyframes card-rise {
+                from { opacity: 0; transform: translateY(40px) scale(0.97); }
+                to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+            @keyframes border-rotate {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            @keyframes spin-ring {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            @keyframes logo-pulse {
+                0%, 100% { box-shadow: 0 0 30px var(--meso-glow), 0 8px 24px rgba(0,0,0,0.4); transform: scale(1); }
+                50% { box-shadow: 0 0 50px var(--meso-glow), 0 0 80px rgba(219,39,119,0.3), 0 8px 24px rgba(0,0,0,0.4); transform: scale(1.05); }
+            }
+            @keyframes shimmer-brand {
+                0%, 100% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+            }
+            @keyframes bar-slide {
+                0% { left: -50%; }
+                100% { left: 110%; }
+            }
+            @keyframes dot-slide {
+                0% { left: -50%; opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { left: 110%; opacity: 0; }
+            }
+            @keyframes dot-pulse {
+                0%, 100% { opacity: 1; box-shadow: 0 0 8px #10b981; }
+                50% { opacity: 0.4; box-shadow: 0 0 3px #10b981; }
+            }
+            @keyframes text-fade {
+                from { opacity: 0.3; }
+                to { opacity: 0.7; }
+            }
+            @keyframes fade-in {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes particle-float {
+                0% { transform: translateY(110vh) scale(0); opacity: 0; }
+                5% { opacity: 1; }
+                95% { opacity: 1; }
+                100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+            }
+        </style>
+    </head>
+
+    <body class="body theme theme--light">
+        <div id="splash-screen">
+            <!-- Cosmic Background -->
+            <div class="splash-bg">
+                <div class="splash-bg__nebula splash-bg__nebula--1"></div>
+                <div class="splash-bg__nebula splash-bg__nebula--2"></div>
+                <div class="splash-bg__nebula splash-bg__nebula--3"></div>
+                <div class="splash-bg__grid"></div>
+                <div class="splash-bg__particles" id="particles"></div>
+            </div>
+
+            <!-- Main Card -->
+            <div class="splash-card">
+                <div class="splash-logo-area">
+                    <!-- Ring + Logo -->
+                    <div class="splash-logo-ring-wrap">
+                        <div class="splash-logo-ring"></div>
+                        <div class="splash-logo-ring splash-logo-ring--outer"></div>
+                        <div class="splash-logo-mark">
+                            <!-- Mesoflix "M" SVG icon -->
+                            <svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6 L4 28 L9 28 L9 14 L17 26 L25 14 L25 28 L30 28 L30 6 L25 6 L17 18 L9 6 Z" fill="white"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Brand Name -->
+                    <div class="splash-brand">
+                        <h1 class="splash-brand__name">MESOFLIX</h1>
+                        <span class="splash-brand__tagline">AI · Bot · Platform</span>
+                    </div>
+                </div>
+
+                <!-- Status & Progress -->
+                <div class="splash-status">
+                    <div class="splash-status__text" id="splash-status-text">Initializing trading engine...</div>
+
+                    <div class="splash-progress">
+                        <div class="splash-progress__track">
+                            <div class="splash-progress__fill"></div>
+                        </div>
+                        <div class="splash-progress__glow"></div>
+                        <div class="splash-progress__dot"></div>
+                    </div>
+
+                    <div class="splash-badge">
+                        <span class="splash-badge__dot"></span>
+                        <span>SSL Secure Connection</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="splash-footer">Mesoflix &copy; 2026</div>
+        </div>
+
+        <div id="modal_root" class="modal-root"></div>
+        <div id="popup_root" class="popup-root"></div>
+        <div id="root"></div>
+
+        <script>
+            // ── Particle generator ──
+            (function() {
+                var container = document.getElementById('particles');
+                var colors = ['#7c3aed', '#db2777', '#4f46e5', '#c084fc', '#f9a8d4'];
+                for (var i = 0; i < 30; i++) {
+                    var p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.left = (Math.random() * 100) + '%';
+                    p.style.width = p.style.height = (Math.random() * 3 + 2) + 'px';
+                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.boxShadow = '0 0 6px ' + colors[Math.floor(Math.random() * colors.length)];
+                    p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+                    p.style.animationDelay = (Math.random() * 10) + 's';
+                    container.appendChild(p);
+                }
+            })();
+
+            // ── Cycling status messages ──
+            (function() {
+                var messages = [
+                    'Initializing trading engine...',
+                    'Connecting to Deriv markets...',
+                    'Loading strategy modules...',
+                    'Calibrating AI signals...',
+                    'Almost ready...'
+                ];
+                var el = document.getElementById('splash-status-text');
+                var i = 0;
+                var iv = setInterval(function() {
+                    i = (i + 1) % messages.length;
+                    el.style.opacity = '0';
+                    setTimeout(function() {
+                        el.textContent = messages[i];
+                        el.style.opacity = '';
+                    }, 300);
+                }, 1400);
+                window.__splashMsgInterval = iv;
+            })();
+
+            // ── Hide splash screen once app is ready ──
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    clearInterval(window.__splashMsgInterval);
+                    var splash = document.getElementById('splash-screen');
+                    if (splash) {
+                        splash.classList.add('hidden');
+                        setTimeout(function() {
+                            splash.style.display = 'none';
+                            document.body.style.overflow = '';
+                        }, 900);
+                    }
+                }, 2000);
+            });
+        </script>
+    </body>
+</html>

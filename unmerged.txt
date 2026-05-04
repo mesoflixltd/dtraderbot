@@ -1,0 +1,4 @@
+src/components/layout/app-logo/BrandLogo.tsx
+src/components/layout/app-logo/index.tsx
+src/pages/dashboard/dashboard.tsx
+src/pages/risk-calculator/index.tsx
