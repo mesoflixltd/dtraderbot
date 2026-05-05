@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BulkTradingPage from './bulk-trading';
-import AIScannerPage from './scanner';
+// import AIScannerPage from './scanner'; // Removed per user request
 import './ai-hub.scss';
 
 // ─── Sub-page components ──────────────────────────────────────────────────────
 
-const AIScannerPageTab = () => (
-    <div className='aihub-subpage aihub-subpage--scanner'>
-        <AIScannerPage />
-    </div>
-);
+// AIScannerPageTab removed per user request
 
 const BulkTradingPageTab = () => (
     <div className='aihub-subpage aihub-subpage--bulk'>
@@ -72,17 +68,16 @@ const UltimateTraderPage = () => (
 );
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
-type TTab = 'scanner' | 'bulk' | 'ultimate';
+type TTab = 'bulk' | 'ultimate';
 
 const TABS: { id: TTab; label: string; icon: string; accent: string }[] = [
-    { id: 'scanner',  label: 'AI Scanner',      icon: '🔍', accent: '#00b4ff' },
     { id: 'bulk',     label: 'Bulk Trading',     icon: '⚡', accent: '#7f5cff' },
     { id: 'ultimate', label: 'Ultimate Trader',  icon: '🏆', accent: '#f5a623' },
 ];
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const AIHub = observer(() => {
-    const [activeTab, setActiveTab] = useState<TTab>('scanner');
+    const [activeTab, setActiveTab] = useState<TTab>('bulk');
 
     return (
         <div className='aihub-page'>
@@ -114,7 +109,6 @@ const AIHub = observer(() => {
 
             {/* ─── Sub-page content ─── */}
             <div className='aihub-content'>
-                {activeTab === 'scanner'  && <AIScannerPageTab />}
                 {activeTab === 'bulk'     && <BulkTradingPageTab />}
                 {activeTab === 'ultimate' && <UltimateTraderPage />}
             </div>
