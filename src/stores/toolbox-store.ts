@@ -152,7 +152,7 @@ export default class ToolboxStore {
                 const block_canvas_rect = workspace.svgBlockCanvas_?.getBoundingClientRect() as any;
 
                 if (workspace.RTL && block_canvas_rect) {
-                    const is_mobile = this.core.ui.is_mobile;
+                    const is_mobile = !!this.core.ui?.is_mobile;
                     const block_canvas_space = is_mobile ? block_canvas_rect.right : block_canvas_rect.left;
 
                     const scroll_distance_mobile = toolbox_width - (block_canvas_space || 0) + 20;
@@ -163,7 +163,8 @@ export default class ToolboxStore {
                         scrollWorkspace(workspace, scroll_distance, true, false);
                     }
                 } else if (block_canvas_rect && Math.round(block_canvas_rect.left || 0) <= toolbox_width) {
-                    const scroll_distance = this.core.ui.is_mobile
+                    const is_mobile = !!this.core.ui?.is_mobile;
+                    const scroll_distance = is_mobile
                         ? toolbox_width - (block_canvas_rect.left || 0) + 50
                         : toolbox_width - (block_canvas_rect.left || 0) + 36;
                     scrollWorkspace(workspace, scroll_distance, true, false);
