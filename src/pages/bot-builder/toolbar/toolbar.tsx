@@ -11,11 +11,10 @@ import ToolbarButton from './toolbar-button';
 import WorkspaceGroup from './workspace-group';
 
 const Toolbar = observer(() => {
-    const { run_panel, toolbar, quick_strategy, client } = useStore();
+    const { toolbar, quick_strategy, client, run_panel } = useStore();
     const { isDesktop } = useDevice();
     const { is_dialog_open, closeResetDialog, onResetOkButtonClick: onOkButtonClick } = toolbar;
-    const { is_running, is_copy_trading, setIsCopyTrading } = run_panel;
-    const { is_virtual } = client;
+    const { is_running } = run_panel;
     const { setFormVisibility } = quick_strategy;
     const confirm_button_text = is_running ? localize('Yes') : localize('OK');
     const cancel_button_text = is_running ? localize('No') : localize('Cancel');
@@ -23,6 +22,10 @@ const Toolbar = observer(() => {
         setFormVisibility(true);
         /* [AI] - Analytics event tracking removed - see migrate-docs/MONITORING_PACKAGES.md for re-implementation guide */
         /* [/AI] */
+    };
+
+    const handleLogin = () => {
+        // No-op for this dialog
     };
     return (
         <React.Fragment>
@@ -38,17 +41,17 @@ const Toolbar = observer(() => {
                                 button_text={localize('Quick strategy')}
                                 is_bot_running={is_running}
                             />
-                            {is_virtual && (
+                            {client.is_virtual && (
                                 <ToolbarButton
                                     popover_message={localize('Duplicate trades from Demo to Real in realtime.')}
                                     button_id='db-toolbar__copytrading-button'
                                     button_classname={classNames('toolbar__btn toolbar__btn--icon', {
-                                        'toolbar__btn--stop': is_copy_trading,
-                                        'toolbar__btn--start': !is_copy_trading,
+                                        'toolbar__btn--stop': run_panel.is_copy_trading,
+                                        'toolbar__btn--start': !run_panel.is_copy_trading,
                                     })}
-                                    buttonOnClick={() => setIsCopyTrading(!is_copy_trading)}
-                                    button_text={is_copy_trading ? localize('Stop Demo to Real') : localize('Start Demo to Real')}
-                                    is_bot_running={is_running}
+                                    buttonOnClick={() => run_panel.setIsCopyTrading(!run_panel.is_copy_trading)}
+                                    button_text={run_panel.is_copy_trading ? localize('Stop Demo to Real') : localize('Start Demo to Real')}
+                                    is_bot_running={run_panel.is_running}
                                 />
                             )}
                         </div>
@@ -68,6 +71,7 @@ const Toolbar = observer(() => {
                 is_mobile_full_width={false}
                 className={'toolbar__dialog'}
                 has_close_icon
+                login={handleLogin}
             >
                 {is_running ? (
                     <Localize

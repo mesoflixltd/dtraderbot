@@ -28,8 +28,6 @@ const Toolbox = observer(() => {
         sub_category_index,
         toolbox_dom,
     } = toolbox;
-    const { is_virtual } = client;
-    const { is_copy_trading, setIsCopyTrading } = run_panel;
     const { setFormVisibility } = quick_strategy;
     const { setVisibility, selected_category } = flyout;
 
@@ -60,16 +58,16 @@ const Toolbox = observer(() => {
                         buttonOnClick={handleQuickStrategyOpen}
                         button_text={localize('Quick strategy')}
                     />
-                    {is_virtual && (
+                    {client.is_virtual && (
                         <ToolbarButton
                             popover_message={localize('Duplicate trades from Demo to Real in realtime.')}
                             button_id='db-toolbar__copytrading-button'
                             button_classname={classNames('toolbar__btn toolbar__btn--icon', {
-                                'toolbar__btn--stop': is_copy_trading,
-                                'toolbar__btn--start': !is_copy_trading,
+                                'toolbar__btn--stop': run_panel.is_copy_trading,
+                                'toolbar__btn--start': !run_panel.is_copy_trading,
                             })}
-                            buttonOnClick={() => setIsCopyTrading(!is_copy_trading)}
-                            button_text={is_copy_trading ? localize('Stop Demo to Real') : localize('Start Demo to Real')}
+                            buttonOnClick={() => run_panel.setIsCopyTrading(!run_panel.is_copy_trading)}
+                            button_text={run_panel.is_copy_trading ? localize('Stop Demo to Real') : localize('Start Demo to Real')}
                         />
                     )}
                 </div>
@@ -106,10 +104,12 @@ const Toolbox = observer(() => {
                         />
                         <div className='db-toolbox__category-menu'>
                             {toolbox_dom &&
-                                Array.from(toolbox_dom.childNodes as HTMLElement[]).map((category, index) => {
-                                    if (category.tagName.toUpperCase() === 'CATEGORY') {
-                                        const has_sub_category = hasSubCategory(category.children);
-                                        const is_sub_category_open = sub_category_index.includes(index);
+                                Array.from(toolbox_dom.childNodes)
+                                    .map(node => node as HTMLElement)
+                                    .map((category, index) => {
+                                        if (category.tagName.toUpperCase() === 'CATEGORY') {
+                                            const has_sub_category = hasSubCategory(category.children);
+                                            const is_sub_category_open = sub_category_index.includes(index);
                                         return (
                                             <div
                                                 key={`db-toolbox__row--${category.getAttribute('id')}`}
@@ -147,8 +147,9 @@ const Toolbox = observer(() => {
                                                 </div>
                                                 {has_sub_category &&
                                                     is_sub_category_open &&
-                                                    (Array.from(category.childNodes) as HTMLElement[]).map(
-                                                        subCategory => {
+                                                    Array.from(category.childNodes)
+                                                        .map(node => node as HTMLElement)
+                                                        .map(subCategory => {
                                                             return (
                                                                 <div
                                                                     key={`db-toolbox__sub-category-row--${subCategory.getAttribute(

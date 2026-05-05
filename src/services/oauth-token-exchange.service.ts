@@ -227,7 +227,6 @@ export class OAuthTokenExchangeService {
                         // Store accounts
                         DerivWSAccountsService.storeAccounts(accounts);
 
-                        // Set the first account as active in localStorage
                         const firstAccount = accounts[0];
                         localStorage.setItem('active_loginid', firstAccount.account_id);
 
@@ -235,6 +234,23 @@ export class OAuthTokenExchangeService {
                         const isDemo =
                             firstAccount.account_id.startsWith('VRT') || firstAccount.account_id.startsWith('VRTC');
                         localStorage.setItem('account_type', isDemo ? 'demo' : 'real');
+
+                        // Populate legacy localStorage keys for bot-skeleton compatibility
+                        const accountsList: Record<string, string> = {};
+                        const clientAccounts: Record<string, any> = {};
+
+                        accounts.forEach(acc => {
+                            const acc_is_demo = acc.account_id.startsWith('VRT') || acc.account_id.startsWith('VRTC');
+                            accountsList[acc.account_id] = data.access_token || '';
+                            clientAccounts[acc.account_id] = {
+                                currency: acc.currency,
+                                is_virtual: acc_is_demo ? 1 : 0,
+                                loginid: acc.account_id,
+                            };
+                        });
+
+                        localStorage.setItem('accountsList', JSON.stringify(accountsList));
+                        localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
 
                         ErrorLogger.info('OAuth', 'Accounts fetched and stored', {
                             loginid: firstAccount.account_id,
