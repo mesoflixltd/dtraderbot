@@ -6,15 +6,13 @@ import { useStore } from '@/hooks/useStore';
 import { LabelPairedChevronDownMdFillIcon } from '@deriv/quill-icons/LabelPaired';
 import { localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
-import ToolbarButton from '../toolbar/toolbar-button';
-import ToggleSwitch from '@/components/shared_ui/toggle-switch';
 import SearchBox from './search-box';
 import { ToolboxItems } from './toolbox-items';
 import './toolbox.scss';
 
 const Toolbox = observer(() => {
     const { isDesktop } = useDevice();
-    const { toolbox, flyout, quick_strategy, run_panel, client } = useStore();
+    const { toolbox, flyout } = useStore();
     const {
         hasSubCategory,
         is_search_loading,
@@ -28,7 +26,6 @@ const Toolbox = observer(() => {
         sub_category_index,
         toolbox_dom,
     } = toolbox;
-    const { setFormVisibility } = quick_strategy;
     const { setVisibility, selected_category } = flyout;
 
     const toolbox_ref = React.useRef(ToolboxItems());
@@ -39,10 +36,6 @@ const Toolbox = observer(() => {
         onMount(toolbox_ref);
         return () => onUnmount();
     }, []);
-
-    const handleQuickStrategyOpen = () => {
-        setFormVisibility(true);
-    };
 
     return (
         <div className={classNames('db-toolbox', { 'db-toolbox--mobile': !isDesktop })} data-testid='dashboard__toolbox'>
@@ -144,30 +137,6 @@ const Toolbox = observer(() => {
                 </div>
             </div>
 
-            <div className='db-toolbox__footer'>
-                <div className='db-toolbox__buttons'>
-                    <ToolbarButton
-                        popover_message={localize('Click here to start building your Deriv Bot.')}
-                        button_id='db-toolbar__get-started-button'
-                        button_classname='toolbar__btn toolbar__btn--icon toolbar__btn--start'
-                        buttonOnClick={handleQuickStrategyOpen}
-                        button_text={localize('Quick strategy')}
-                    />
-                    {client.is_virtual && (
-                        <div className='db-toolbox__copy-trade'>
-                            <Text size='xxs' weight='bold' className='db-toolbox__copy-trade-label'>
-                                {localize('Demo to Real')}
-                            </Text>
-                            <ToggleSwitch
-                                id='db-toolbox__copy-trade-toggle'
-                                className='db-toolbox__toggle'
-                                is_enabled={run_panel.is_copy_trading}
-                                handleToggle={() => run_panel.setIsCopyTrading(!run_panel.is_copy_trading)}
-                            />
-                        </div>
-                    )}
-                </div>
-            </div>
             {/* Blockly toolbox will be injected here if needed, but we use our own menu */}
             <div style={{ display: 'none' }} id='gtm-toolbox' />
         </div>
