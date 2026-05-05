@@ -10,7 +10,10 @@ export const updateScannerBotXML = (
         prediction: number,
         martingale: string,
         takeProfit: string,
-        stopLoss: string 
+        stopLoss: string,
+        maxTrades: string,
+        targetWins: string,
+        maxLosses: string
     }
 ) => {
     const parser = new DOMParser();
@@ -44,6 +47,9 @@ export const updateScannerBotXML = (
         if (parentId === 'martingale_id_001') field.textContent = settings.martingale;
         if (parentId === 'tp_id_001') field.textContent = settings.takeProfit;
         if (parentId === 'sl_id_001') field.textContent = settings.stopLoss;
+        if (parentId === 'max_trades_id_001') field.textContent = settings.maxTrades;
+        if (parentId === 'target_wins_id_001') field.textContent = settings.targetWins;
+        if (parentId === 'max_losses_id_001') field.textContent = settings.maxLosses;
 
         // Special: Update Purchase List based on signal
         if (field.getAttribute('name') === 'PURCHASE_LIST') {

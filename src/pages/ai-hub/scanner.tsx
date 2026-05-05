@@ -29,8 +29,14 @@ const TEMPLATE_XML = `<xml xmlns="https://developers.google.com/blockly/xml" is_
     <variable id="v_martingale">martingale</variable>
     <variable id="v_tp">take_profit</variable>
     <variable id="v_sl">stop_loss</variable>
+    <variable id="v_max_trades">max_trades</variable>
+    <variable id="v_target_wins">target_wins</variable>
+    <variable id="v_max_losses">max_losses</variable>
     <variable id="v_current_stake">current_stake</variable>
     <variable id="v_total_profit">total_profit</variable>
+    <variable id="v_trade_count">trade_count</variable>
+    <variable id="v_win_count">win_count</variable>
+    <variable id="v_loss_count">loss_count</variable>
   </variables>
   <block type="trade_definition" id="trade_def_main" deletable="false" x="0" y="0">
     <statement name="TRADE_OPTIONS">
@@ -107,13 +113,57 @@ const TEMPLATE_XML = `<xml xmlns="https://developers.google.com/blockly/xml" is_
                           </block>
                         </value>
                         <next>
-                          <block type="variables_set" id="init_profit">
-                            <field name="VAR" id="v_total_profit">total_profit</field>
+                          <block type="variables_set" id="init_max_trades">
+                            <field name="VAR" id="v_max_trades">max_trades</field>
                             <value name="VALUE">
-                              <block type="math_number">
-                                <field name="NUM">0</field>
+                              <block type="math_number" id="max_trades_id_001">
+                                <field name="NUM">50</field>
                               </block>
                             </value>
+                            <next>
+                              <block type="variables_set" id="init_target_wins">
+                                <field name="VAR" id="v_target_wins">target_wins</field>
+                                <value name="VALUE">
+                                  <block type="math_number" id="target_wins_id_001">
+                                    <field name="NUM">10</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="variables_set" id="init_max_losses">
+                                    <field name="VAR" id="v_max_losses">max_losses</field>
+                                    <value name="VALUE">
+                                      <block type="math_number" id="max_losses_id_001">
+                                        <field name="NUM">5</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="variables_set">
+                                        <field name="VAR" id="v_total_profit">total_profit</field>
+                                        <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                                        <next>
+                                          <block type="variables_set">
+                                            <field name="VAR" id="v_trade_count">trade_count</field>
+                                            <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                                            <next>
+                                              <block type="variables_set">
+                                                <field name="VAR" id="v_win_count">win_count</field>
+                                                <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                                                <next>
+                                                  <block type="variables_set">
+                                                    <field name="VAR" id="v_loss_count">loss_count</field>
+                                                    <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
                           </block>
                         </next>
                       </block>
@@ -158,95 +208,133 @@ const TEMPLATE_XML = `<xml xmlns="https://developers.google.com/blockly/xml" is_
   <block type="after_purchase" id="after_id_001" x="550" y="0">
     <statement name="AFTERPURCHASE_STACK">
       <block type="math_change">
-        <field name="VAR" id="v_total_profit">total_profit</field>
-        <value name="DELTA">
-          <block type="read_details">
-            <field name="DETAIL_INDEX">4</field>
-          </block>
-        </value>
+        <field name="VAR" id="v_trade_count">trade_count</field>
+        <value name="DELTA"><block type="math_number"><field name="NUM">1</field></block></value>
         <next>
-          <block type="controls_if">
-            <mutation else="1"></mutation>
-            <value name="IF0">
-              <block type="contract_check_result">
-                <field name="CHECK_RESULT">win</field>
+          <block type="math_change">
+            <field name="VAR" id="v_total_profit">total_profit</field>
+            <value name="DELTA">
+              <block type="read_details">
+                <field name="DETAIL_INDEX">4</field>
               </block>
             </value>
-            <statement name="DO0">
-              <block type="variables_set">
-                <field name="VAR" id="v_current_stake">current_stake</field>
-                <value name="VALUE">
-                  <block type="variables_get">
-                    <field name="VAR" id="v_stake">stake</field>
-                  </block>
-                </value>
-              </block>
-            </statement>
-            <statement name="ELSE">
-              <block type="variables_set">
-                <field name="VAR" id="v_current_stake">current_stake</field>
-                <value name="VALUE">
-                  <block type="math_arithmetic">
-                    <field name="OP">MULTIPLY</field>
-                    <value name="A">
-                      <block type="variables_get">
-                        <field name="VAR" id="v_current_stake">current_stake</field>
-                      </block>
-                    </value>
-                    <value name="B">
-                      <block type="variables_get">
-                        <field name="VAR" id="v_martingale">martingale</field>
-                      </block>
-                    </value>
-                  </block>
-                </value>
-              </block>
-            </statement>
             <next>
               <block type="controls_if">
+                <mutation else="1"></mutation>
                 <value name="IF0">
-                  <block type="logic_operation">
-                    <field name="OP">AND</field>
-                    <value name="A">
-                      <block type="logic_compare">
-                        <field name="OP">LT</field>
-                        <value name="A">
+                  <block type="contract_check_result">
+                    <field name="CHECK_RESULT">win</field>
+                  </block>
+                </value>
+                <statement name="DO0">
+                  <block type="math_change">
+                    <field name="VAR" id="v_win_count">win_count</field>
+                    <value name="DELTA"><block type="math_number"><field name="NUM">1</field></block></value>
+                    <next>
+                      <block type="variables_set">
+                        <field name="VAR" id="v_current_stake">current_stake</field>
+                        <value name="VALUE">
                           <block type="variables_get">
-                            <field name="VAR" id="v_total_profit">total_profit</field>
-                          </block>
-                        </value>
-                        <value name="B">
-                          <block type="variables_get">
-                            <field name="VAR" id="v_tp">take_profit</field>
+                            <field name="VAR" id="v_stake">stake</field>
                           </block>
                         </value>
                       </block>
-                    </value>
-                    <value name="B">
-                      <block type="logic_compare">
-                        <field name="OP">GT</field>
+                    </next>
+                  </block>
+                </statement>
+                <statement name="ELSE">
+                  <block type="math_change">
+                    <field name="VAR" id="v_loss_count">loss_count</field>
+                    <value name="DELTA"><block type="math_number"><field name="NUM">1</field></block></value>
+                    <next>
+                      <block type="variables_set">
+                        <field name="VAR" id="v_current_stake">current_stake</field>
+                        <value name="VALUE">
+                          <block type="math_arithmetic">
+                            <field name="OP">MULTIPLY</field>
+                            <value name="A">
+                              <block type="variables_get">
+                                <field name="VAR" id="v_current_stake">current_stake</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="variables_get">
+                                <field name="VAR" id="v_martingale">martingale</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+                <next>
+                  <block type="controls_if">
+                    <value name="IF0">
+                      <block type="logic_operation">
+                        <field name="OP">AND</field>
                         <value name="A">
-                          <block type="variables_get">
-                            <field name="VAR" id="v_total_profit">total_profit</field>
+                          <block type="logic_operation">
+                            <field name="OP">AND</field>
+                            <value name="A">
+                              <block type="logic_compare">
+                                <field name="OP">LT</field>
+                                <value name="A"><block type="variables_get"><field name="VAR" id="v_total_profit">total_profit</field></block></value>
+                                <value name="B"><block type="variables_get"><field name="VAR" id="v_tp">take_profit</field></block></value>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="logic_compare">
+                                <field name="OP">GT</field>
+                                <value name="A"><block type="variables_get"><field name="VAR" id="v_total_profit">total_profit</field></block></value>
+                                <value name="B">
+                                  <block type="math_single">
+                                    <field name="OP">NEG</field>
+                                    <value name="NUM"><block type="variables_get"><field name="VAR" id="v_sl">stop_loss</field></block></value>
+                                  </block>
+                                </value>
+                              </block>
+                            </value>
                           </block>
                         </value>
                         <value name="B">
-                          <block type="math_single">
-                            <field name="OP">NEG</field>
-                            <value name="NUM">
-                              <block type="variables_get">
-                                <field name="VAR" id="v_sl">stop_loss</field>
+                          <block type="logic_operation">
+                            <field name="OP">AND</field>
+                            <value name="A">
+                              <block type="logic_compare">
+                                <field name="OP">LT</field>
+                                <value name="A"><block type="variables_get"><field name="VAR" id="v_trade_count">trade_count</field></block></value>
+                                <value name="B"><block type="variables_get"><field name="VAR" id="v_max_trades">max_trades</field></block></value>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="logic_operation">
+                                <field name="OP">AND</field>
+                                <value name="A">
+                                  <block type="logic_compare">
+                                    <field name="OP">LT</field>
+                                    <value name="A"><block type="variables_get"><field name="VAR" id="v_win_count">win_count</field></block></value>
+                                    <value name="B"><block type="variables_get"><field name="VAR" id="v_target_wins">target_wins</field></block></value>
+                                  </block>
+                                </value>
+                                <value name="B">
+                                  <block type="logic_compare">
+                                    <field name="OP">LT</field>
+                                    <value name="A"><block type="variables_get"><field name="VAR" id="v_loss_count">loss_count</field></block></value>
+                                    <value name="B"><block type="variables_get"><field name="VAR" id="v_max_losses">max_losses</field></block></value>
+                                  </block>
+                                </value>
                               </block>
                             </value>
                           </block>
                         </value>
                       </block>
                     </value>
+                    <statement name="DO0">
+                      <block type="trade_again"></block>
+                    </statement>
                   </block>
-                </value>
-                <statement name="DO0">
-                  <block type="trade_again"></block>
-                </statement>
+                </next>
               </block>
             </next>
           </block>
@@ -285,7 +373,10 @@ const getDigit = (price: number, pip: number) => {
 const AIScannerPage: React.FC = observer((): JSX.Element => {
     const navigate = useNavigate();
     const [marketStats, setMarketStats] = useState<Record<string, IMarketData>>({});
-    const [loading, setLoading] = useState(true);
+    const [favorableSymbols, setFavorableSymbols] = useState<string[]>([]);
+    const [isScanning, setIsScanning] = useState(false);
+    const [scanMode, setScanMode] = useState<'multi'>('multi');
+    const [currentScanningSymbol, setCurrentScanningSymbol] = useState<string | null>(null);
     const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
     const [selectedSignal, setSelectedSignal] = useState<ISignal | null>(null);
     
@@ -293,8 +384,12 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
     const [martingale, setMartingale] = useState('2.0');
     const [takeProfit, setTakeProfit] = useState('10');
     const [stopLoss, setStopLoss] = useState('10');
+    const [maxTrades, setMaxTrades] = useState('50');
+    const [targetWins, setTargetWins] = useState('10');
+    const [maxLosses, setMaxLosses] = useState('5');
 
     const syncCount = useRef(0);
+    const activeSubscriptions = useRef<Record<string, string>>({}); // symbol -> subId
 
     // Initial State Setup
     useEffect(() => {
@@ -322,7 +417,6 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             return;
         }
 
-        // Logic like Bulk Trading: handle 'history' then 'tick' flow
         const calculateFrequencies = (digits: number[]) => {
             if (!digits.length) return new Array(10).fill(0);
             const counts = new Array(10).fill(0);
@@ -333,6 +427,10 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
         if (msg_type === 'history') {
             const sym = echo_req.ticks_history;
             if (!sym) return;
+
+            if (msg.subscription?.id) {
+                activeSubscriptions.current[sym] = msg.subscription.id;
+            }
 
             const prices = (history?.prices ?? []).map(Number);
             const pip = Number(msg.pip_size ?? 2);
@@ -352,7 +450,6 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             }));
             
             syncCount.current += 1;
-            if (syncCount.current >= 5) setLoading(false);
         }
 
         if (msg_type === 'tick') {
@@ -394,29 +491,63 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
                 return;
             }
             setWsStatus('connected');
-            console.warn('[AI Scanner] Subscribing via Global API...');
-            
-            SCAN_SYMBOLS.forEach((s, index) => {
-                setTimeout(() => {
-                    api_base.api.send({
-                        ticks_history: s.symbol,
-                        count: WINDOW_SIZE, 
-                        end: 'latest', 
-                        style: 'ticks', 
-                        subscribe: 1, 
-                        req_id: 3000 + index
-                    });
-                }, index * 200);
-            });
-
             sub = api_base.api.onMessage().subscribe((envelope: any) => {
                 handleMessage({ data: JSON.stringify(envelope.data || envelope) } as MessageEvent);
             });
         };
 
         init();
-        return () => sub?.unsubscribe();
+        return () => {
+            sub?.unsubscribe();
+            // Clean up subscriptions
+            Object.values(activeSubscriptions.current).forEach(id => {
+                api_base.api?.send({ forget: id });
+            });
+        };
     }, [handleMessage]);
+
+    const startScan = useCallback(async () => {
+        if (!api_base.api) return;
+        setIsScanning(true);
+        setFavorableSymbols([]);
+        
+        for (let i = 0; i < SCAN_SYMBOLS.length; i++) {
+            const s = SCAN_SYMBOLS[i];
+            setCurrentScanningSymbol(s.symbol);
+            
+            api_base.api.send({
+                ticks_history: s.symbol,
+                count: WINDOW_SIZE, 
+                end: 'latest', 
+                style: 'ticks', 
+                subscribe: 1, 
+                req_id: 3000 + i
+            });
+
+            // Wait for analysis period
+            await new Promise(resolve => setTimeout(resolve, 3500));
+
+            // Evaluation
+            setMarketStats(current => {
+                const data = current[s.symbol];
+                if (data) {
+                    const probAbove1 = data.frequencies.slice(2).reduce((a, b) => a + b, 0);
+                    if (probAbove1 > 65) {
+                        setFavorableSymbols(prev => [...prev, s.symbol]);
+                    } else {
+                        const subId = activeSubscriptions.current[s.symbol];
+                        if (subId) {
+                            api_base.api.send({ forget: subId });
+                            delete activeSubscriptions.current[s.symbol];
+                        }
+                    }
+                }
+                return current;
+            });
+        }
+        setIsScanning(false);
+        setCurrentScanningSymbol(null);
+    }, []);
 
     const handleLaunchBot = useCallback(() => {
         if (!selectedSignal) return;
@@ -441,7 +572,10 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             prediction: selectedSignal.prediction,
             martingale: martingale,
             takeProfit,
-            stopLoss
+            stopLoss,
+            maxTrades,
+            targetWins,
+            maxLosses
         }).replace('overunder', contract_type).replace('DIGITOVER', purchase_list);
 
         try {
@@ -458,75 +592,58 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
     const signals = useMemo(() => {
         const results: ISignal[] = [];
         Object.values(marketStats).forEach(data => {
+            // Only show signals for symbols that passed the scan
+            if (!favorableSymbols.includes(data.symbol) && data.symbol !== currentScanningSymbol) return;
             if (data.digits.length < 50) return;
-            const pcts = data.frequencies.map((f, i) => ({ digit: i, pct: f }));
             
-            const lowDigits = pcts.filter(p => p.digit <= 1).reduce((a,b) => a + b.pct, 0); 
-            const highDigits = pcts.filter(p => p.digit >= 8).reduce((a,b) => a + b.pct, 0); 
-            const evenDigits = pcts.filter(p => p.digit % 2 === 0).reduce((a,b) => a + b.pct, 0);
-            const oddDigits = 100 - evenDigits;
-
-            if (lowDigits < 17) {
+            const probabilityAbove1 = data.frequencies.slice(2).reduce((a, b) => a + b, 0);
+            
+            if (probabilityAbove1 > 65) {
                 results.push({
-                    symbol: data.symbol, type: 'OVER', prediction: 1,
-                    confidence: Math.round(Math.min(100, (22 - lowDigits) * 10)),
-                    reason: `Low cluster 0-1`
-                });
-            } else if (highDigits < 17) {
-                results.push({
-                    symbol: data.symbol, type: 'UNDER', prediction: 8,
-                    confidence: Math.round(Math.min(100, (22 - highDigits) * 10)),
-                    reason: `Low cluster 8-9`
-                });
-            } else if (evenDigits > 58) {
-                results.push({
-                    symbol: data.symbol, type: 'EVEN', prediction: 0,
-                    confidence: Math.round((evenDigits - 50) * 10),
-                    reason: `Even Bias`
-                });
-            } else if (oddDigits > 58) {
-                results.push({
-                    symbol: data.symbol, type: 'ODD', prediction: 0,
-                    confidence: Math.round((oddDigits - 50) * 10),
-                    reason: `Odd Bias`
-                });
-            }
-
-            const peak = [...pcts].sort((a,b) => b.pct - a.pct)[0];
-            if (peak.pct > 14) {
-                results.push({
-                    symbol: data.symbol, type: 'MATCH', prediction: peak.digit,
-                    confidence: Math.round(peak.pct * 5),
-                    reason: `Frequent Digit ${peak.digit}`
+                    symbol: data.symbol, 
+                    type: 'OVER', 
+                    prediction: 1,
+                    confidence: Math.round(probabilityAbove1),
+                    reason: `Probability of digits 2-9 is ${probabilityAbove1.toFixed(1)}%`
                 });
             }
         });
         return results.sort((a,b) => b.confidence - a.confidence);
-    }, [marketStats]);
+    }, [marketStats, favorableSymbols, currentScanningSymbol]);
 
     return (
         <div className="dss-scanner dss-scanner--full">
             <div className="dss-scanner__header">
                 <div className="dss-scanner__title">
-                    <h2>Deriv Smart Scanner</h2>
+                    <h2>AI Market Intelligence</h2>
                     <div className={`dss-status dss-status--${wsStatus}`}>
-                        {wsStatus === 'connected' ? '● Real-Time Feed Active' : '○ Resyncing Matrix...'}
+                        {isScanning ? `Scanning Matrix: ${currentScanningSymbol || '...'}` : (favorableSymbols.length > 0 ? `${favorableSymbols.length} Favorable Markets Found` : 'Matrix Standby')}
                     </div>
                 </div>
-                <div className="dss-scanner__summary">
-                    {loading ? 'Initializing Analysis...' : `Mode: Over 1 / Under 8 • Markets Synced: ${syncCount.current}/10`}
+                <div className="dss-scanner__actions">
+                    <select className="dss-mode-select" value={scanMode} onChange={e => setScanMode(e.target.value as any)}>
+                        <option value="multi">Scan Multimarket</option>
+                    </select>
+                    <button 
+                        className={`dss-scan-btn ${isScanning ? 'dss-scan-btn--active' : ''}`}
+                        onClick={startScan}
+                        disabled={isScanning}
+                    >
+                        {isScanning ? 'SCANNING...' : 'START SCAN'}
+                    </button>
                 </div>
             </div>
 
             <div className="dss-grid-wrapper">
                 <div className="dss-grid">
-                    {SCAN_SYMBOLS.map(s => {
+                    {SCAN_SYMBOLS.filter(s => favorableSymbols.includes(s.symbol) || s.symbol === currentScanningSymbol).map(s => {
                         const data = marketStats[s.symbol];
                         const signal = signals.find(sig => sig.symbol === s.symbol);
                         const isNewTick = data?.tick_pulse && (Date.now() - data.tick_pulse < 300);
+                        const isCurrentlyScanning = s.symbol === currentScanningSymbol;
 
                         return (
-                            <div key={s.symbol} className={`dss-card ${signal ? 'dss-card--has-signal' : 'dss-card--scanning'} ${isNewTick ? 'dss-card--active' : ''}`}>
+                            <div key={s.symbol} className={`dss-card ${signal ? 'dss-card--has-signal' : 'dss-card--scanning'} ${isNewTick ? 'dss-card--active' : ''} ${isCurrentlyScanning ? 'dss-card--scanning-active' : ''}`}>
                                 <div className="dss-card__market">
                                     <div className="dss-card__market-left">
                                         <span className="dss-card__name">{s.name}</span>
@@ -557,24 +674,31 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
                                 {signal ? (
                                     <div className="dss-signal animated pulse">
                                         <div className="dss-signal__type">
-                                            <span className="label">RECOVERY TARGET:</span>
+                                            <span className="label">ANALYSIS RESULT:</span>
                                             <span className={`value ${signal.type.toLowerCase()}`}>{signal.type} {signal.prediction}</span>
                                         </div>
                                         <div className="dss-signal__confidence">
                                             <div className="conf-bar"><div className="conf-fill" style={{ width: `${signal.confidence}%` }} /></div>
-                                            <span className="conf-text">{signal.confidence}% Confidence</span>
+                                            <span className="conf-text">{signal.confidence}% Accuracy</span>
                                         </div>
-                                        <button className="dss-trade-btn" onClick={() => setSelectedSignal(signal)}>LOAD & RUN BOT</button>
+                                        <button className="dss-trade-btn" onClick={() => setSelectedSignal(signal)}>LOAD & SELECT STRATEGY</button>
                                     </div>
                                 ) : (
                                     <div className="dss-no-signal">
                                         <div className="dss-search-loader" />
-                                        <span>Monitoring Bias... [{data?.digits.length || 0}/1000]</span>
+                                        <span>{isCurrentlyScanning ? 'Gathering Intelligence...' : 'Awaiting Matrix...'}</span>
                                     </div>
                                 )}
                             </div>
                         );
                     })}
+                    {!isScanning && favorableSymbols.length === 0 && (
+                        <div className="dss-empty-state">
+                            <div className="dss-empty-state__icon">📡</div>
+                            <h3>No Active Signals</h3>
+                            <p>Click 'START SCAN' to begin multi-market intelligence gathering.</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -592,20 +716,32 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
                             </div>
                             <div className="dss-form-grid">
                                 <div className="dss-input-group">
-                                    <label>Base Stake (USD)</label>
+                                    <label>Stake (USD)</label>
                                     <input type="number" step="0.1" value={stake} onChange={e => setStake(e.target.value)} />
                                 </div>
                                 <div className="dss-input-group">
-                                    <label>Martingale Level</label>
+                                    <label>Martingale Factor</label>
                                     <input type="number" step="0.1" value={martingale} onChange={e => setMartingale(e.target.value)} />
                                 </div>
                                 <div className="dss-input-group">
-                                    <label>Take Profit (USD)</label>
+                                    <label>Target Profit (USD)</label>
                                     <input type="number" value={takeProfit} onChange={e => setTakeProfit(e.target.value)} />
                                 </div>
                                 <div className="dss-input-group">
                                     <label>Stop Loss (USD)</label>
                                     <input type="number" value={stopLoss} onChange={e => setStopLoss(e.target.value)} />
+                                </div>
+                                <div className="dss-input-group">
+                                    <label>Max Trades</label>
+                                    <input type="number" value={maxTrades} onChange={e => setMaxTrades(e.target.value)} />
+                                </div>
+                                <div className="dss-input-group">
+                                    <label>Number of Wins</label>
+                                    <input type="number" value={targetWins} onChange={e => setTargetWins(e.target.value)} />
+                                </div>
+                                <div className="dss-input-group">
+                                    <label>Number of Losses</label>
+                                    <input type="number" value={maxLosses} onChange={e => setMaxLosses(e.target.value)} />
                                 </div>
                             </div>
                         </div>
@@ -614,13 +750,6 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
                             <button className="launch-btn" onClick={handleLaunchBot}>LOAD & RUN STRATEGY →</button>
                         </div>
                     </div>
-                </div>
-            )}
-            
-            {loading && (
-                <div className="dss-loading-overlay">
-                    <div className="dss-spinner" />
-                    <p>Priming DSS Intelligence... Synching 10 Markets</p>
                 </div>
             )}
         </div>

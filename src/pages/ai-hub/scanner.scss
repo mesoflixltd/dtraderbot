@@ -49,6 +49,54 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
+  &__actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .dss-mode-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+
+    option { background: #1a1a2e; }
+  }
+
+  .dss-scan-btn {
+    background: linear-gradient(135deg, #00f2ff 0%, #006aff 100%);
+    color: #fff;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+      box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: #333;
+    }
+
+    &--active {
+      animation: pulse 1s infinite;
+    }
+  }
+
   .dss-status {
     font-size: 0.8rem;
     font-family: 'JetBrains Mono', monospace;
@@ -57,6 +105,37 @@
     &--connected { color: #00ff88; }
     &--connecting { color: #ffaa00; }
     &--error { color: #ff4444; }
+  }
+
+  .dss-empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 24px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+
+    &__icon { font-size: 4rem; margin-bottom: 20px; opacity: 0.5; }
+    h3 { font-size: 1.8rem; margin: 0 0 10px; color: #fff; }
+    p { color: rgba(255, 255, 255, 0.4); }
+  }
+
+  .dss-card--scanning-active {
+    border-color: #00f2ff;
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, #00f2ff, transparent);
+      animation: scan-line 2s linear infinite;
+    }
+  }
+
+  @keyframes scan-line {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(400px); }
   }
 
   .dss-grid-wrapper {
