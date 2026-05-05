@@ -259,6 +259,7 @@ export default class ToolboxStore {
 
     getAllCategories = (): ChildNode[] => {
         const categories: ChildNode[] = [];
+        if (!this.toolbox_dom) return categories;
         Array.from((this.toolbox_dom as HTMLElement).childNodes).forEach((category: any) => {
             categories.push(category);
             if (this.hasSubCategory((category as HTMLElement).children)) {
