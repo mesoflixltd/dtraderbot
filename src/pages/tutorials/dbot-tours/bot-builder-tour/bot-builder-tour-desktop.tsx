@@ -5,6 +5,7 @@ import { getSetting } from '@/utils/settings';
 import ReactJoyrideWrapper from '../common/react-joyride-wrapper';
 import TourEndDialog from '../common/tour-end-dialog';
 import TourStartDialog from '../common/tour-start-dialog';
+import { DBOT_TABS } from '@/constants/bot-contents';
 import { BOT_BUILDER_TOUR } from '../tour-content';
 import { useTourHandler } from '../useTourHandler';
 
@@ -15,7 +16,7 @@ const BotBuilderTourDesktop = observer(() => {
     const { is_load_modal_open } = load_modal;
     // Check if tour should be shown with setTimeout to prevent showing on every reload
     React.useEffect(() => {
-        if (active_tab === 1) {
+        if (active_tab === DBOT_TABS.BOT_BUILDER) {
             const timeoutId = setTimeout(() => {
                 const token = getSetting('bot_builder_token');
                 if (!token && !is_tour_dialog_visible) {

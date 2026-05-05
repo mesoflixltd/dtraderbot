@@ -4,6 +4,7 @@ import { useStore } from '@/hooks/useStore';
 import { getSetting } from '@/utils/settings';
 import ReactJoyrideWrapper from '../common/react-joyride-wrapper';
 import TourStartDialog from '../common/tour-start-dialog';
+import { DBOT_TABS } from '@/constants/bot-contents';
 import { DBOT_ONBOARDING } from '../tour-content';
 import { useTourHandler } from '../useTourHandler';
 
@@ -20,7 +21,7 @@ const OnboardingTourDesktop = observer(() => {
 
     // Check if tour should be shown with setTimeout to prevent showing on every reload
     React.useEffect(() => {
-        if (active_tab === 0) {
+        if (active_tab === DBOT_TABS.DASHBOARD) {
             const timeoutId = setTimeout(() => {
                 const token = getSetting('onboard_tour_token');
                 if (!token && !is_tour_dialog_visible) {
