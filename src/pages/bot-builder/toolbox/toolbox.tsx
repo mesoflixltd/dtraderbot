@@ -92,7 +92,7 @@ const Toolbox = observer(() => {
                             onSearchClear={onSearchClear}
                             onSearchKeyUp={onSearchKeyUp}
                         />
-                        <div className='db-toolbox' id='gtm-toolbox' />
+                        <div className='db-toolbox__content' id='gtm-toolbox' />
                     </div>
                 </div>
             </div>
