@@ -14,7 +14,7 @@ import { generateUrlWithRedirect } from '@/utils/url-redirect-utils';
 import { Buy, ProposalOpenContract } from '@deriv/api-types';
 import { TStores } from '@deriv/stores/types';
 import { localize } from '@deriv-com/translations';
-import { TDbot } from 'Types';
+import { TBotSkeleton } from '@/types/dbot.types';
 import RootStore from './root-store';
 
 export type TContractState = {
@@ -24,10 +24,9 @@ export type TContractState = {
     id: string;
 };
 
-export default class RunPanelStore {
     root_store: RootStore;
-    dbot: TDbot;
-    core: TStores;
+    dbot: any;
+    core: any;
     disposeReactionsFn: () => void;
     timer: NodeJS.Timeout | null;
 
@@ -95,7 +94,7 @@ export default class RunPanelStore {
         });
 
         this.root_store = root_store;
-        this.dbot = this.root_store.dbot;
+        this.dbot = this.root_store.dbot as any;
         this.core = core;
         this.disposeReactionsFn = this.registerReactions();
         this.timer = null;
@@ -103,7 +102,7 @@ export default class RunPanelStore {
 
     setIsCopyTrading = (is_copy_trading: boolean) => {
         this.is_copy_trading = is_copy_trading;
-        globalObserver.setState({ is_copy_trading });
+        observer.setState({ is_copy_trading });
     };
 
     active_index = 0;
@@ -118,6 +117,7 @@ export default class RunPanelStore {
     show_bot_stop_message = false;
     is_contract_buying_in_progress = false;
     is_run_panel_minimized = false;
+    is_copy_trading = false;
 
     setRunPanelMinimized = (is_minimized: boolean) => {
         this.is_run_panel_minimized = is_minimized;
@@ -193,7 +193,7 @@ export default class RunPanelStore {
         const is_ios = mobileOSDetect() === 'iOS';
         this.dbot.saveRecentWorkspace();
         this.dbot.unHighlightAllBlocks();
-        if (!client.is_logged_in) {
+        if (!client?.is_logged_in) {
             this.showLoginDialog();
             return;
         }
@@ -212,14 +212,14 @@ export default class RunPanelStore {
             return;
         }
 
-        ui?.setAccountSwitcherDisabledMessage(
+        ui?.setAccountSwitcherDisabledMessage?.(
             localize(
                 'Account switching is disabled while your bot is running. Please stop your bot before switching accounts.'
             )
         );
         runInAction(() => {
             this.setIsRunning(true);
-            ui.setPromptHandler(true);
+            ui?.setPromptHandler?.(true);
             this.toggleDrawer(true);
             this.run_id = `run-${Date.now()}`;
 
@@ -261,12 +261,12 @@ export default class RunPanelStore {
 
         this.dbot.stopBot();
 
-        ui.setPromptHandler(false);
+        ui?.setPromptHandler?.(false);
 
         if (this.error_type) {
             // when user click stop button when there is a error but bot is retrying
             this.setContractStage(contract_stages.NOT_RUNNING);
-            ui.setAccountSwitcherDisabledMessage();
+            ui?.setAccountSwitcherDisabledMessage?.();
             this.setIsRunning(false);
         } else if (this.has_open_contract) {
             // when user click stop button when bot is running
@@ -275,7 +275,7 @@ export default class RunPanelStore {
             // when user click stop button before bot start running
             this.setContractStage(contract_stages.NOT_RUNNING);
             this.unregisterBotListeners();
-            ui.setAccountSwitcherDisabledMessage();
+            ui?.setAccountSwitcherDisabledMessage?.();
             this.setIsRunning(false);
         }
 
@@ -329,7 +329,7 @@ export default class RunPanelStore {
         const { ui } = this.core;
         const { toggleStopBotDialog } = quick_strategy;
 
-        ui.setPromptHandler(false);
+        ui?.setPromptHandler?.(false);
         this.dbot.terminateBot();
         this.onCloseDialog();
         summary_card.clear();
@@ -358,7 +358,7 @@ export default class RunPanelStore {
         const { ui } = this.core;
 
         this.onOkButtonClick = () => {
-            ui.setPromptHandler(false);
+            ui?.setPromptHandler?.(false);
             this.dbot.terminateBot();
             if (this.timer) {
                 clearInterval(this.timer);
@@ -480,9 +480,9 @@ export default class RunPanelStore {
 
         const registerIsSocketOpenedListener = () => {
             // TODO: fix notifications
-            if (common.is_socket_opened) {
+            if (common?.is_socket_opened) {
                 disposeIsSocketOpenedListener = reaction(
-                    () => client.loginid,
+                    () => client?.loginid,
                     loginid => {
                         if (loginid && this.is_running) {
                             // TODO: fix notifications
@@ -544,7 +544,7 @@ export default class RunPanelStore {
         const indicateBotStopped = () => {
             this.error_type = undefined;
             this.setContractStage(contract_stages.NOT_RUNNING);
-            ui.setAccountSwitcherDisabledMessage();
+            ui?.setAccountSwitcherDisabledMessage?.();
             this.unregisterBotListeners();
         };
         if (this.error_type === ErrorTypes.RECOVERABLE_ERRORS) {
@@ -572,7 +572,7 @@ export default class RunPanelStore {
             this.error_type = undefined;
             this.is_sell_requested = false;
             this.setContractStage(contract_stages.CONTRACT_CLOSED);
-            ui.setAccountSwitcherDisabledMessage();
+            ui?.setAccountSwitcherDisabledMessage?.();
             this.unregisterBotListeners();
         }
 
@@ -607,7 +607,7 @@ export default class RunPanelStore {
                     this.is_contract_buying_in_progress = false;
                     this.setContractStage(contract_stages.PURCHASE_RECEIVED);
                     const { buy } = contract_status;
-                    const { is_virtual } = this.core.client;
+                    const is_virtual = this.core.client?.is_virtual;
 
                     if (!is_virtual && buy) {
                         try {
@@ -751,7 +751,7 @@ export default class RunPanelStore {
         if (journal.journal_filters.some(filter => filter === MessageTypes.ERROR)) {
             this.toggleDrawer(true);
             this.setActiveTabIndex(run_panel.JOURNAL);
-            ui.setPromptHandler(false);
+            ui?.setPromptHandler?.(false);
         } else {
             // TODO: fix notifications
             // notifications.addNotificationMessage(journalError(this.switchToJournal));
