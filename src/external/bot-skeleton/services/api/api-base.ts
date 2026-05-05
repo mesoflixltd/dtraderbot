@@ -478,11 +478,28 @@ class APIBase {
 
         try {
             console.log('[APIBase] Authorizing...');
-            const authResponse = await this.api.authorize(token);
+            let authResponse;
+            
+            // If token contains dots, it's an Ory access token.
+            // Deriv's authorize command doesn't accept dots.
+            // If we're connected via OTP, the socket is already pre-authorized.
+            if (token.includes('.')) {
+                console.log('[APIBase] Using Ory token, assuming pre-authorization via OTP');
+                // Simulate a successful auth response for state management
+                authResponse = {
+                    authorize: {
+                        loginid: account_id,
+                        currency: 'USD', // Fallback, will be updated by balance call
+                        is_virtual: isDemoAccount(account_id || '') ? 1 : 0,
+                    }
+                };
+            } else {
+                authResponse = await this.api.authorize(token);
 
-            if (authResponse.error) {
-                console.error('[APIBase] Authorization failed:', authResponse.error);
-                throw authResponse.error;
+                if (authResponse.error) {
+                    console.error('[APIBase] Authorization failed:', authResponse.error);
+                    throw authResponse.error;
+                }
             }
 
             console.log('[APIBase] Authorization successful for:', authResponse.authorize.loginid);

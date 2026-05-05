@@ -801,6 +801,13 @@
         }
     }
 
+    &__account-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.4rem;
+    }
+
     &__balance {
         color: var(--text-prominent);
         line-height: 1.4;
@@ -857,6 +864,13 @@
             transform: scale(0.98);
         }
     }
+}
+
+.acc-info__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .header {

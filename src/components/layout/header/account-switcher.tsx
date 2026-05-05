@@ -13,6 +13,22 @@ import AccountInfoWrapper from './account-info-wrapper';
 import brandConfig from '@/../brand.config.json';
 import './account-switcher.scss';
 
+const RealIcon = () => (
+    <svg width='20' height='20' viewBox='0 0 20 20' fill='none' className='acc-info__icon'>
+        <path d='M10 2L3 5V10C3 14.41 6.13 18.23 10 19.5C13.87 18.23 17 14.41 17 10V5L10 2Z' fill='#4BB463' fillOpacity='0.15' stroke='#4BB463' strokeWidth='1.5' strokeLinejoin='round'/>
+        <path d='M7 10.5L9 12.5L13 8.5' stroke='#4BB463' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/>
+        <path d='M10 6V7' stroke='#4BB463' strokeWidth='1.5' strokeLinecap='round'/>
+    </svg>
+);
+
+const DemoIcon = () => (
+    <svg width='20' height='20' viewBox='0 0 20 20' fill='none' className='acc-info__icon'>
+        <path d='M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2Z' fill='#FFAD3A' fillOpacity='0.15' stroke='#FFAD3A' strokeWidth='1.5'/>
+        <path d='M10 6V11L13 13' stroke='#FFAD3A' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/>
+        <circle cx='10' cy='10' r='1' fill='#FFAD3A'/>
+    </svg>
+);
+
 type TAccountGroup = 'real' | 'demo';
 
 const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDisabled }: TAccountSwitcher) => {
@@ -162,7 +178,9 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                         }
                     }}
                 >
-                    <span className='acc-info__id' aria-hidden='true'></span>
+                    <span className='acc-info__id' aria-hidden='true'>
+                        {isVirtual ? <DemoIcon /> : <RealIcon />}
+                    </span>
                     <div className='acc-info__content'>
                         <div className='acc-info__account-type-header'>
                             <Text as='p' size='xs' className='acc-info__account-type'>
@@ -250,18 +268,21 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                 }
                             }}
                         >
-                            <Text
-                                size='xxxs'
-                                className={classNames('acc-dropdown__account-type', {
-                                    'acc-dropdown__account-type--virtual': account.isVirtual,
-                                })}
-                            >
-                                {account.isVirtual ? (
-                                    <Localize i18n_default_text='Demo account' />
-                                ) : (
-                                    <Localize i18n_default_text='Real account' />
-                                )}
-                            </Text>
+                            <div className='acc-dropdown__account-header'>
+                                {account.isVirtual ? <DemoIcon /> : <RealIcon />}
+                                <Text
+                                    size='xxxs'
+                                    className={classNames('acc-dropdown__account-type', {
+                                        'acc-dropdown__account-type--virtual': account.isVirtual,
+                                    })}
+                                >
+                                    {account.isVirtual ? (
+                                        <Localize i18n_default_text='Demo account' />
+                                    ) : (
+                                        <Localize i18n_default_text='Real account' />
+                                    )}
+                                </Text>
+                            </div>
                             <Text size='xs' weight='bold' className='acc-dropdown__balance'>
                                 {account.currency ? (
                                     `${account.balance} ${getCurrencyDisplayCode(account.currency)}`
