@@ -202,6 +202,9 @@
       font-weight: 800;
       font-family: 'Roboto Mono', monospace;
     }
+
+    &:nth-child(1) strong { color: #00e676; } // Hot
+    &:nth-child(2) strong { color: #ff5252; } // Cold
   }
 
   /* ─────────────────── OFFLINE ─────────────────── */
@@ -239,10 +242,12 @@
 
     &:hover { transform: translateY(-3px); border-color: #7f5cff; }
 
-    &--hot     { --ring-color: #ff9100; }
-    &--warm    { --ring-color: #ffc400; }
-    &--neutral { --ring-color: #448aff; }
-    &--cold    { --ring-color: #90caf9; }
+    &--hot,
+    &--warm,
+    &--neutral,
+    &--cold {
+      --ring-color: rgba(255, 255, 255, 0.15);
+    }
 
     &--highest {
       border-color: #00e676;

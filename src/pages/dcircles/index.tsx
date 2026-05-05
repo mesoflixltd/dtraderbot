@@ -443,10 +443,22 @@ const DCircles = observer(() => {
         }));
     }, [digitsWindow]);
 
-    const { hottestDigit, coldestDigit } = useMemo(() => {
-        if (!digitStats.length) return { hottestDigit: -1, coldestDigit: -1 };
+    const { maxCount, minCount } = useMemo(() => {
+        if (!digitStats.length) return { maxCount: -1, minCount: -1 };
+        const counts = digitStats.map(s => s.count);
+        return { maxCount: Math.max(...counts), minCount: Math.min(...counts) };
+    }, [digitStats]);
+
+    const hottestDigit = useMemo(() => {
+        if (!digitStats.length) return -1;
         const sorted = [...digitStats].sort((a, b) => b.count - a.count);
-        return { hottestDigit: sorted[0].digit, coldestDigit: sorted[sorted.length - 1].digit };
+        return sorted[0].digit;
+    }, [digitStats]);
+
+    const coldestDigit = useMemo(() => {
+        if (!digitStats.length) return -1;
+        const sorted = [...digitStats].sort((a, b) => a.count - b.count);
+        return sorted[0].digit;
     }, [digitStats]);
 
     const evenOddStats = useMemo(() => {
@@ -565,10 +577,10 @@ const DCircles = observer(() => {
 
             {/* ─── DIGIT GRID ─── */}
             <div className='dcircles-grid'>
-                {digitStats.map(({ digit, percentage }) => {
+                {digitStats.map(({ digit, count, percentage }) => {
                     const heat      = getHeat(percentage);
-                    const isHottest = digit === hottestDigit;
-                    const isLowest  = digit === coldestDigit;
+                    const isHottest = count === maxCount && maxCount > minCount;
+                    const isLowest  = count === minCount && maxCount > minCount;
                     const isFlash   = digit === lastDigit;
 
                     return (
