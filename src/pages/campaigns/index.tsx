@@ -30,7 +30,7 @@ const Campaigns = observer(() => {
             id: 1,
             title: 'HFT Wizard V2',
             desc: 'High-Frequency Trading Protocol with 92% accuracy. Limited slots available for institutional access.',
-            image: 'https://images.unsplash.com/photo-1642790103517-1a52f450f813?q=80&w=1933&auto=format&fit=crop',
+            image: 'https://images.unsplash.com/photo-1633156189757-4f493b8a4593?q=80&w=2070&auto=format&fit=crop',
             badge: 'Limited Offer',
             link: '#/freebots'
         },
@@ -54,6 +54,17 @@ const Campaigns = observer(() => {
 
     return (
         <div className="campaigns-page">
+            <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="campaigns-page__video-bg"
+            >
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-financial-data-scrolling-on-a-monitor-4344-large.mp4" type="video/mp4" />
+            </video>
+            <div className="campaigns-page__overlay" />
+
             <nav className="campaigns-nav">
                 <button 
                     className={classNames('campaigns-nav__btn', { 'campaigns-nav__btn--active': active_sub_tab === 'promotions' })}
