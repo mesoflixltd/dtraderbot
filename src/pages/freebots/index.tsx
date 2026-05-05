@@ -87,7 +87,12 @@ const FreeBots = observer(() => {
                 xml_string = await response.text();
             } else {
                 // Try local paths (from manifest)
-                const paths = [`/bots/${bot.name}`, `/public/bots/${bot.name}`, `/${bot.name}`];
+                const paths = [
+                    `/bots/${encodeURIComponent(bot.name)}`,
+                    `/bots/${bot.name}`,
+                    `/public/bots/${bot.name}`,
+                    `/${bot.name}`
+                ];
                 for (const path of paths) {
                     try {
                         const res = await fetch(path);

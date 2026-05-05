@@ -13,6 +13,8 @@ const BotActionButtons = observer(() => {
     const { quick_strategy, run_panel, client } = useStore();
     const { setFormVisibility } = quick_strategy;
 
+    if (isDesktop) return null;
+
     const handleQuickStrategyOpen = () => {
         setFormVisibility(true);
     };

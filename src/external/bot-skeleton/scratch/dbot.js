@@ -150,6 +150,21 @@ class DBot {
                 this.workspace.addChangeListener(event => this.workspace.dispatchBlockEventEffects(event));
                 this.workspace.addChangeListener(event => {
                     if (event.type === 'drag' && !event.isStart && !is_mobile) validateErrorOnBlockDelete();
+                    
+                    const workspace_change_events = [
+                        window.Blockly.Events.BLOCK_CREATE,
+                        window.Blockly.Events.BLOCK_DELETE,
+                        window.Blockly.Events.BLOCK_MOVE,
+                        window.Blockly.Events.BLOCK_CHANGE,
+                        window.Blockly.Events.VAR_CREATE,
+                        window.Blockly.Events.VAR_DELETE,
+                        window.Blockly.Events.VAR_RENAME,
+                    ];
+
+                    if (workspace_change_events.includes(event.type)) {
+                        this.saveRecentWorkspace();
+                    }
+
                     if (event.type == window.Blockly.Events.BLOCK_CHANGE) {
                         const block = this.workspace.getBlockById(event.blockId);
                         if (is_mobile && block && event.element == 'collapsed') {
