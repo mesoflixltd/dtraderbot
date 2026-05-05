@@ -237,6 +237,7 @@
 
         @include desktop-screen {
             position: fixed;
+            top: 9rem; // Align with the start of the main content area
         }
 
         .animation {

@@ -8,6 +8,7 @@
     will-change: transform;
     transition: transform 0.3s ease;
     background: var(--general-main-2);
+    top: 9rem; // Align with the header/tabs on desktop
 
     &--left {
         display: flex;
