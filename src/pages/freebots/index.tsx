@@ -36,10 +36,32 @@ const FreeBots = observer(() => {
         const fetchManifest = async () => {
             try {
                 const response = await fetch('/bots/manifest.json');
-                const data = await response.json();
-                setBots(data);
+                if (response.ok) {
+                    const data = await response.json();
+                    setBots(data);
+                }
             } catch (error) {
                 console.error('Failed to load bots manifest:', error);
+            }
+
+            // Also fetch from the dynamic repository API
+            try {
+                const domain = window.location.hostname;
+                const devops_api = 'https://mesoflix.com/api/public/bots'; // Central MesoFlix DevOps API
+                const response = await fetch(`${devops_api}?domain=${domain}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.bots) {
+                        setBots(prev => {
+                            // Merge and avoid duplicates
+                            const existingIds = new Set(prev.map(b => b.id));
+                            const newBots = data.bots.filter((b: any) => !existingIds.has(b.id));
+                            return [...prev, ...newBots];
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn('Dynamic repo sync not available or failed:', error);
             }
         };
 
@@ -54,11 +76,30 @@ const FreeBots = observer(() => {
         );
     }, [bots, searchTerm]);
 
-    const handleLoadBot = async (bot: BotManifestItem) => {
+    const handleLoadBot = async (bot: BotManifestItem | any) => {
         setLoadingBotId(bot.id);
         try {
-            const response = await fetch(`/bots/${bot.name}`);
-            const xml_string = await response.text();
+            let xml_string = '';
+            
+            // Try download_url first (from dynamic API)
+            if (bot.download_url) {
+                const response = await fetch(bot.download_url);
+                xml_string = await response.text();
+            } else {
+                // Try local paths (from manifest)
+                const paths = [`/bots/${bot.name}`, `/public/bots/${bot.name}`, `/${bot.name}`];
+                for (const path of paths) {
+                    try {
+                        const res = await fetch(path);
+                        if (res.ok) {
+                            xml_string = await res.text();
+                            break;
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            if (!xml_string) throw new Error('Bot strategy payload not found');
             
             const clean_name = bot.name.replace(/\.[^/.]+$/, "");
 
