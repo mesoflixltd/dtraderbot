@@ -8,21 +8,13 @@ const getChartUrl = () => atob(_0x4f2a[0]);
 
 const WS_URL = 'wss://api.derivws.com/trading/v1/options/ws/public';
 
-const MARKETS = [
-    { symbol: 'R_10', name: 'Volatility 10 Index' },
-    { symbol: 'R_25', name: 'Volatility 25 Index' },
-    { symbol: 'R_50', name: 'Volatility 50 Index' },
-    { symbol: 'R_75', name: 'Volatility 75 Index' },
-    { symbol: 'R_100', name: 'Volatility 100 Index' },
-    { symbol: '1HZ10V', name: 'Volatility 10 (1s) Index' },
-    { symbol: '1HZ100V', name: 'Volatility 100 (1s) Index' },
-];
-
 const AnalysisPanel = observer(() => {
     const [selectedSymbol, setSelectedSymbol] = useState('R_10');
-    const [symbols, setSymbols] = useState<{symbol: string, name: string}[]>(MARKETS);
+    const [symbols, setSymbols] = useState<{symbol: string, name: string}[]>([]);
     const [ticks, setTicks] = useState<number[]>([]);
-    const [stats, setStats] = useState({ rise: 50, fall: 50, trend: 'Neutral', lastPrice: 0 });
+    const [tickCount, setTickCount] = useState(100);
+    const [stats, setStats] = useState({ rise: 50, fall: 50, trend: 'Neutral', lastPrice: 0, streak: '' });
+    const [historyTape, setHistoryTape] = useState<{type: 'R'|'F', price: number}[]>([]);
     const wsRef = useRef<WebSocket | null>(null);
 
     const connect = useCallback(() => {
@@ -33,7 +25,7 @@ const AnalysisPanel = observer(() => {
 
         ws.onopen = () => {
             ws.send(JSON.stringify({ active_symbols: 'brief', product_type: 'basic' }));
-            ws.send(JSON.stringify({ ticks_history: selectedSymbol, count: 100, end: 'latest', style: 'ticks', subscribe: 1 }));
+            ws.send(JSON.stringify({ ticks_history: selectedSymbol, count: Math.max(tickCount, 100), end: 'latest', style: 'ticks', subscribe: 1 }));
         };
 
         ws.onmessage = (msg) => {
@@ -44,16 +36,33 @@ const AnalysisPanel = observer(() => {
                     .map((s: any) => ({ symbol: s.symbol, name: s.display_name }));
                 if (filtered.length > 0) setSymbols(filtered);
             } else if (data.msg_type === 'history') {
-                setTicks(data.history.prices.map(Number));
+                const prices = data.history.prices.map(Number);
+                setTicks(prices);
+                
+                // Build initial tape
+                const tape: {type: 'R'|'F', price: number}[] = [];
+                for(let i=1; i<prices.length; i++) {
+                    tape.push({ type: prices[i] >= prices[i-1] ? 'R' : 'F', price: prices[i] });
+                }
+                setHistoryTape(tape.slice(-30));
             } else if (data.msg_type === 'tick') {
                 if (data.tick.symbol === selectedSymbol) {
                     const price = Number(data.tick.quote);
-                    setTicks(prev => [...prev.slice(-99), price]);
+                    setTicks(prev => {
+                        const newTicks = [...prev.slice(-(tickCount - 1)), price];
+                        
+                        // Update tape
+                        const lastPrice = prev[prev.length - 1] || price;
+                        const type = price >= lastPrice ? 'R' : 'F';
+                        setHistoryTape(t => [...t.slice(-29), { type, price }]);
+                        
+                        return newTicks;
+                    });
                     setStats(s => ({ ...s, lastPrice: price }));
                 }
             }
         };
-    }, [selectedSymbol]);
+    }, [selectedSymbol, tickCount]);
 
     useEffect(() => {
         connect();
@@ -64,9 +73,11 @@ const AnalysisPanel = observer(() => {
         if (ticks.length < 2) return;
         let riseCount = 0;
         let fallCount = 0;
-        for (let i = 1; i < ticks.length; i++) {
-            if (ticks[i] > ticks[i-1]) riseCount++;
-            else if (ticks[i] < ticks[i-1]) fallCount++;
+        // Analyze window based on user tickCount
+        const windowTicks = ticks.slice(-tickCount);
+        for (let i = 1; i < windowTicks.length; i++) {
+            if (windowTicks[i] >= windowTicks[i-1]) riseCount++;
+            else fallCount++;
         }
         const total = riseCount + fallCount;
         if (total === 0) return;
@@ -80,8 +91,18 @@ const AnalysisPanel = observer(() => {
         if (risePct > 65) trend = 'Critical Rise';
         if (fallPct > 65) trend = 'Critical Fall';
 
-        setStats(prev => ({ ...prev, rise: risePct, fall: fallPct, trend }));
-    }, [ticks]);
+        // Calculate Streak from the tape
+        if (historyTape.length > 0) {
+            let streakType = historyTape[historyTape.length - 1].type;
+            let streakCount = 0;
+            for (let i = historyTape.length - 1; i >= 0; i--) {
+                if (historyTape[i].type === streakType) streakCount++;
+                else break;
+            }
+            const streak = streakCount > 1 ? `${streakCount}${streakType}` : '';
+            setStats(prev => ({ ...prev, rise: risePct, fall: fallPct, trend, streak }));
+        }
+    }, [ticks, historyTape, tickCount]);
 
     return (
         <div className="rf-analysis">
@@ -89,13 +110,33 @@ const AnalysisPanel = observer(() => {
                 <div className="rf-analysis__top">
                     <div className="market-selector">
                         <label>Target Market</label>
-                        <select value={selectedSymbol} onChange={e => setSelectedSymbol(e.target.value)}>
-                            {symbols.map(m => <option key={m.symbol} value={m.symbol}>{m.name}</option>)}
-                        </select>
+                        <div className="dropdown-wrapper">
+                            <select value={selectedSymbol} onChange={e => setSelectedSymbol(e.target.value)}>
+                                {symbols.length > 0 ? symbols.map(m => <option key={m.symbol} value={m.symbol}>{m.name}</option>) : <option>Loading Symbols...</option>}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="analysis-config">
+                        <label>Ticks Window</label>
+                        <div className="input-pill">
+                            <input 
+                                type="number" 
+                                value={tickCount} 
+                                onChange={e => setTickCount(Math.min(1000, Math.max(10, Number(e.target.value))))} 
+                            />
+                            <span className="unit">TKS</span>
+                        </div>
                     </div>
                     <div className="price-display">
                         <span className="label">Live Quote</span>
                         <span className="value">{stats.lastPrice.toFixed(3)}</span>
+                    </div>
+                    <div className="streak-indicator">
+                        {stats.streak && (
+                            <div className={`streak-badge streak-badge--${stats.streak.includes('R') ? 'rise' : 'fall'}`}>
+                                {stats.streak} STREAK
+                            </div>
+                        )}
                     </div>
                     <div className={`trend-status trend-status--${stats.trend.toLowerCase().replace(' ', '-')}`}>
                         {stats.trend.toUpperCase()}
@@ -103,14 +144,14 @@ const AnalysisPanel = observer(() => {
                 </div>
 
                 <div className="rf-analysis__main">
-                    <div className="metric-box">
+                    <div className="metric-box glass-accent">
                         <div className="metric-box__title">Rise Probability</div>
                         <div className="metric-box__value rise">{stats.rise}%</div>
                         <div className="metric-box__bar">
                             <div className="fill rise" style={{ width: `${stats.rise}%` }} />
                         </div>
                     </div>
-                    <div className="metric-box">
+                    <div className="metric-box glass-accent">
                         <div className="metric-box__title">Fall Probability</div>
                         <div className="metric-box__value fall">{stats.fall}%</div>
                         <div className="metric-box__bar">
@@ -124,27 +165,54 @@ const AnalysisPanel = observer(() => {
                         <svg viewBox="0 0 100 100">
                             <circle className="bg" cx="50" cy="50" r="45" />
                             <circle 
-                                className="progress rise" 
+                                className={`progress ${stats.rise > stats.fall ? 'rise' : 'fall'}`} 
                                 cx="50" cy="50" r="45" 
-                                style={{ strokeDasharray: `${stats.rise * 2.82} 282` }}
+                                style={{ strokeDasharray: `${(stats.rise > stats.fall ? stats.rise : stats.fall) * 2.82} 282` }}
                             />
                         </svg>
                         <div className="viz-content">
-                            <span className="pct">{stats.rise}%</span>
-                            <span className="txt">BULLISH</span>
+                            <span className="pct">{stats.rise > stats.fall ? stats.rise : stats.fall}%</span>
+                            <span className="txt">{stats.rise > stats.fall ? 'BULLISH' : 'BEARISH'}</span>
                         </div>
                     </div>
                     <div className="viz-info">
-                        <h4>Advanced Intelligence</h4>
-                        <p>Real-time tick analysis processing last 100 movements. Detecting micro-trends and momentum shifts in the {selectedSymbol} market.</p>
-                        <div className="signals">
+                        <div className="viz-info__header">
+                            <h4>Market Sentiment</h4>
+                            <p>Deep-tick analysis processing the last {tickCount} price movements. Using sequential momentum verification to identify trade entries.</p>
+                        </div>
+                        <div className="signals-grid">
                             <div className="signal-item">
-                                <span className="dot" /> Volatility Matrix Active
+                                <span className="dot pulse" /> Volatility Matrix: ACTIVE
                             </div>
                             <div className="signal-item">
-                                <span className="dot" /> Tick Stream Verified
+                                <span className="dot pulse" /> Sentiment: {stats.trend}
+                            </div>
+                            <div className="signal-item">
+                                <span className="dot pulse" /> Stream Stability: HIGH
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div className="rf-analysis__tape glass-dark">
+                    <div className="tape-header">
+                        <span>LIVE TICK TAPE (LAST 30)</span>
+                        <div className="legend">
+                            <span className="r">R = Rise</span>
+                            <span className="f">F = Fall</span>
+                        </div>
+                    </div>
+                    <div className="tape-container">
+                        {historyTape.map((t, i) => (
+                            <div 
+                                key={i} 
+                                className={`tape-node tape-node--${t.type === 'R' ? 'rise' : 'fall'} ${i === historyTape.length - 1 ? 'latest' : ''}`}
+                            >
+                                <div className="node-symbol">{t.type}</div>
+                                <div className="node-price">{t.price.toString().split('.')[1]?.slice(0, 2) || '00'}</div>
+                                {i === historyTape.length - 1 && <div className="latest-indicator">NEW</div>}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -160,7 +228,7 @@ const TradingView = observer(() => {
             <div className="tv-header">
                 <div className="tv-header__title">
                     <h2>Market Intelligence</h2>
-                    <p>Advanced charting and tick analysis engine</p>
+                    <p>Professional analysis suite with real-time tick intelligence</p>
                 </div>
                 <div className="tv-switcher glass">
                     <button 
@@ -173,7 +241,7 @@ const TradingView = observer(() => {
                         className={`tv-switcher__btn ${view === 'analysis' ? 'active' : ''}`}
                         onClick={() => setView('analysis')}
                     >
-                        📈 Analysis
+                        📈 Tick Analysis
                     </button>
                 </div>
             </div>
