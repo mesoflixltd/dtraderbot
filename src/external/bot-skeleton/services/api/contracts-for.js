@@ -209,11 +209,34 @@ export default class ContractsFor {
 
             this.retrieving_contracts_for[symbol] = new PendingPromise();
 
-            try {
-                const response = await api_base.api.send({ contracts_for: symbol });
+            const sendRequest = async (attempt = 1) => {
+                try {
+                    const response = await api_base.api.send({ contracts_for: symbol });
 
-                if (!response || response.error) {
-                    console.warn('contracts_for API error for symbol:', symbol, response?.error);
+                    if (response?.error?.code === 'InternalServerError' && attempt < 2) {
+                        console.warn(`[ContractsFor] InternalServerError for ${symbol}. Retrying (Attempt ${attempt + 1})...`);
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        return sendRequest(attempt + 1);
+                    }
+
+                    if (!response || response.error) {
+                        console.warn('contracts_for API error for symbol:', symbol, response?.error);
+                        return null;
+                    }
+                    return response;
+                } catch (e) {
+                    if (attempt < 2) {
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        return sendRequest(attempt + 1);
+                    }
+                    throw e;
+                }
+            };
+
+            try {
+                const response = await sendRequest();
+
+                if (!response) {
                     if (this.retrieving_contracts_for[symbol]) {
                         this.retrieving_contracts_for[symbol].resolve();
                         delete this.retrieving_contracts_for[symbol];
