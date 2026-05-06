@@ -551,6 +551,8 @@ const BulkTradingPage: React.FC = observer(() => {
                 </div>
             </div>
 
+            {renderMobileTicker()}
+
             <div className='bt-config-grid'>
                 {(tradeType === 'over_under' || tradeType === 'matches_differs') && (
                     <div className='bt-config-item'>
@@ -981,6 +983,59 @@ const BulkTradingPage: React.FC = observer(() => {
         </div>
     );
 
+    const renderMobileTicker = () => {
+        if (loading) return null;
+
+        return (
+            <div className='bt-mobile-ticker'>
+                <span className='bt-mobile-ticker__label'>Live Stats:</span>
+                <div className='bt-mobile-ticker__row'>
+                    {(tradeType === 'over_under' || tradeType === 'matches_differs') && (
+                        [...digitsWindow].reverse().slice(0, 15).map((d, i) => (
+                            <span
+                                key={i}
+                                className={`bt-trail__pill bt-trail__pill--compact ${
+                                    d >= 5 ? 'bt-trail__pill--high' : 'bt-trail__pill--low'
+                                } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                            >
+                                {d}
+                            </span>
+                        ))
+                    )}
+                    {tradeType === 'even_odd' && (
+                        [...digitsWindow].reverse().slice(0, 15).map((d, i) => (
+                            <span
+                                key={i}
+                                className={`bt-trail__pill bt-trail__pill--compact ${
+                                    d % 2 === 0 ? 'bt-trail__pill--even' : 'bt-trail__pill--odd'
+                                } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                            >
+                                {d % 2 === 0 ? 'E' : 'O'}
+                            </span>
+                        ))
+                    )}
+                    {tradeType === 'rise_fall' && (
+                        [...priceWindow].reverse().slice(0, 15).map((p, i, arr) => {
+                            const next = arr[i + 1];
+                            if (next === undefined) return null;
+                            const isRise = p > next;
+                            return (
+                                <span
+                                    key={i}
+                                    className={`bt-trail__pill bt-trail__pill--compact ${
+                                        isRise ? 'bt-trail__pill--rise' : 'bt-trail__pill--fall'
+                                    } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                                >
+                                    {isRise ? '▲' : '▼'}
+                                </span>
+                            );
+                        })
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     const renderStatusBanner = () => {
         if (!isAuthenticated) {
             if (status === 'connected') return <div className='bt-banner bt-banner--warn'>⚠️ Guest Mode (Ticks Live)</div>;
@@ -1032,6 +1087,7 @@ const BulkTradingPage: React.FC = observer(() => {
                         </div>
                     </div>
                 </div>
+                {renderMobileTicker()}
             </div>
 
             <div className='bt-type-tabs'>
