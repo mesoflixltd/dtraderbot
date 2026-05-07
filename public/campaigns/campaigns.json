@@ -1,5 +1,13 @@
 [
   {
+    "id": 1778173006455,
+    "title": "Test Campaign",
+    "desc": " this is the very first Ad campaign from our management Center, 🎉 ",
+    "badge": "Free Tool",
+    "link": "#/AI-hub",
+    "image": "campaigns/252716.jpg"
+  },
+  {
     "id": 1,
     "title": "HFT Wizard V2",
     "desc": "High-Frequency Trading Protocol with 92% accuracy. Limited slots available for institutional access.",
