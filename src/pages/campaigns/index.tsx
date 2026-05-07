@@ -30,7 +30,7 @@ const Campaigns = observer(() => {
             id: 1,
             title: 'HFT Wizard V2',
             desc: 'High-Frequency Trading Protocol with 92% accuracy. Limited slots available for institutional access.',
-            image: 'https://images.unsplash.com/photo-1633156189757-4f493b8a4593?q=80&w=2070&auto=format&fit=crop',
+            image: 'campaigns/hft_wizard.png',
             badge: 'Limited Offer',
             link: '#/freebots'
         },
@@ -38,7 +38,7 @@ const Campaigns = observer(() => {
             id: 2,
             title: 'AI Smart Alpha',
             desc: 'Neural-network driven market sentiment analysis. Join the revolution of automated intelligence.',
-            image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop',
+            image: 'campaigns/ai_smart_alpha.png',
             badge: 'AI Exclusive',
             link: '#/ai-hub'
         },
@@ -46,7 +46,7 @@ const Campaigns = observer(() => {
             id: 3,
             title: 'Live Mentorship',
             desc: 'Professional 1-on-1 coaching sessions. Scale your account with expert guidance.',
-            image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop',
+            image: 'campaigns/live_mentorship.png',
             badge: 'Coaching',
             link: '#/classes'
         }
