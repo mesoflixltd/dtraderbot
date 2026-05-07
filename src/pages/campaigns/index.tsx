@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames';
@@ -7,7 +7,53 @@ import './campaigns.scss';
 
 const Campaigns = observer(() => {
     const [active_sub_tab, setActiveSubTab] = useState<'promotions' | 'booking'>('promotions');
-    
+    const [promotions, setPromotions] = useState<any[]>([]);
+
+    const defaultPromotions = [
+        {
+            id: 1,
+            title: 'HFT Wizard V2',
+            desc: 'High-Frequency Trading Protocol with 92% accuracy. Limited slots available for institutional access.',
+            image: '/campaigns/hft_wizard.png',
+            badge: 'Limited Offer',
+            link: '#/freebots'
+        },
+        {
+            id: 2,
+            title: 'AI Smart Alpha',
+            desc: 'Neural-network driven market sentiment analysis. Join the revolution of automated intelligence.',
+            image: '/campaigns/ai_smart_alpha.png',
+            badge: 'AI Exclusive',
+            link: '#/ai-hub'
+        },
+        {
+            id: 3,
+            title: 'Live Mentorship',
+            desc: 'Professional 1-on-1 coaching sessions. Scale your account with expert guidance.',
+            image: '/campaigns/live_mentorship.png',
+            badge: 'Coaching',
+            link: '#/classes'
+        }
+    ];
+
+    useEffect(() => {
+        fetch('/campaigns/campaigns.json')
+            .then(res => {
+                if (!res.ok) throw new Error();
+                return res.json();
+            })
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    setPromotions(data);
+                } else {
+                    setPromotions(defaultPromotions);
+                }
+            })
+            .catch(() => {
+                setPromotions(defaultPromotions);
+            });
+    }, []);
+
     // Booking Form State
     const [bookingData, setBookingData] = useState({
         name: '',
@@ -24,33 +70,6 @@ const Campaigns = observer(() => {
         const whatsapp_url = `https://wa.me/254723913800?text=${encodeURIComponent(message)}`;
         window.open(whatsapp_url, '_blank');
     };
-
-    const promotions = [
-        {
-            id: 1,
-            title: 'HFT Wizard V2',
-            desc: 'High-Frequency Trading Protocol with 92% accuracy. Limited slots available for institutional access.',
-            image: 'campaigns/hft_wizard.png',
-            badge: 'Limited Offer',
-            link: '#/freebots'
-        },
-        {
-            id: 2,
-            title: 'AI Smart Alpha',
-            desc: 'Neural-network driven market sentiment analysis. Join the revolution of automated intelligence.',
-            image: 'campaigns/ai_smart_alpha.png',
-            badge: 'AI Exclusive',
-            link: '#/ai-hub'
-        },
-        {
-            id: 3,
-            title: 'Live Mentorship',
-            desc: 'Professional 1-on-1 coaching sessions. Scale your account with expert guidance.',
-            image: 'campaigns/live_mentorship.png',
-            badge: 'Coaching',
-            link: '#/classes'
-        }
-    ];
 
     return (
         <div className="campaigns-page">
