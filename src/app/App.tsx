@@ -10,7 +10,6 @@ import { useOAuthCallback } from '@/hooks/useOAuthCallback';
 import { StoreProvider } from '@/hooks/useStore';
 import { OAuthTokenExchangeService } from '@/services/oauth-token-exchange.service';
 import { initializeI18n, localize, TranslationProvider } from '@deriv-com/translations';
-import { copyTradingService } from '@/services/copy-trading.service';
 import CoreStoreProvider from './CoreStoreProvider';
 import './app-root.scss';
 
@@ -243,7 +242,7 @@ function App() {
             if (params.code) {
                 // Exchange authorization code for access token
                 OAuthTokenExchangeService.exchangeCodeForToken(params.code)
-                    .then(response => {
+                    .then((response: any) => {
                         if (response.access_token) {
                             cleanupURL();
                             // Mark V2 as active since it succeeded
@@ -257,7 +256,7 @@ function App() {
                             window.location.replace(window.location.origin);
                         }
                     })
-                    .catch(error => {
+                    .catch((error: any) => {
                         console.error('❌ Token exchange request failed:', error);
                         cleanupURL();
                         window.location.replace(window.location.origin);
