@@ -35,16 +35,42 @@ const RealIcon = () => (
 );
 
 const DemoIcon = () => (
-    <svg width='20' height='20' viewBox='0 0 20 20' fill='none' className='acc-info__icon'>
-        <path
-            d='M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2Z'
-            fill='#FFAD3A'
-            fillOpacity='0.15'
-            stroke='#FFAD3A'
-            strokeWidth='1.5'
-        />
-        <path d='M10 6V11L13 13' stroke='#FFAD3A' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' />
-        <circle cx='10' cy='10' r='1' fill='#FFAD3A' />
+    <svg width='20' height='20' viewBox='0 0 24 24' fill='none' className='acc-info__icon'>
+        <circle cx='12' cy='12' r='10' fill='#FFAD3A' fillOpacity='0.15' stroke='#FFAD3A' strokeWidth='1.5' />
+        <path d='M15.5 15.5L19 19' stroke='#FFAD3A' strokeWidth='2' strokeLinecap='round' />
+        <circle cx='11' cy='11' r='5' stroke='#FFAD3A' strokeWidth='2' />
+        <path d='M10 9H11.5C12.33 9 13 9.67 13 10.5C13 11.33 12.33 12 11.5 12H10V9Z' stroke='#FFAD3A' strokeWidth='1.2' strokeLinecap='round' strokeLinejoin='round' />
+        <path d='M10 9V12' stroke='#FFAD3A' strokeWidth='1.2' strokeLinecap='round' />
+    </svg>
+);
+
+const USFlagIcon = () => (
+    <svg width='16' height='11' viewBox='0 0 16 11' className='acc-info__currency-flag' style={{ marginLeft: '6px', borderRadius: '1.5px', display: 'inline-block', verticalAlign: 'middle', border: '0.5px solid rgba(255, 255, 255, 0.15)' }}>
+        <rect width='16' height='11' fill='#3c3b6e' />
+        <rect y='0.84' width='16' height='0.84' fill='#ffffff' />
+        <rect y='2.52' width='16' height='0.84' fill='#ffffff' />
+        <rect y='4.2' width='16' height='0.84' fill='#ffffff' />
+        <rect y='5.88' width='16' height='0.84' fill='#ffffff' />
+        <rect y='7.56' width='16' height='0.84' fill='#ffffff' />
+        <rect y='9.24' width='16' height='0.84' fill='#ffffff' />
+        <rect y='0' width='16' height='0.84' fill='#b22234' />
+        <rect y='1.68' width='16' height='0.84' fill='#b22234' />
+        <rect y='3.36' width='16' height='0.84' fill='#b22234' />
+        <rect y='5.04' width='16' height='0.84' fill='#b22234' />
+        <rect y='6.72' width='16' height='0.84' fill='#b22234' />
+        <rect y='8.4' width='16' height='0.84' fill='#b22234' />
+        <rect y='10.08' width='16' height='0.84' fill='#b22234' />
+        <rect width='7.38' height='5.88' fill='#3c3b6e' />
+        <circle cx='1.5' cy='1.2' r='0.3' fill='#ffffff' />
+        <circle cx='3.5' cy='1.2' r='0.3' fill='#ffffff' />
+        <circle cx='5.5' cy='1.2' r='0.3' fill='#ffffff' />
+        <circle cx='2.5' cy='2.4' r='0.3' fill='#ffffff' />
+        <circle cx='4.5' cy='2.4' r='0.3' fill='#ffffff' />
+        <circle cx='1.5' cy='3.6' r='0.3' fill='#ffffff' />
+        <circle cx='3.5' cy='3.6' r='0.3' fill='#ffffff' />
+        <circle cx='5.5' cy='3.6' r='0.3' fill='#ffffff' />
+        <circle cx='2.5' cy='4.8' r='0.3' fill='#ffffff' />
+        <circle cx='4.5' cy='4.8' r='0.3' fill='#ffffff' />
     </svg>
 );
 
@@ -289,7 +315,6 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                 ) : (
                                     <Localize i18n_default_text='Real account' />
                                 )}
-                                {activeLoginid && <span className='acc-info__loginid-tag'> ({activeLoginid})</span>}
                             </Text>
                             {showChevron && (
                                 <span
@@ -322,7 +347,10 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                     {!currency ? (
                                         <Localize i18n_default_text='No currency assigned' />
                                     ) : (
-                                        `${balance} ${getCurrencyDisplayCode(currency)}`
+                                        <>
+                                            {balance} {getCurrencyDisplayCode(currency)}
+                                            {!isVirtual && currency?.toUpperCase() === 'USD' && <USFlagIcon />}
+                                        </>
                                     )}
                                 </p>
                             </div>
