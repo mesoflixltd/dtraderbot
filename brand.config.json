@@ -1,11 +1,11 @@
 {
-    "brand_name": "Mesoflix",
-    "brand_domain": "tradermind.site",
+    "brand_name": "OsamTradingHub",
+    "brand_domain": "osamtradinghub.com",
     "brand_hostname": {
-        "staging": "tradermind.site",
-        "production": "tradermind.site"
+        "staging": "osamtradinghub.com",
+        "production": "osamtradinghub.com"
     },
-    "domain_name": "tradermind.site",
+    "domain_name": "osamtradinghub.com",
     "main_branch": "master",
     "colors": {
         "primary": "#6366f1",
@@ -59,17 +59,17 @@
         "css_variable_prefix": "--brand"
     },
     "platform": {
-        "name": "Mesoflix",
-        "app_id": "114343",
-        "client_id": "330eaEOGxCeshCbrYIo8F",
-        "oauth_redirect_uri": "https://bot.tradermind.site/",
+        "name": "OsamTradingHub",
+        "app_id": "82991",
+        "client_id": "336LX3fF9g92vG1aGHypZ",
+        "oauth_redirect_uri": "https://osamtradinghub.com/",
         "logo": {
             "type": "component",
             "component_name": "BrandLogo",
-            "alt_text": "Mesoflix",
+            "alt_text": "OsamTradingHub",
             "link_url": "/",
             "show_text": false,
-            "text": "Mesoflix"
+            "text": "OsamTradingHub"
         },
         "footer": {
             "enable_language_settings": false,
@@ -77,10 +77,10 @@
         },
         "hostname": {
             "production": {
-                "com": "bot.tradermind.site"
+                "com": "osamtradinghub.com"
             },
             "staging": {
-                "com": "bot.tradermind.site"
+                "com": "osamtradinghub.com"
             }
         },
         "auth2_url": {

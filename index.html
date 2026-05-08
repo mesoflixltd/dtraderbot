@@ -4,17 +4,17 @@
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-        <meta name="title" content="Automate Your Trades | Mesoflix" />
+        <meta name="title" content="Automate Your Trades | OsamTradingHub" />
         <meta
             name="description"
-            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Mesoflix."
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with OsamTradingHub."
         />
-        <meta property="og:title" content="Mesoflix" />
+        <meta property="og:title" content="OsamTradingHub" />
         <meta
             property="og:description"
-            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Mesoflix."
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with OsamTradingHub."
         />
-        <title>Automate Your Trades | Mesoflix</title>
+        <title>Automate Your Trades | OsamTradingHub</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -283,10 +283,11 @@
             .splash-progress {
                 position: relative;
                 width: 100%;
-                height: 3px;
+                height: 4px;
                 background: rgba(255, 255, 255, 0.04);
                 border-radius: 100px;
                 overflow: visible;
+                margin-top: 6px;
             }
             .splash-progress__track {
                 position: absolute;
@@ -297,42 +298,51 @@
             .splash-progress__fill {
                 position: absolute;
                 height: 100%;
-                width: 45%;
+                width: 0%;
                 background: linear-gradient(
                     90deg,
-                    transparent,
                     var(--meso-purple),
-                    #c084fc,
-                    var(--meso-pink),
-                    transparent
+                    #8b5cf6,
+                    var(--meso-pink)
                 );
                 border-radius: 100px;
-                animation: bar-slide 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                transition: width 0.1s ease-out;
             }
             .splash-progress__glow {
                 position: absolute;
                 top: -4px;
-                height: 11px;
-                width: 45%;
-                background: linear-gradient(90deg, transparent, var(--meso-purple), var(--meso-pink), transparent);
+                height: 12px;
+                width: 0%;
+                background: linear-gradient(90deg, var(--meso-purple), var(--meso-pink));
                 border-radius: 100px;
-                filter: blur(6px);
-                animation: bar-slide 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-                opacity: 0.7;
+                filter: blur(8px);
+                opacity: 0.8;
+                transition: width 0.1s ease-out;
             }
             /* Moving light dot on the bar */
             .splash-progress__dot {
                 position: absolute;
                 top: 50%;
-                transform: translateY(-50%);
-                width: 8px;
-                height: 8px;
+                left: 0%;
+                transform: translate(-50%, -50%);
+                width: 10px;
+                height: 10px;
                 background: white;
                 border-radius: 50%;
                 box-shadow:
-                    0 0 12px 4px var(--meso-purple),
-                    0 0 20px 6px var(--meso-pink);
-                animation: dot-slide 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                    0 0 15px 5px var(--meso-purple),
+                    0 0 25px 8px var(--meso-pink);
+                transition: left 0.1s ease-out;
+            }
+            .splash-percent {
+                font-size: 14px;
+                font-weight: 900;
+                color: white;
+                text-align: center;
+                margin-top: 4px;
+                font-family: 'Outfit', sans-serif;
+                letter-spacing: 1px;
+                text-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
             }
 
             /* ── Security Badge ── */
@@ -520,20 +530,18 @@
                         <div class="splash-logo-ring"></div>
                         <div class="splash-logo-ring splash-logo-ring--outer"></div>
                         <div class="splash-logo-mark">
-                            <!-- Mesoflix "M" SVG icon -->
+                            <!-- OsamTradingHub "O" SVG icon -->
                             <svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M4 6 L4 28 L9 28 L9 14 L17 26 L25 14 L25 28 L30 28 L30 6 L25 6 L17 18 L9 6 Z"
-                                    fill="white"
-                                />
+                                <circle cx="17" cy="17" r="11" stroke="white" stroke-width="4" fill="none" />
+                                <circle cx="17" cy="17" r="5" fill="white" />
                             </svg>
                         </div>
                     </div>
 
                     <!-- Brand Name -->
                     <div class="splash-brand">
-                        <h1 class="splash-brand__name">MESOFLIX</h1>
-                        <span class="splash-brand__tagline">AI · Bot · Platform</span>
+                        <h1 class="splash-brand__name">OSAMTRADINGHUB</h1>
+                        <span class="splash-brand__tagline">AI · Bot · Trading Hub</span>
                     </div>
                 </div>
 
@@ -548,6 +556,7 @@
                         <div class="splash-progress__glow"></div>
                         <div class="splash-progress__dot"></div>
                     </div>
+                    <div class="splash-percent" id="splash-progress-percent">0%</div>
 
                     <div class="splash-badge">
                         <span class="splash-badge__dot"></span>
@@ -557,7 +566,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="splash-footer">Mesoflix &copy; 2026</div>
+            <div class="splash-footer">OsamTradingHub &copy; 2026</div>
         </div>
 
         <div id="modal_root" class="modal-root"></div>
@@ -568,8 +577,8 @@
             // ── Particle generator ──
             (function () {
                 var container = document.getElementById('particles');
-                var colors = ['#7c3aed', '#db2777', '#4f46e5', '#c084fc', '#f9a8d4'];
-                for (var i = 0; i < 30; i++) {
+                var colors = ['#6366f1', '#a855f7', '#3b82f6', '#c084fc', '#818cf8'];
+                for (var i = 0; i < 35; i++) {
                     var p = document.createElement('div');
                     p.className = 'particle';
                     p.style.left = Math.random() * 100 + '%';
@@ -604,10 +613,49 @@
                 window.__splashMsgInterval = iv;
             })();
 
+            // ── Dynamic progression ──
+            (function () {
+                var progressFill = document.querySelector('.splash-progress__fill');
+                var progressGlow = document.querySelector('.splash-progress__glow');
+                var progressDot = document.querySelector('.splash-progress__dot');
+                var percentText = document.getElementById('splash-progress-percent');
+                
+                var percentage = 0;
+                var duration = 2400; // 2.4 seconds
+                var intervalTime = 30; // ms
+                var increment = 100 / (duration / intervalTime);
+                
+                var timer = setInterval(function () {
+                    percentage += increment + Math.random() * 1.5;
+                    if (percentage >= 100) {
+                        percentage = 100;
+                        clearInterval(timer);
+                    }
+                    var rounded = Math.floor(percentage);
+                    if (percentText) percentText.textContent = rounded + '%';
+                    if (progressFill) progressFill.style.width = rounded + '%';
+                    if (progressGlow) progressGlow.style.width = rounded + '%';
+                    if (progressDot) progressDot.style.left = rounded + '%';
+                }, intervalTime);
+                window.__splashProgressInterval = timer;
+            })();
+
             // ── Hide splash screen once app is ready ──
             window.addEventListener('load', function () {
                 setTimeout(function () {
                     clearInterval(window.__splashMsgInterval);
+                    clearInterval(window.__splashProgressInterval);
+                    
+                    // Force complete progress elements
+                    var progressFill = document.querySelector('.splash-progress__fill');
+                    var progressGlow = document.querySelector('.splash-progress__glow');
+                    var progressDot = document.querySelector('.splash-progress__dot');
+                    var percentText = document.getElementById('splash-progress-percent');
+                    if (percentText) percentText.textContent = '100%';
+                    if (progressFill) progressFill.style.width = '100%';
+                    if (progressGlow) progressGlow.style.width = '100%';
+                    if (progressDot) progressDot.style.left = '100%';
+
                     var splash = document.getElementById('splash-screen');
                     if (splash) {
                         splash.classList.add('hidden');
@@ -616,7 +664,7 @@
                             document.body.style.overflow = '';
                         }, 900);
                     }
-                }, 2000);
+                }, 2500);
             });
         </script>
     </body>

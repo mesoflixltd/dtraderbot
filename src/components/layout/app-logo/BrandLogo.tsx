@@ -38,11 +38,12 @@ export const BrandLogo = ({
                     justifyContent: 'center',
                     color: 'white',
                     fontSize: isMobile ? '16px' : '18px',
+                    fontWeight: 900,
                 }}
             >
-                M
+                O
             </div>
-            <span>{isMobile ? 'Mesoflix' : 'Mesoflix'}</span>
+            <span>{isMobile ? 'Osam' : 'OsamTradingHub'}</span>
         </div>
     );
 };

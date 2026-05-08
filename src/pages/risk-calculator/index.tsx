@@ -61,7 +61,7 @@ const RiskCalculator = observer(() => {
 
     // ── Persist journal ────────────────────────────────────────────────────────
     useEffect(() => {
-        const saved = localStorage.getItem('mesoflix_trading_journal');
+        const saved = localStorage.getItem('osamtradinghub_trading_journal') || localStorage.getItem('mesoflix_trading_journal');
         if (saved) {
             try {
                 setEntries(JSON.parse(saved));
@@ -72,7 +72,7 @@ const RiskCalculator = observer(() => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('mesoflix_trading_journal', JSON.stringify(entries));
+        localStorage.setItem('osamtradinghub_trading_journal', JSON.stringify(entries));
     }, [entries]);
 
     // ── AI Engine calculations ─────────────────────────────────────────────────
@@ -1118,7 +1118,7 @@ const RiskCalculator = observer(() => {
             {/* Header */}
             <div className='risk-calculator-page__header'>
                 <div className='risk-calculator-page__header-title'>
-                    <Text as='h1'>Mesoflix Risk Tools</Text>
+                    <Text as='h1'>OsamTradingHub Risk Tools</Text>
 
                     <div className='risk-calculator-page__toggle'>
                         <button

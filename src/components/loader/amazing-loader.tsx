@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { localize } from '@deriv-com/translations';
 import './amazing-loader.scss';
 
@@ -8,6 +8,29 @@ interface AmazingLoaderProps {
 }
 
 const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const duration = 2000; // 2 seconds
+        const intervalTime = 30; // ms
+        const increment = 100 / (duration / intervalTime);
+
+        const timer = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(timer);
+                    return 100;
+                }
+                const nextVal = prev + increment + Math.random() * 1.5;
+                return nextVal >= 100 ? 100 : nextVal;
+            });
+        }, intervalTime);
+
+        return () => {
+            clearInterval(timer);
+        };
+    }, []);
+
     return (
         <div className='amazing-loader'>
             <div className='amazing-loader__background'>
@@ -21,7 +44,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
                 <div className='amazing-loader__glass-card'>
                     <div className='amazing-loader__logo-section'>
                         <div className='amazing-loader__brand-mark'>
-                            <span className='amazing-loader__m-letter'>M</span>
+                            <span className='amazing-loader__o-letter'>O</span>
                             <div className='amazing-loader__ring'></div>
                             <div className='amazing-loader__ring amazing-loader__ring--outer'></div>
                             <div className='amazing-loader__scan-line'></div>
@@ -30,8 +53,8 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
 
                     <div className='amazing-loader__content'>
                         <div className='amazing-loader__brand-wrapper'>
-                            <h2 className='amazing-loader__brand-name'>MESOFLIX</h2>
-                            <span className='amazing-loader__brand-suffix'>BOT PLATFORM</span>
+                            <h2 className='amazing-loader__brand-name'>OSAMTRADINGHUB</h2>
+                            <span className='amazing-loader__brand-suffix'>TRADING HUB</span>
                         </div>
 
                         <div className='amazing-loader__status-container'>
@@ -39,12 +62,14 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
                                 {message || 'Initializing quantum trade engine...'}
                             </div>
                             <div className='amazing-loader__progress-wrapper'>
-                                <div className='amazing-loader__progress-track'>
-                                    <div className='amazing-loader__progress-indicator'>
-                                        <div className='amazing-loader__progress-glow'></div>
-                                    </div>
+                                <div
+                                    className='amazing-loader__progress-indicator'
+                                    style={{ width: `${Math.floor(progress)}%` }}
+                                >
+                                    <div className='amazing-loader__progress-glow'></div>
                                 </div>
                             </div>
+                            <div className='amazing-loader__percent-label'>{Math.floor(progress)}%</div>
                             <div className='amazing-loader__security-badge'>
                                 <span className='amazing-loader__dot'></span>
                                 <span>SSL SECURE CONNECTION</span>
@@ -73,7 +98,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
                 )}
 
                 <div className='amazing-loader__footer'>
-                    <span className='amazing-loader__tagline'>Mesoflix · AI-Powered Trading Infrastructure</span>
+                    <span className='amazing-loader__tagline'>OsamTradingHub · AI-Powered Trading Infrastructure</span>
                 </div>
             </div>
         </div>
