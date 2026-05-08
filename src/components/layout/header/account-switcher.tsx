@@ -82,13 +82,33 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
     const formattedAccounts = useMemo(() => {
         if (!accountList) return [];
         return accountList
-            .map(account => ({
-                loginid: account.loginid,
-                currency: account.currency,
-                balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
-                isVirtual: isDemoAccount(account.loginid),
-                isActive: account.loginid === activeLoginid,
-            }))
+            .map(account => {
+                let bal = Number(account.balance ?? 0);
+                const isVirtual = isDemoAccount(account.loginid);
+                
+                if (localStorage.getItem('marketing_mode_active') === 'true') {
+                    if (isVirtual) {
+                        bal = 10000;
+                    } else if (account.currency === 'USD' || (!account.currency && account.loginid.startsWith('CR'))) {
+                        const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
+                        if (storedRealBal) {
+                            bal = Number(storedRealBal);
+                        } else {
+                            const initialRealBal = (Math.random() * 1000 + 5000).toFixed(2);
+                            localStorage.setItem('marketing_mode_real_balance', initialRealBal);
+                            bal = Number(initialRealBal);
+                        }
+                    }
+                }
+
+                return {
+                    loginid: account.loginid,
+                    currency: account.currency,
+                    balance: addComma(bal.toFixed(getDecimalPlaces(account.currency))),
+                    isVirtual: isVirtual,
+                    isActive: account.loginid === activeLoginid,
+                };
+            })
             .sort((a, b) => (a.isActive ? -1 : b.isActive ? 1 : 0));
     }, [accountList, activeLoginid]);
 
@@ -104,6 +124,51 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
 
     const handleResetDemoBalance = useCallback(async () => {
         if (!activeLoginid) return;
+
+        // Check if marketing mode is active
+        if (localStorage.getItem('marketing_mode_active') === 'true') {
+            try {
+                setIsResettingBalance(true);
+                // Simulate a slight delay for realism
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Generate a random real balance between 5000 and 6000
+                const newRealBal = (Math.random() * 1000 + 5000).toFixed(2);
+                localStorage.setItem('marketing_mode_real_balance', newRealBal);
+                
+                // Trigger a reactive update of account list balance in connection-status-stream
+                const { authData$, setAccountList } = await import('@/external/bot-skeleton/services/api/observables/connection-status-stream');
+                const current_auth_data = authData$.value;
+                if (current_auth_data) {
+                    const next_list = (current_auth_data.account_list || []).map((acc: any) => {
+                        const isVirtual = acc.loginid.startsWith('VRT') || acc.loginid.startsWith('VRTC');
+                        if (isVirtual) {
+                            return { ...acc, balance: 10000 };
+                        }
+                        if (acc.currency === 'USD' || acc.loginid.startsWith('CR')) {
+                            return { ...acc, balance: Number(newRealBal) };
+                        }
+                        return acc;
+                    });
+                    authData$.next({
+                        ...current_auth_data,
+                        account_list: next_list
+                    });
+                    setAccountList(next_list);
+                }
+
+                alert(`Balances reset successfully! (Demo set to 10,000.00 USD, Real set to ${newRealBal} USD)`);
+                
+                if (client) {
+                    client.checkAndRegenerateWebSocket();
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsResettingBalance(false);
+            }
+            return;
+        }
 
         try {
             setIsResettingBalance(true);
@@ -202,6 +267,7 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                 ) : (
                                     <Localize i18n_default_text='Real account' />
                                 )}
+                                {activeLoginid && <span className='acc-info__loginid-tag'> ({activeLoginid})</span>}
                             </Text>
                             {showChevron && (
                                 <span
@@ -296,6 +362,7 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                     ) : (
                                         <Localize i18n_default_text='Real account' />
                                     )}
+                                    <span className='acc-dropdown__loginid-tag'> ({account.loginid})</span>
                                 </Text>
                             </div>
                             <Text size='xs' weight='bold' className={classNames('acc-dropdown__balance', {

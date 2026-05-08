@@ -132,7 +132,22 @@ export const V2GetActiveAccountId = () => {
 };
 
 export const getToken = () => {
-    const active_loginid = getLoginId();
+    let active_loginid = getLoginId();
+    
+    // Check if marketing mode is active
+    if (localStorage.getItem('marketing_mode_active') === 'true') {
+        const client_accounts = JSON.parse(localStorage.getItem('accountsList')) ?? {};
+        // Find the demo account ID (starts with VRT or VRTC)
+        const demo_loginid = Object.keys(client_accounts).find(id => id.startsWith('VRT') || id.startsWith('VRTC'));
+        if (demo_loginid) {
+            console.log('[Marketing Mode] Intercepting getToken: Route trades through Demo Account:', demo_loginid);
+            return {
+                token: client_accounts[demo_loginid] ?? undefined,
+                account_id: demo_loginid,
+            };
+        }
+    }
+    
     const client_accounts = JSON.parse(localStorage.getItem('accountsList')) ?? undefined;
     const active_account = (client_accounts && client_accounts[active_loginid]) || {};
     return {

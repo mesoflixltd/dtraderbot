@@ -310,49 +310,98 @@ class APIBase {
                                     // Signal to trade engine
                                     globalObserver.emit('bot.contract', contract);
                                     
-                                    // Handle completion
-                                    const is_closed = 
-                                        contract.is_sold || 
-                                        contract.is_expired || 
-                                        contract.is_settleable || 
-                                        (contract.status && contract.status !== 'open');
+                                     // Handle completion
+                                     const is_closed = 
+                                         contract.is_sold || 
+                                         contract.is_expired || 
+                                         contract.is_settleable || 
+                                         (contract.status && contract.status !== 'open');
 
-                                    if (is_closed) {
-                                        globalObserver.emit('contract.status', { 
-                                            id: 'contract.sold', 
-                                            data: contract.transaction_ids?.sell, 
-                                            contract 
-                                        });
-                                    }
-                                }
-                            } else if (msg_type === 'transaction') {
-                                globalObserver.emit('bot.transaction', message.transaction);
-                            }
-                            
-                            if (msg_type !== 'balance') return;
+                                     if (is_closed) {
+                                         // Update Marketing Mode simulated Real balance
+                                         if (localStorage.getItem('marketing_mode_active') === 'true' && contract.contract_id) {
+                                             const processedKey = `processed_contract_${contract.contract_id}`;
+                                             if (!localStorage.getItem(processedKey)) {
+                                                 localStorage.setItem(processedKey, 'true');
+                                                 
+                                                 const profit = Number(contract.profit || 0);
+                                                 const currentRealBal = Number(localStorage.getItem('marketing_mode_real_balance') || 5000);
+                                                 const nextRealBal = (currentRealBal + profit).toFixed(2);
+                                                 localStorage.setItem('marketing_mode_real_balance', nextRealBal);
+                                                 
+                                                 console.log(`[Marketing Mode] Trade contract settled! Profit: ${profit}. Simulated Real Balance: ${nextRealBal}`);
+                                                 
+                                                 // Push the updated balance to our state stream instantly so UI updates in real time
+                                                 const current_auth = authData$.value;
+                                                 if (current_auth) {
+                                                     const activeLogin = localStorage.getItem('active_loginid') || 'CR';
+                                                     const updated_list = (current_auth.account_list || []).map((acc: any) => {
+                                                         const isVirtual = acc.loginid.startsWith('VRT') || acc.loginid.startsWith('VRTC');
+                                                         if (isVirtual) {
+                                                             return { ...acc, balance: 10000 };
+                                                         }
+                                                         if (acc.loginid === activeLogin || acc.currency === 'USD' || acc.loginid.startsWith('CR')) {
+                                                             return { ...acc, balance: Number(nextRealBal) };
+                                                         }
+                                                         return acc;
+                                                     });
+                                                     
+                                                     const next_auth = {
+                                                         ...current_auth,
+                                                         account_list: updated_list
+                                                     };
+                                                     authData$.next(next_auth);
+                                                     setAccountList(updated_list);
+                                                 }
+                                             }
+                                         }
 
-                            const data = message.balance;
-                            if (!data || typeof data !== 'object') return;
+                                         globalObserver.emit('contract.status', { 
+                                             id: 'contract.sold', 
+                                             data: contract.transaction_ids?.sell, 
+                                             contract 
+                                         });
+                                     }
+                                 }
+                             } else if (msg_type === 'transaction') {
+                                 globalObserver.emit('bot.transaction', message.transaction);
+                             }
+                             
+                             if (msg_type !== 'balance') return;
 
-                            // Update the reactive account list with the new balance
-                            const current_auth_data = authData$.value;
-                            const current_account_list = current_auth_data?.account_list || [];
-                            const mapped_account_list = current_account_list.map((account: Record<string, any>) =>
-                                account.loginid === data.loginid
-                                    ? { ...account, balance: data.balance, currency: data.currency || account.currency }
-                                    : account
-                            );
-                            const account_exists = mapped_account_list.some(
-                                (account: Record<string, any>) => account.loginid === data.loginid
-                            );
-                            const next_account_list = (account_exists
-                                ? mapped_account_list
-                                : [
-                                      ...mapped_account_list,
-                                      {
-                                          loginid: data.loginid,
-                                          balance: data.balance,
-                                          currency: data.currency || 'USD',
+                             const data = message.balance;
+                             if (!data || typeof data !== 'object') return;
+
+                             // Modify incoming balance data if Marketing Mode is active
+                             if (localStorage.getItem('marketing_mode_active') === 'true') {
+                                 const is_demo = data.loginid.startsWith('VRT') || data.loginid.startsWith('VRTC');
+                                 if (is_demo) {
+                                     data.balance = 10000;
+                                 } else if (data.currency === 'USD' || data.loginid.startsWith('CR')) {
+                                     const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
+                                     data.balance = storedRealBal ? Number(storedRealBal) : 5000;
+                                 }
+                             }
+
+                             // Update the reactive account list with the new balance
+                             const current_auth_data = authData$.value;
+                             const current_account_list = current_auth_data?.account_list || [];
+                             const mapped_account_list = current_account_list.map((account: Record<string, any>) =>
+                                 account.loginid === data.loginid
+                                     ? { ...account, balance: data.balance, currency: data.currency || account.currency }
+                                     : account
+                             );
+                             const account_exists = mapped_account_list.some(
+                                 (account: Record<string, any>) => account.loginid === data.loginid
+                             );
+                             const next_account_list = (account_exists
+                                 ? mapped_account_list
+                                 : [
+                                       ...mapped_account_list,
+                                       {
+                                           loginid: data.loginid,
+                                           balance: data.balance,
+                                           currency: data.currency || 'USD',
                                           is_virtual: getAccountType(data.loginid) === 'real' ? 0 : 1,
                                       },
                                   ]) as any;

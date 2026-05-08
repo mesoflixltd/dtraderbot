@@ -30,13 +30,31 @@ const useActiveAccount = ({
         // Use centralized utility to determine if demo account
         const isVirtual = isVirtualAccount(activeAccount.loginid);
 
+        let balVal = currentBalanceData?.balance
+            ? currentBalanceData.balance
+            : directBalance
+              ? parseFloat(directBalance)
+              : 0;
+
+        // Override if marketing mode is active
+        if (localStorage.getItem('marketing_mode_active') === 'true') {
+            if (isVirtual) {
+                balVal = 10000;
+            } else if (activeAccount.currency === 'USD' || (!activeAccount.currency && activeAccount.loginid.startsWith('CR'))) {
+                const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
+                if (storedRealBal) {
+                    balVal = Number(storedRealBal);
+                } else {
+                    const initialRealBal = (Math.random() * 1000 + 5000).toFixed(2);
+                    localStorage.setItem('marketing_mode_real_balance', initialRealBal);
+                    balVal = Number(initialRealBal);
+                }
+            }
+        }
+
         return {
             ...activeAccount,
-            balance: currentBalanceData?.balance
-                ? addComma(currentBalanceData.balance.toFixed(getDecimalPlaces(currentBalanceData.currency)))
-                : directBalance
-                  ? addComma(parseFloat(directBalance).toFixed(getDecimalPlaces(activeAccount.currency)))
-                  : addComma(parseFloat('0').toFixed(getDecimalPlaces(activeAccount.currency))),
+            balance: addComma(balVal.toFixed(getDecimalPlaces(activeAccount.currency || 'USD'))),
             currencyLabel: isVirtual ? 'Demo' : activeAccount?.currency,
             icon: <CurrencyIcon currency={activeAccount?.currency?.toLowerCase()} isVirtual={isVirtual} />,
             isVirtual: isVirtual,

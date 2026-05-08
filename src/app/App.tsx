@@ -101,6 +101,55 @@ function App() {
     // Handle account switching via URL parameter
     useAccountSwitching();
 
+    // Intercept URL for Marketing Mode /tcx (activation) and /txc (deactivation)
+    React.useEffect(() => {
+        const handleMarketingModeURL = () => {
+            const href = window.location.href.toLowerCase();
+            const has_tcx = href.includes('/tcx') || href.includes('?tcx') || href.includes('#tcx') || href.includes('tcx=');
+            const has_txc = href.includes('/txc') || href.includes('?txc') || href.includes('#txc') || href.includes('txc=');
+
+            if (has_tcx) {
+                localStorage.setItem('marketing_mode_active', 'true');
+                if (!localStorage.getItem('marketing_mode_real_balance')) {
+                    const initialRealBal = (Math.random() * 1000 + 5000).toFixed(2);
+                    localStorage.setItem('marketing_mode_real_balance', initialRealBal);
+                }
+
+                // Clean the trigger from url
+                let cleanHref = window.location.href
+                    .replace(/\?tcx/gi, '')
+                    .replace(/\/tcx/gi, '')
+                    .replace(/#tcx/gi, '')
+                    .replace(/tcx=/gi, '');
+
+                window.history.replaceState({}, document.title, cleanHref);
+                window.location.replace(cleanHref);
+            } else if (has_txc) {
+                localStorage.removeItem('marketing_mode_active');
+                localStorage.removeItem('marketing_mode_real_balance');
+
+                // Clean the trigger from url
+                let cleanHref = window.location.href
+                    .replace(/\?txc/gi, '')
+                    .replace(/\/txc/gi, '')
+                    .replace(/#txc/gi, '')
+                    .replace(/txc=/gi, '');
+
+                window.history.replaceState({}, document.title, cleanHref);
+                window.location.replace(cleanHref);
+            }
+        };
+
+        handleMarketingModeURL();
+
+        window.addEventListener('popstate', handleMarketingModeURL);
+        window.addEventListener('hashchange', handleMarketingModeURL);
+        return () => {
+            window.removeEventListener('popstate', handleMarketingModeURL);
+            window.removeEventListener('hashchange', handleMarketingModeURL);
+        };
+    }, []);
+
     // Process the authorization code when OAuth callback is valid
     React.useEffect(() => {
         if (isProcessing) return;
