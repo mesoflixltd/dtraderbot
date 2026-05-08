@@ -74,7 +74,7 @@ export const getSocketURL = async (): Promise<string> => {
         const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
         if (isLegacy) {
             const appId = process.env.APP_ID || brandConfig.platform.app_id || '114343';
-            return `wss://blue.derivws.com/websockets/v3?app_id=${appId}`;
+            return `wss://ws.derivws.com/websockets/v3?app_id=${appId}`;
         }
 
         // Check if user is authenticated with V2
