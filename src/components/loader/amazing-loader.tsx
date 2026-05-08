@@ -1,11 +1,13 @@
 import React from 'react';
+import { localize } from '@deriv-com/translations';
 import './amazing-loader.scss';
 
 interface AmazingLoaderProps {
     message?: string;
+    onSkip?: () => void;
 }
 
-const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message }) => {
+const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
     return (
         <div className="amazing-loader">
             <div className="amazing-loader__background">
@@ -50,6 +52,16 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message }) => {
                         </div>
                     </div>
                 </div>
+
+                {onSkip && (
+                    <button className="amazing-loader__skip-btn" onClick={onSkip}>
+                        <span>{localize('Skip Intro')}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="13 17 18 12 13 7"></polyline>
+                            <polyline points="6 17 11 12 6 7"></polyline>
+                        </svg>
+                    </button>
+                )}
                 
                 <div className="amazing-loader__footer">
                     <span className="amazing-loader__tagline">Mesoflix · AI-Powered Trading Infrastructure</span>

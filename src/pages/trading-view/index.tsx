@@ -25,6 +25,7 @@ const MARKET_NAME_MAP: Record<string, string> = {
 };
 
 const getMarketDisplayName = (symbol: string, defaultName?: string): string => {
+    if (!symbol) return defaultName || '';
     if (MARKET_NAME_MAP[symbol]) {
         return MARKET_NAME_MAP[symbol];
     }
@@ -90,7 +91,7 @@ const AnalysisPanel = observer(() => {
             if (data.msg_type === 'active_symbols') {
                 if (data.active_symbols && Array.isArray(data.active_symbols)) {
                     const filtered = data.active_symbols
-                        .filter((s: any) => s.market === 'synthetic_index' || s.market === 'synthetic_indices' || /^(R_|1HZ)/.test(s.symbol))
+                        .filter((s: any) => s && s.symbol && (s.market === 'synthetic_index' || s.market === 'synthetic_indices' || /^(R_|1HZ)/.test(s.symbol)))
                         .map((s: any) => ({ symbol: s.symbol, name: getMarketDisplayName(s.symbol, s.display_name) }));
                     if (filtered.length > 0) setSymbols(filtered);
                 } else {

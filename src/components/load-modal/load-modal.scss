@@ -157,6 +157,22 @@
             }
         }
 
+        &__local-footer {
+            margin-top: 2rem;
+            padding: 1.6rem;
+            background: var(--general-main-1);
+            border-radius: 12px;
+            border: 1px solid var(--general-section-1);
+            position: relative;
+            z-index: 10000 !important;
+            margin-bottom: 160px !important; /* Lifted above bottom run panel and disclaimer */
+            
+            button {
+                width: 100%;
+                margin: 0.4rem 0;
+            }
+        }
+
         &__title {
             margin: 1.5rem;
         }

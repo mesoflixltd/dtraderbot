@@ -7,7 +7,7 @@
 .dcircles-page {
   width: 100%;
   min-height: 100%;
-  padding: 2rem 2rem 6rem;  // extra bottom pad so last panel is never cut
+  padding: 2rem 2rem 18rem;  // extra bottom pad so last panel is never cut, even on mobile with run panels
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -460,7 +460,7 @@
 
 @media (max-width: 640px) {
   .dcircles-page {
-    padding: 1rem 1rem 3rem;
+    padding: 1rem 1rem 18rem;
     gap: 1.2rem;
 
     &__header { flex-direction: column; align-items: flex-start; }

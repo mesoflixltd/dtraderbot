@@ -88,7 +88,15 @@ const AppRoot = () => {
                         className="app-root__fullscreen-loader"
                         style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#0e0e0e' }}
                     >
-                        <AmazingLoader message={localize('Initializing Command Centre...')} />
+                        <AmazingLoader 
+                            message={localize('Initializing Command Centre...')} 
+                            onSkip={() => {
+                                setShowTechAnimation(false);
+                                if (!is_api_initialized) {
+                                    setIsApiInitialized(true);
+                                }
+                            }}
+                        />
                     </motion.div>
                 )}
             </AnimatePresence>
