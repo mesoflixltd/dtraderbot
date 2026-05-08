@@ -53,7 +53,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
 
                     <div className='amazing-loader__content'>
                         <div className='amazing-loader__brand-wrapper'>
-                            <h2 className='amazing-loader__brand-name'>TRADQ</h2>
+                            <h2 className='amazing-loader__brand-name'>TRADEQ</h2>
                             <span className='amazing-loader__brand-suffix'>AI TRADING HUB</span>
                         </div>
 
@@ -98,7 +98,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
                 )}
 
                 <div className='amazing-loader__footer'>
-                    <span className='amazing-loader__tagline'>Tradq · AI-Powered Trading Infrastructure</span>
+                    <span className='amazing-loader__tagline'>TRADEQ · AI-Powered Trading Infrastructure</span>
                 </div>
             </div>
         </div>

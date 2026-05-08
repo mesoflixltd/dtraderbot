@@ -1,5 +1,5 @@
 {
-    "brand_name": "Tradq",
+    "brand_name": "TRADEQ",
     "brand_domain": "tradeqhub.com",
     "brand_hostname": {
         "staging": "tradeqhub.com",
@@ -59,17 +59,17 @@
         "css_variable_prefix": "--brand"
     },
     "platform": {
-        "name": "Tradq",
+        "name": "TRADEQ",
         "app_id": "116391",
         "client_id": "337zPatJc8aj5yrYRCZWx",
         "oauth_redirect_uri": "https://tradeqhub.com/",
         "logo": {
             "type": "component",
             "component_name": "BrandLogo",
-            "alt_text": "Tradq",
+            "alt_text": "TRADEQ",
             "link_url": "/",
             "show_text": false,
-            "text": "Tradq"
+            "text": "TRADEQ"
         },
         "footer": {
             "enable_language_settings": false,

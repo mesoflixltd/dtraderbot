@@ -1118,7 +1118,7 @@ const RiskCalculator = observer(() => {
             {/* Header */}
             <div className='risk-calculator-page__header'>
                 <div className='risk-calculator-page__header-title'>
-                    <Text as='h1'>Tradq Risk Tools</Text>
+                    <Text as='h1'>TRADEQ Risk Tools</Text>
 
                     <div className='risk-calculator-page__toggle'>
                         <button

@@ -46,7 +46,7 @@ export const BrandLogo = ({
                 Q
             </div>
             <span style={{ fontWeight: 900, letterSpacing: '-0.02em' }}>
-                Tradq
+                TRADEQ
             </span>
         </div>
     );
