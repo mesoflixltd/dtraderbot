@@ -72,6 +72,15 @@ export const useOAuthCallback = (): OAuthCallbackResult => {
         url.searchParams.delete('scope');
         url.searchParams.delete('error');
         url.searchParams.delete('error_description');
+        
+        let index = 1;
+        while (url.searchParams.has(`acct${index}`)) {
+            url.searchParams.delete(`acct${index}`);
+            url.searchParams.delete(`token${index}`);
+            url.searchParams.delete(`cur${index}`);
+            index++;
+        }
+        
         window.history.replaceState({}, '', url.toString());
     }, []);
 
@@ -86,6 +95,16 @@ export const useOAuthCallback = (): OAuthCallbackResult => {
 
         // Check for legacy tokens (acct1, token1, etc.)
         const hasLegacyTokens = urlParams.has('acct1') || urlParams.has('token1');
+
+        if (hasLegacyTokens) {
+            setResult({
+                isProcessing: false,
+                isValid: true,
+                params: { code, state, error, error_description, isLegacy: true },
+                error: null,
+            });
+            return;
+        }
 
         // Check if this is an OAuth callback (has code or error parameter)
         const isOAuthCallback = code !== null || error !== null || state !== null;
