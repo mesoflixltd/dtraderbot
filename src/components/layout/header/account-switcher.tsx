@@ -227,6 +227,8 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                     data-testid='dt_balance'
                                     className={classNames('acc-info__balance', {
                                         'acc-info__balance--no-currency': !currency && !isVirtual,
+                                        'acc-info__balance--virtual': isVirtual,
+                                        'acc-info__balance--real': !isVirtual,
                                     })}
                                 >
                                     {!currency ? (
@@ -296,7 +298,10 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                     )}
                                 </Text>
                             </div>
-                            <Text size='xs' weight='bold' className='acc-dropdown__balance'>
+                            <Text size='xs' weight='bold' className={classNames('acc-dropdown__balance', {
+                                'acc-dropdown__balance--virtual': account.isVirtual,
+                                'acc-dropdown__balance--real': !account.isVirtual,
+                            })}>
                                 {account.currency ? (
                                     `${account.balance} ${getCurrencyDisplayCode(account.currency)}`
                                 ) : (

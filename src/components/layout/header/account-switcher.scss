@@ -158,13 +158,20 @@
     }
 
     &__balance {
-        @include typeface(--paragraph-left-bold-black);
-
         line-height: 1.4;
         pointer-events: none;
         margin: 0;
         font-size: 1.4rem;
-        color: var(--status-success);
+        font-weight: 700;
+        color: #4bb463;
+
+        &--real {
+            color: #4bb463 !important;
+        }
+
+        &--virtual {
+            color: #ffad3a !important;
+        }
 
         &--no-currency {
             @include typeface(--small-left-normal-grey);
@@ -891,11 +898,19 @@
     }
 
     &__balance {
-        color: var(--text-prominent);
         line-height: 1.4;
         font-size: 1.35rem;
         font-weight: 700;
         margin-inline-start: 2.2rem; // Aligns perfectly with the icon width
+        color: #4bb463;
+
+        &--real {
+            color: #4bb463 !important;
+        }
+
+        &--virtual {
+            color: #ffad3a !important;
+        }
     }
 
     &__reset {

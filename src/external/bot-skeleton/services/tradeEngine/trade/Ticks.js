@@ -26,7 +26,8 @@ export default Engine =>
                     if (this.is_proposal_subscription_required) {
                         this.checkProposalReady();
                     }
-                    const lastTick = ticks.slice(-1)[0];
+                    const lastTick = ticks && ticks.length > 0 ? ticks.slice(-1)[0] : null;
+                    if (!lastTick) return;
                     const { epoch } = lastTick;
                     this.store.dispatch({ type: constants.NEW_TICK, payload: epoch });
                 };
