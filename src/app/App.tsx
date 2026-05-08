@@ -129,6 +129,7 @@ function App() {
                     // Set active loginid to first account
                     const firstAccount = accounts[0];
                     localStorage.setItem('active_loginid', firstAccount.account_id);
+                    localStorage.setItem('authToken', firstAccount.token);
 
                     // Set account type
                     const isDemo = firstAccount.account_id.startsWith('VRT') || firstAccount.account_id.startsWith('VRTC');
@@ -169,11 +170,7 @@ function App() {
                     sessionStorage.setItem('deriv_accounts', JSON.stringify(derivAccounts));
 
                     cleanupURL();
-
-                    // Initialize WebSocket connection using api_base
-                    import('@/external/bot-skeleton').then(async ({ api_base }) => {
-                        await api_base.init(true);
-                    });
+                    window.location.replace(window.location.origin);
                 }
                 return;
             }
@@ -188,14 +185,18 @@ function App() {
                             cleanupURL();
                             // Mark V2 as active since it succeeded
                             localStorage.setItem('mesoflix_account_v2', 'true');
+                            localStorage.removeItem('is_legacy_account');
+                            window.location.replace(window.location.origin);
                         } else if (response.error) {
                             console.error('❌ Token exchange failed:', response.error);
                             cleanupURL();
+                            window.location.replace(window.location.origin);
                         }
                     })
                     .catch(error => {
                         console.error('❌ Token exchange request failed:', error);
                         cleanupURL();
+                        window.location.replace(window.location.origin);
                     });
             }
         } else if (error) {

@@ -4,6 +4,8 @@ import { OAuthTokenExchangeService } from '@/services/oauth-token-exchange.servi
 import { DerivWSAccountsService } from '@/services/derivws-accounts.service';
 import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import { authData$ } from '@/external/bot-skeleton/services/api/observables/connection-status-stream';
+import { useStore } from '@/hooks/useStore';
+import { observer as globalObserver } from '@/external/bot-skeleton/utils/observer';
 import './bulk-trading.scss';
 
 // ── Constants (Synced with DCircles) ──────────────────────────────────────────
@@ -327,20 +329,35 @@ const BulkTradingPage: React.FC = observer(() => {
         };
     }, [wsUrl, subscribe, setStatus, wsRef]);
 
-    const [balance, setBalance] = useState<string>('0.00');
-    const [currency, setCurrency] = useState<string>('USD');
+    const rootStore = useStore();
+    const { client } = rootStore ?? {};
+    const balance = client?.balance ? Number(client.balance).toFixed(2) : '0.00';
+    const currency = client?.currency || 'USD';
 
     useEffect(() => {
-        const sub = api_base.api?.onMessage().subscribe((envelope: any) => {
-            const msg = envelope?.data ?? envelope ?? {};
-            
-            if (msg.msg_type === 'balance') {
-                setBalance(Number(msg.balance.balance).toFixed(2));
-                setCurrency(msg.balance.currency);
+        const handleBotContract = (poc: any) => {
+            if (poc) {
+                console.log(`[BulkTrade] Received global POC for ${poc.contract_id}, is_sold: ${poc.is_sold}, status: ${poc.status}`);
+                setTrades(prev => prev.map(tr => {
+                    if (String(tr.contract_id) === String(poc.contract_id)) {
+                        const isSold = !!poc.is_sold;
+                        const finalStatus = isSold ? (poc.status === 'won' ? 'won' : 'lost') : 'open';
+                        
+                        return {
+                            ...tr,
+                            status: finalStatus,
+                            exit: poc.exit_tick_display_value ?? poc.exit_tick ?? poc.sell_price ?? tr.exit,
+                            profit: Number(poc.profit_display_value ?? poc.profit ?? 0)
+                        };
+                    }
+                    return tr;
+                }));
             }
-            if (msg.msg_type === 'transaction') {
-                const tx = msg.transaction;
-                if (tx && tx.action === 'sell') {
+        };
+
+        const handleBotTransaction = (tx: any) => {
+            if (tx) {
+                if (tx.action === 'sell') {
                     setTrades(prev => prev.map(tr => {
                         if (String(tr.contract_id) === String(tx.contract_id)) {
                             return {
@@ -353,28 +370,15 @@ const BulkTradingPage: React.FC = observer(() => {
                     }));
                 }
             }
-            if (msg.msg_type === 'proposal_open_contract') {
-                const poc = msg.proposal_open_contract;
-                if (poc) {
-                    console.log(`[BulkTrade] Received POC for ${poc.contract_id}, is_sold: ${poc.is_sold}, status: ${poc.status}`);
-                    setTrades(prev => prev.map(tr => {
-                        if (String(tr.contract_id) === String(poc.contract_id)) {
-                            const isSold = !!poc.is_sold;
-                            const finalStatus = isSold ? (poc.status === 'won' ? 'won' : 'lost') : 'open';
-                            
-                            return {
-                                ...tr,
-                                status: finalStatus,
-                                exit: poc.exit_tick_display_value ?? poc.exit_tick ?? poc.sell_price ?? tr.exit,
-                                profit: Number(poc.profit_display_value ?? poc.profit ?? 0)
-                            };
-                        }
-                        return tr;
-                    }));
-                }
-            }
-        });
-        return () => sub?.unsubscribe();
+        };
+
+        globalObserver.register('bot.contract', handleBotContract);
+        globalObserver.register('bot.transaction', handleBotTransaction);
+
+        return () => {
+            globalObserver.unregister('bot.contract', handleBotContract);
+            globalObserver.unregister('bot.transaction', handleBotTransaction);
+        };
     }, []);
 
     // ── Bulk Execution Logic ──

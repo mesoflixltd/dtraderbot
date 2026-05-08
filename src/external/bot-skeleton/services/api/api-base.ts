@@ -249,6 +249,9 @@ class APIBase {
                     }
 
                     if (this.api?.connection) {
+                        // Set logging to true by default for debugging as requested by user
+                        (window as any).DERIV_API_LOGGING = true;
+
                         // Expose logging helper to window for easier debugging
                         (window as any).enableApiLogging = (enable = true) => {
                             (window as any).DERIV_API_LOGGING = enable;
