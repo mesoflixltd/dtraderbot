@@ -19,7 +19,10 @@ const UltimateTraderPage = () => (
         <div className='aihub-subpage__hero'>
             <div className='aihub-subpage__hero-icon'>🏆</div>
             <h2>Ultimate Trader</h2>
-            <p>The complete autonomous trading suite. Combines AI signals, bulk execution, and adaptive risk management into one command center. Set your goal and let it trade.</p>
+            <p>
+                The complete autonomous trading suite. Combines AI signals, bulk execution, and adaptive risk management
+                into one command center. Set your goal and let it trade.
+            </p>
             <div className='aihub-badge aihub-badge--pro'>★ Pro Feature — Coming Soon</div>
         </div>
 
@@ -27,13 +30,19 @@ const UltimateTraderPage = () => (
             <div className='aihub-feature-card aihub-feature-card--gold'>
                 <div className='aihub-feature-card__icon'>🧠</div>
                 <h3>AI Autopilot</h3>
-                <p>The system reads live market data, selects the optimal trade type, enters and exits automatically based on your pre-set risk profile.</p>
+                <p>
+                    The system reads live market data, selects the optimal trade type, enters and exits automatically
+                    based on your pre-set risk profile.
+                </p>
                 <div className='aihub-feature-card__status aihub-feature-card__status--pro'>Pro</div>
             </div>
             <div className='aihub-feature-card aihub-feature-card--gold'>
                 <div className='aihub-feature-card__icon'>🎯</div>
                 <h3>Goal-Based Sessions</h3>
-                <p>Set a profit target and a stop-loss. The engine runs until one is hit, then sends you a full session report.</p>
+                <p>
+                    Set a profit target and a stop-loss. The engine runs until one is hit, then sends you a full session
+                    report.
+                </p>
                 <div className='aihub-feature-card__status aihub-feature-card__status--pro'>Pro</div>
             </div>
             <div className='aihub-feature-card aihub-feature-card--gold'>
@@ -53,14 +62,12 @@ const UltimateTraderPage = () => (
         <div className='aihub-cta'>
             <div className='aihub-cta__text'>
                 <h3>Be the First to Access</h3>
-                <p>Ultimate Trader is currently in closed development. Join the waitlist to get early access when it launches.</p>
+                <p>
+                    Ultimate Trader is currently in closed development. Join the waitlist to get early access when it
+                    launches.
+                </p>
             </div>
-            <a
-                className='aihub-cta__btn'
-                href='https://tradermind.site'
-                target='_blank'
-                rel='noreferrer'
-            >
+            <a className='aihub-cta__btn' href='https://tradermind.site' target='_blank' rel='noreferrer'>
                 Visit Mesoflix Site →
             </a>
         </div>
@@ -71,8 +78,8 @@ const UltimateTraderPage = () => (
 type TTab = 'bulk' | 'ultimate';
 
 const TABS: { id: TTab; label: string; icon: string; accent: string }[] = [
-    { id: 'bulk',     label: 'Bulk Trading',     icon: '⚡', accent: '#7f5cff' },
-    { id: 'ultimate', label: 'Ultimate Trader',  icon: '🏆', accent: '#f5a623' },
+    { id: 'bulk', label: 'Bulk Trading', icon: '⚡', accent: '#7f5cff' },
+    { id: 'ultimate', label: 'Ultimate Trader', icon: '🏆', accent: '#f5a623' },
 ];
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -81,12 +88,13 @@ const AIHub = observer(() => {
 
     return (
         <div className='aihub-page'>
-
             {/* ─── Header ─── */}
             <div className='aihub-header'>
                 <div className='aihub-header__text'>
                     <h1>AI Hub</h1>
-                    <p>Your intelligent trading command centre — powered by machine learning and real-time market data.</p>
+                    <p>
+                        Your intelligent trading command centre — powered by machine learning and real-time market data.
+                    </p>
                 </div>
                 <div className='aihub-header__badge'>Ai Intelligence</div>
             </div>
@@ -109,10 +117,9 @@ const AIHub = observer(() => {
 
             {/* ─── Sub-page content ─── */}
             <div className='aihub-content'>
-                {activeTab === 'bulk'     && <BulkTradingPageTab />}
+                {activeTab === 'bulk' && <BulkTradingPageTab />}
                 {activeTab === 'ultimate' && <UltimateTraderPage />}
             </div>
-
         </div>
     );
 });

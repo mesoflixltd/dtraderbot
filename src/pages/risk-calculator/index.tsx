@@ -38,32 +38,36 @@ const RiskCalculator = observer(() => {
     const isAuthenticated = client.is_logged_in;
 
     // ── Calculator state ───────────────────────────────────────────────────────
-    const [balance,      setBalance]      = useState<string>('1000');
-    const [target,       setTarget]       = useState<string>('1200');
-    const [payoutPct,    setPayoutPct]    = useState<string>('95');
-    const [stake,        setStake]        = useState<string>('0.35');
-    const [sessionRuns,  setSessionRuns]  = useState<string>('3');
+    const [balance, setBalance] = useState<string>('1000');
+    const [target, setTarget] = useState<string>('1200');
+    const [payoutPct, setPayoutPct] = useState<string>('95');
+    const [stake, setStake] = useState<string>('0.35');
+    const [sessionRuns, setSessionRuns] = useState<string>('3');
 
     // ── Journal state ──────────────────────────────────────────────────────────
-    const [entries,      setEntries]      = useState<TJournalEntry[]>([]);
-    const [isFormOpen,   setIsFormOpen]   = useState(false);
+    const [entries, setEntries] = useState<TJournalEntry[]>([]);
+    const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingEntry, setEditingEntry] = useState<TJournalEntry | null>(null);
-    const [title,        setTitle]        = useState('');
-    const [description,  setDescription]  = useState('');
-    const [entryType,    setEntryType]    = useState<'Journal' | 'Plan'>('Journal');
-    const [active_view,  setActiveView]   = useState<TActiveView>('calculator');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [entryType, setEntryType] = useState<'Journal' | 'Plan'>('Journal');
+    const [active_view, setActiveView] = useState<TActiveView>('calculator');
 
     // ── Analytics state ────────────────────────────────────────────────────────
     const [analyticsLoading, setAnalyticsLoading] = useState(false);
-    const [analyticsStage,   setAnalyticsStage]   = useState('');
-    const [analyticsData,    setAnalyticsData]    = useState<any | null>(null);
+    const [analyticsStage, setAnalyticsStage] = useState('');
+    const [analyticsData, setAnalyticsData] = useState<any | null>(null);
     const [useSimulatedData, setUseSimulatedData] = useState(false);
 
     // ── Persist journal ────────────────────────────────────────────────────────
     useEffect(() => {
         const saved = localStorage.getItem('mesoflix_trading_journal');
         if (saved) {
-            try { setEntries(JSON.parse(saved)); } catch (_) { /* noop */ }
+            try {
+                setEntries(JSON.parse(saved));
+            } catch (_) {
+                /* noop */
+            }
         }
     }, []);
 
@@ -73,40 +77,39 @@ const RiskCalculator = observer(() => {
 
     // ── AI Engine calculations ─────────────────────────────────────────────────
     const calc = useMemo(() => {
-        const b   = parseFloat(balance)   || 0;
-        const tgt = parseFloat(target)    || 0;
-        const pp  = parseFloat(payoutPct) || 95;
+        const b = parseFloat(balance) || 0;
+        const tgt = parseFloat(target) || 0;
+        const pp = parseFloat(payoutPct) || 95;
         const stk = Math.max(MIN_STAKE, parseFloat(stake) || MIN_STAKE);
         const runs = Math.max(1, parseInt(sessionRuns, 10) || 3);
 
-        const profitNeeded   = Math.max(0, tgt - b);
-        const profitPerTrade = stk * (pp / 100);            // profit on each winning trade
-        const tradesNeeded   = profitPerTrade > 0
-            ? Math.ceil(profitNeeded / profitPerTrade)
-            : 0;
-        const tradesPerRun   = Math.ceil(tradesNeeded / runs);
-        const roiPercent     = b > 0 ? ((tgt - b) / b) * 100 : 0;
-        const winRateNeeded  = tradesNeeded > 0
-            ? (tradesNeeded / (tradesNeeded * 1.2)) * 100  // assumes ~20% loss buffer
-            : 0;
-        const maxDrawdownRisk = stk * tradesPerRun;         // worst-case loss per run
-        const totalPayout     = stk + profitPerTrade;
+        const profitNeeded = Math.max(0, tgt - b);
+        const profitPerTrade = stk * (pp / 100); // profit on each winning trade
+        const tradesNeeded = profitPerTrade > 0 ? Math.ceil(profitNeeded / profitPerTrade) : 0;
+        const tradesPerRun = Math.ceil(tradesNeeded / runs);
+        const roiPercent = b > 0 ? ((tgt - b) / b) * 100 : 0;
+        const winRateNeeded =
+            tradesNeeded > 0
+                ? (tradesNeeded / (tradesNeeded * 1.2)) * 100 // assumes ~20% loss buffer
+                : 0;
+        const maxDrawdownRisk = stk * tradesPerRun; // worst-case loss per run
+        const totalPayout = stk + profitPerTrade;
 
         // Daily projection — simple linear at `runs` per day
         const daysNeeded = runs > 0 ? Math.ceil(tradesNeeded / (tradesPerRun * runs)) : 0;
 
         return {
-            stk:             stk.toFixed(2),
-            profitPerTrade:  profitPerTrade.toFixed(3),
-            totalPayout:     totalPayout.toFixed(3),
-            profitNeeded:    profitNeeded.toFixed(2),
+            stk: stk.toFixed(2),
+            profitPerTrade: profitPerTrade.toFixed(3),
+            totalPayout: totalPayout.toFixed(3),
+            profitNeeded: profitNeeded.toFixed(2),
             tradesNeeded,
             tradesPerRun,
-            roiPercent:      roiPercent.toFixed(1),
-            winRateNeeded:   winRateNeeded.toFixed(1),
+            roiPercent: roiPercent.toFixed(1),
+            winRateNeeded: winRateNeeded.toFixed(1),
             maxDrawdownRisk: maxDrawdownRisk.toFixed(2),
             daysNeeded,
-            isViable:        stk >= MIN_STAKE && profitNeeded >= 0 && b > 0,
+            isViable: stk >= MIN_STAKE && profitNeeded >= 0 && b > 0,
         };
     }, [balance, target, payoutPct, stake, sessionRuns]);
 
@@ -130,17 +133,25 @@ const RiskCalculator = observer(() => {
     const handleSaveEntry = () => {
         if (!title.trim() || !description.trim()) return;
         if (editingEntry) {
-            setEntries(prev => prev.map(e =>
-                e.id === editingEntry.id ? { ...e, title, description, type: entryType } : e
-            ));
+            setEntries(prev =>
+                prev.map(e => (e.id === editingEntry.id ? { ...e, title, description, type: entryType } : e))
+            );
             setEditingEntry(null);
         } else {
-            setEntries(prev => [{
-                id: uuidv4(), title, description, type: entryType,
-                createdAt: new Date().toISOString(),
-            }, ...prev]);
+            setEntries(prev => [
+                {
+                    id: uuidv4(),
+                    title,
+                    description,
+                    type: entryType,
+                    createdAt: new Date().toISOString(),
+                },
+                ...prev,
+            ]);
         }
-        setTitle(''); setDescription(''); setIsFormOpen(false);
+        setTitle('');
+        setDescription('');
+        setIsFormOpen(false);
     };
 
     const handleDeleteEntry = (id: string, e: React.MouseEvent) => {
@@ -161,7 +172,7 @@ const RiskCalculator = observer(() => {
     const getSimulatedTransactions = useCallback(() => {
         const mockTxs: any[] = [];
         const now = Math.floor(Date.now() / 1000);
-        
+
         // Add deposit
         mockTxs.push({
             action_type: 'deposit',
@@ -169,11 +180,11 @@ const RiskCalculator = observer(() => {
             balance_after: '500.00',
             transaction_id: '88234710',
             transaction_time: now - 15 * 24 * 3600,
-            longcode: 'Payment agent deposit via Neteller'
+            longcode: 'Payment agent deposit via Neteller',
         });
 
         // Add 20 random trades over the last 15 days
-        let currentBalance = 500.00;
+        let currentBalance = 500.0;
         const winLossPattern = [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1]; // 15 wins, 5 losses (75% win rate!)
         const stakes = [10, 10, 10, 15, 15, 15, 20, 20, 20, 25, 25, 25, 25, 30, 30, 30, 30, 40, 40, 40];
         const payouts = stakes.map(s => s * 1.95);
@@ -193,7 +204,7 @@ const RiskCalculator = observer(() => {
                 contract_id: contractId,
                 transaction_id: String(99120340 + index * 2),
                 transaction_time: now - timeOffset,
-                longcode: `Win contract on Volatility 10 (1s) Index (Matches/Differs)`
+                longcode: `Win contract on Volatility 10 (1s) Index (Matches/Differs)`,
             });
 
             if (isWin) {
@@ -206,20 +217,20 @@ const RiskCalculator = observer(() => {
                     contract_id: contractId,
                     transaction_id: String(99120340 + index * 2 + 1),
                     transaction_time: now - timeOffset + 3,
-                    longcode: `Contract win payout`
+                    longcode: `Contract win payout`,
                 });
             }
         });
 
         // Add a withdrawal
-        currentBalance -= 150.00;
+        currentBalance -= 150.0;
         mockTxs.push({
             action_type: 'withdrawal',
             amount: '-150.00',
             balance_after: currentBalance.toFixed(2),
             transaction_id: '88349210',
             transaction_time: now - 2 * 24 * 3600,
-            longcode: 'Withdrawal to WebMoney wallet'
+            longcode: 'Withdrawal to WebMoney wallet',
         });
 
         return mockTxs.reverse();
@@ -260,7 +271,10 @@ const RiskCalculator = observer(() => {
         const sortedTxs = [...txs].sort((a, b) => a.transaction_time - b.transaction_time);
         const firstTxDate = new Date(sortedTxs[0].transaction_time * 1000);
         const lastTxDate = new Date(sortedTxs[sortedTxs.length - 1].transaction_time * 1000);
-        const activeDays = Math.max(1, Math.ceil((lastTxDate.getTime() - firstTxDate.getTime()) / (1000 * 60 * 60 * 24)));
+        const activeDays = Math.max(
+            1,
+            Math.ceil((lastTxDate.getTime() - firstTxDate.getTime()) / (1000 * 60 * 60 * 24))
+        );
 
         let totalDeposits = 0;
         let totalWithdrawals = 0;
@@ -300,7 +314,7 @@ const RiskCalculator = observer(() => {
         let maxLoss = 0;
 
         const sortedTrades = trades.sort((a, b) => a.buy.transaction_time - b.buy.transaction_time);
-        
+
         let currentWinStreak = 0;
         let currentLossStreak = 0;
         let maxWinStreak = 0;
@@ -359,24 +373,29 @@ const RiskCalculator = observer(() => {
 
         let healthGrade = 'D';
         let healthLabel = 'High Risk';
-        let healthDesc = 'Your portfolio shows signs of rapid drawdown risk. Reduce your stake size and practice consistent rules.';
+        let healthDesc =
+            'Your portfolio shows signs of rapid drawdown risk. Reduce your stake size and practice consistent rules.';
 
         if (healthScore >= 90) {
             healthGrade = 'S';
             healthLabel = 'Legendary Elite';
-            healthDesc = 'Exceptional risk-adjusted returns! You have consistent win streaks, excellent trade sizes, and positive expectancy.';
+            healthDesc =
+                'Exceptional risk-adjusted returns! You have consistent win streaks, excellent trade sizes, and positive expectancy.';
         } else if (healthScore >= 80) {
             healthGrade = 'A';
             healthLabel = 'Professional';
-            healthDesc = 'Solid execution and high profitability. Your profit factor is strongly positive. Continue with your active plan.';
+            healthDesc =
+                'Solid execution and high profitability. Your profit factor is strongly positive. Continue with your active plan.';
         } else if (healthScore >= 65) {
             healthGrade = 'B';
             healthLabel = 'Consistent';
-            healthDesc = 'Good account stability. Maintain discipline and adjust take-profit rules slightly to increase average wins.';
+            healthDesc =
+                'Good account stability. Maintain discipline and adjust take-profit rules slightly to increase average wins.';
         } else if (healthScore >= 50) {
             healthGrade = 'C';
             healthLabel = 'Developing';
-            healthDesc = 'Profitable but experiencing high drawdown variances. Monitor your losing streaks and apply tighter stops.';
+            healthDesc =
+                'Profitable but experiencing high drawdown variances. Monitor your losing streaks and apply tighter stops.';
         }
 
         const recentTxList = txs.slice(0, 10);
@@ -413,16 +432,16 @@ const RiskCalculator = observer(() => {
     const runDiagnostics = async (isSimulatedOverride?: boolean) => {
         setAnalyticsLoading(true);
         setAnalyticsData(null);
-        
+
         const isSimulated = isSimulatedOverride !== undefined ? isSimulatedOverride : useSimulatedData;
-        
+
         const stages = [
             'Establishing Secure Handshake with Deriv API...',
             'Scanning Account Statement Logs...',
             'Analyzing Performance Metrics & Win Streaks...',
-            'Calibrating Account Health Index...'
+            'Calibrating Account Health Index...',
         ];
-        
+
         let currentStageIdx = 0;
         setAnalyticsStage(stages[currentStageIdx]);
         const stageInterval = setInterval(() => {
@@ -434,10 +453,10 @@ const RiskCalculator = observer(() => {
 
         try {
             let transactions: any[] = [];
-            
+
             if (isAuthenticated && !isSimulated) {
                 const { api_base } = await import('@/external/bot-skeleton/services/api/api-base');
-                
+
                 if (api_base.api) {
                     let offset = 0;
                     const limit = 100;
@@ -450,14 +469,14 @@ const RiskCalculator = observer(() => {
                             limit,
                             offset,
                         });
-                        
+
                         if (response.error) {
                             throw new Error(response.error.message);
                         }
-                        
+
                         const list = response.statement?.transactions || [];
                         transactions.push(...list);
-                        
+
                         if (list.length < limit || transactions.length >= 500) {
                             hasMore = false;
                         } else {
@@ -510,7 +529,7 @@ const RiskCalculator = observer(() => {
                     </div>
                     <div className='rc-form__field'>
                         <label>Target Amount ($)</label>
-                        <input type='number' min='0' value={target}  onChange={e => setTarget(e.target.value)} />
+                        <input type='number' min='0' value={target} onChange={e => setTarget(e.target.value)} />
                     </div>
                 </div>
 
@@ -518,7 +537,9 @@ const RiskCalculator = observer(() => {
                     <div className='rc-form__field'>
                         <label>Stake per Trade ($)</label>
                         <input
-                            type='number' min={MIN_STAKE} step='0.01'
+                            type='number'
+                            min={MIN_STAKE}
+                            step='0.01'
                             value={stake}
                             onChange={e => setStake(e.target.value)}
                         />
@@ -526,14 +547,26 @@ const RiskCalculator = observer(() => {
                     </div>
                     <div className='rc-form__field'>
                         <label>Payout per Trade (%)</label>
-                        <input type='number' min='1' max='200' value={payoutPct} onChange={e => setPayoutPct(e.target.value)} />
+                        <input
+                            type='number'
+                            min='1'
+                            max='200'
+                            value={payoutPct}
+                            onChange={e => setPayoutPct(e.target.value)}
+                        />
                     </div>
                 </div>
 
                 <div className='rc-form__row rc-form__row--single'>
                     <div className='rc-form__field'>
                         <label>Runs per Session</label>
-                        <input type='number' min='1' max='100' value={sessionRuns} onChange={e => setSessionRuns(e.target.value)} />
+                        <input
+                            type='number'
+                            min='1'
+                            max='100'
+                            value={sessionRuns}
+                            onChange={e => setSessionRuns(e.target.value)}
+                        />
                         <span className='rc-form__hint'>How many rounds you plan per session</span>
                     </div>
                 </div>
@@ -543,7 +576,9 @@ const RiskCalculator = observer(() => {
                 <div className='rc-results'>
                     <div className='rc-results__header'>
                         <span className='rc-results__badge'>AI Analysis</span>
-                        <span className='rc-results__roi'>ROI needed: <strong>{calc.roiPercent}%</strong></span>
+                        <span className='rc-results__roi'>
+                            ROI needed: <strong>{calc.roiPercent}%</strong>
+                        </span>
                     </div>
 
                     <div className='rc-results__grid'>
@@ -575,10 +610,10 @@ const RiskCalculator = observer(() => {
 
                     <div className='rc-results__summary'>
                         <p>
-                            With a <strong>${calc.stk}</strong> stake at <strong>{payoutPct}%</strong> payout,
-                            each win nets <strong>${calc.profitPerTrade}</strong>. You need
-                            <strong> {calc.tradesNeeded} wins</strong> to reach your
-                            target, split into <strong>{calc.tradesPerRun} trades per run</strong> across
+                            With a <strong>${calc.stk}</strong> stake at <strong>{payoutPct}%</strong> payout, each win
+                            nets <strong>${calc.profitPerTrade}</strong>. You need
+                            <strong> {calc.tradesNeeded} wins</strong> to reach your target, split into{' '}
+                            <strong>{calc.tradesPerRun} trades per run</strong> across
                             <strong> {sessionRuns} runs per session</strong>.
                         </p>
                     </div>
@@ -602,7 +637,13 @@ const RiskCalculator = observer(() => {
                     <LabelPairedMemoPadCaptionBoldIcon width='22px' height='22px' fill='var(--brand-blue)' />
                     Trading Journal
                 </div>
-                <button className='rc-add-btn' onClick={() => { setIsFormOpen(!isFormOpen); if (isFormOpen) setEditingEntry(null); }}>
+                <button
+                    className='rc-add-btn'
+                    onClick={() => {
+                        setIsFormOpen(!isFormOpen);
+                        if (isFormOpen) setEditingEntry(null);
+                    }}
+                >
                     {isFormOpen ? '✕ Cancel' : '+ New Entry'}
                 </button>
             </div>
@@ -611,12 +652,25 @@ const RiskCalculator = observer(() => {
                 <div className='rc-journal-form'>
                     <div className='rc-form__field'>
                         <label>Title / Trading Pair</label>
-                        <input type='text' value={title} onChange={e => setTitle(e.target.value)} placeholder='e.g. Target Plan — R_50' />
+                        <input
+                            type='text'
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                            placeholder='e.g. Target Plan — R_50'
+                        />
                     </div>
                     <div className='rc-journal-form__types'>
                         {(['Journal', 'Plan'] as const).map(t => (
-                            <label key={t} className={classNames('rc-type-btn', { 'rc-type-btn--active': entryType === t })}>
-                                <input type='radio' name='entry-type' checked={entryType === t} onChange={() => setEntryType(t)} />
+                            <label
+                                key={t}
+                                className={classNames('rc-type-btn', { 'rc-type-btn--active': entryType === t })}
+                            >
+                                <input
+                                    type='radio'
+                                    name='entry-type'
+                                    checked={entryType === t}
+                                    onChange={() => setEntryType(t)}
+                                />
                                 {t === 'Journal' ? '📒 Journal' : '📋 Trading Plan'}
                             </label>
                         ))}
@@ -655,15 +709,25 @@ const RiskCalculator = observer(() => {
                                     <h3>{entry.title}</h3>
                                     <time>{new Date(entry.createdAt).toLocaleDateString()}</time>
                                 </div>
-                                <p>{entry.description.length > 180 ? entry.description.substring(0, 180) + '…' : entry.description}</p>
+                                <p>
+                                    {entry.description.length > 180
+                                        ? entry.description.substring(0, 180) + '…'
+                                        : entry.description}
+                                </p>
                                 <div className='rc-journal-item__footer'>
                                     <span className={classNames('rc-tag', { 'rc-tag--plan': entry.type === 'Plan' })}>
                                         {entry.type === 'Plan' ? '📋 Plan' : '📒 Journal'}
                                     </span>
                                     <div className='rc-journal-item__actions'>
-                                        <LabelPairedPenCaptionRegularIcon width='15px' height='15px' fill='var(--text-less-prominent)' />
+                                        <LabelPairedPenCaptionRegularIcon
+                                            width='15px'
+                                            height='15px'
+                                            fill='var(--text-less-prominent)'
+                                        />
                                         <LabelPairedTrashCaptionRegularIcon
-                                            width='15px' height='15px' fill='var(--status-danger)'
+                                            width='15px'
+                                            height='15px'
+                                            fill='var(--status-danger)'
                                             onClick={(e: React.MouseEvent) => handleDeleteEntry(entry.id, e)}
                                         />
                                     </div>
@@ -687,7 +751,10 @@ const RiskCalculator = observer(() => {
                             <div className='health-card__score-label'>Score: {data.healthScore}/100</div>
                         </div>
                         <div className='health-card__details'>
-                            <h3>Account Health Index: <span className='health-card__label-text'>{data.healthLabel}</span></h3>
+                            <h3>
+                                Account Health Index:{' '}
+                                <span className='health-card__label-text'>{data.healthLabel}</span>
+                            </h3>
                             <p>{data.healthDesc}</p>
                         </div>
                     </div>
@@ -699,12 +766,16 @@ const RiskCalculator = observer(() => {
                         <span className='analytics-stat-card__icon'>📈</span>
                         <div className='analytics-stat-card__content'>
                             <span className='analytics-stat-card__label'>Net Profit / Loss</span>
-                            <span className={classNames('analytics-stat-card__value', { 
-                                'analytics-stat-card__value--gain': parseFloat(data.totalProfit) - parseFloat(data.totalLoss) >= 0, 
-                                'analytics-stat-card__value--loss': parseFloat(data.totalProfit) - parseFloat(data.totalLoss) < 0 
-                            })}>
-                                {parseFloat(data.totalProfit) - parseFloat(data.totalLoss) >= 0 ? '+' : ''}
-                                ${(parseFloat(data.totalProfit) - parseFloat(data.totalLoss)).toFixed(2)}
+                            <span
+                                className={classNames('analytics-stat-card__value', {
+                                    'analytics-stat-card__value--gain':
+                                        parseFloat(data.totalProfit) - parseFloat(data.totalLoss) >= 0,
+                                    'analytics-stat-card__value--loss':
+                                        parseFloat(data.totalProfit) - parseFloat(data.totalLoss) < 0,
+                                })}
+                            >
+                                {parseFloat(data.totalProfit) - parseFloat(data.totalLoss) >= 0 ? '+' : ''}$
+                                {(parseFloat(data.totalProfit) - parseFloat(data.totalLoss)).toFixed(2)}
                             </span>
                         </div>
                     </div>
@@ -719,7 +790,9 @@ const RiskCalculator = observer(() => {
                         <span className='analytics-stat-card__icon'>⏳</span>
                         <div className='analytics-stat-card__content'>
                             <span className='analytics-stat-card__label'>Account Lifetime</span>
-                            <span className='analytics-stat-card__value'>{data.activeDays} {data.activeDays === 1 ? 'Day' : 'Days'}</span>
+                            <span className='analytics-stat-card__value'>
+                                {data.activeDays} {data.activeDays === 1 ? 'Day' : 'Days'}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -729,19 +802,25 @@ const RiskCalculator = observer(() => {
                     <div className='analytics-stat-card analytics-stat-card--secondary'>
                         <div className='analytics-stat-card__content'>
                             <span className='analytics-stat-card__label'>Lifetime Deposits</span>
-                            <span className='analytics-stat-card__value analytics-stat-card__value--gain'>${parseFloat(data.totalDeposits).toFixed(2)}</span>
+                            <span className='analytics-stat-card__value analytics-stat-card__value--gain'>
+                                ${parseFloat(data.totalDeposits).toFixed(2)}
+                            </span>
                         </div>
                     </div>
                     <div className='analytics-stat-card analytics-stat-card--secondary'>
                         <div className='analytics-stat-card__content'>
                             <span className='analytics-stat-card__label'>Lifetime Withdrawals</span>
-                            <span className='analytics-stat-card__value analytics-stat-card__value--loss'>-${parseFloat(data.totalWithdrawals).toFixed(2)}</span>
+                            <span className='analytics-stat-card__value analytics-stat-card__value--loss'>
+                                -${parseFloat(data.totalWithdrawals).toFixed(2)}
+                            </span>
                         </div>
                     </div>
                     <div className='analytics-stat-card analytics-stat-card--secondary'>
                         <div className='analytics-stat-card__content'>
                             <span className='analytics-stat-card__label'>Net Capital Input</span>
-                            <span className='analytics-stat-card__value'>${parseFloat(data.netCapital).toFixed(2)}</span>
+                            <span className='analytics-stat-card__value'>
+                                ${parseFloat(data.netCapital).toFixed(2)}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -846,24 +925,31 @@ const RiskCalculator = observer(() => {
                                             <tr key={tx.transaction_id || idx}>
                                                 <td>{new Date(tx.transaction_time * 1000).toLocaleString()}</td>
                                                 <td>
-                                                    <span className={classNames('log-type-tag', {
-                                                        'log-type-tag--buy': tx.action_type === 'buy',
-                                                        'log-type-tag--sell': tx.action_type === 'sell',
-                                                        'log-type-tag--deposit': tx.action_type === 'deposit',
-                                                        'log-type-tag--withdrawal': tx.action_type === 'withdrawal',
-                                                    })}>
+                                                    <span
+                                                        className={classNames('log-type-tag', {
+                                                            'log-type-tag--buy': tx.action_type === 'buy',
+                                                            'log-type-tag--sell': tx.action_type === 'sell',
+                                                            'log-type-tag--deposit': tx.action_type === 'deposit',
+                                                            'log-type-tag--withdrawal': tx.action_type === 'withdrawal',
+                                                        })}
+                                                    >
                                                         {typeLabel}
                                                     </span>
                                                 </td>
                                                 <td className='text-mono'>{tx.transaction_id}</td>
                                                 <td className='log-desc-col'>{tx.longcode || 'Transaction record'}</td>
-                                                <td className={classNames('text-right text-mono', { 
-                                                    'text-success': parseFloat(tx.amount) > 0, 
-                                                    'text-danger': parseFloat(tx.amount) < 0 
-                                                })}>
-                                                    {parseFloat(tx.amount) > 0 ? '+' : ''}${parseFloat(tx.amount).toFixed(2)}
+                                                <td
+                                                    className={classNames('text-right text-mono', {
+                                                        'text-success': parseFloat(tx.amount) > 0,
+                                                        'text-danger': parseFloat(tx.amount) < 0,
+                                                    })}
+                                                >
+                                                    {parseFloat(tx.amount) > 0 ? '+' : ''}$
+                                                    {parseFloat(tx.amount).toFixed(2)}
                                                 </td>
-                                                <td className='text-right text-mono'>${parseFloat(tx.balance_after).toFixed(2)}</td>
+                                                <td className='text-right text-mono'>
+                                                    ${parseFloat(tx.balance_after).toFixed(2)}
+                                                </td>
                                             </tr>
                                         );
                                     })}
@@ -901,7 +987,8 @@ const RiskCalculator = observer(() => {
             healthScore: 92,
             healthGrade: 'S',
             healthLabel: 'Legendary Elite',
-            healthDesc: 'Exceptional risk-adjusted returns! You have consistent win streaks, excellent trade sizes, and positive expectancy.',
+            healthDesc:
+                'Exceptional risk-adjusted returns! You have consistent win streaks, excellent trade sizes, and positive expectancy.',
             recentTxList: getSimulatedTransactions().slice(0, 5),
         };
     };
@@ -914,12 +1001,19 @@ const RiskCalculator = observer(() => {
                         <div className='analytics-teaser__badge'>🔒 Authorized Feature</div>
                         <h2>Unlock Account Diagnostics &amp; Lifetime Stats</h2>
                         <p>
-                            Perform a deep-scan of your live account performance directly via the Deriv WS API. 
-                            Instantly analyze lifetime trade growth, streaks, and calculate your custom Account Health Index.
+                            Perform a deep-scan of your live account performance directly via the Deriv WS API.
+                            Instantly analyze lifetime trade growth, streaks, and calculate your custom Account Health
+                            Index.
                         </p>
-                        
+
                         <div className='analytics-teaser__demo-cta'>
-                            <button className='rc-save-btn' onClick={() => { setUseSimulatedData(true); runDiagnostics(true); }}>
+                            <button
+                                className='rc-save-btn'
+                                onClick={() => {
+                                    setUseSimulatedData(true);
+                                    runDiagnostics(true);
+                                }}
+                            >
                                 ✨ Try Simulation Playground Demo
                             </button>
                         </div>
@@ -958,11 +1052,15 @@ const RiskCalculator = observer(() => {
                     <div className='analytics-header-row'>
                         <div className='analytics-header-row__left'>
                             <h2>Account Diagnostics Report</h2>
-                            <span className={classNames('analytics-badge', { 
-                                'analytics-badge--real': analyticsData.isReal && !analyticsData.isEmpty, 
-                                'analytics-badge--simulated': !analyticsData.isReal || analyticsData.isEmpty 
-                            })}>
-                                {analyticsData.isReal && !analyticsData.isEmpty ? '🟢 Live Account' : '✨ Simulated Demo'}
+                            <span
+                                className={classNames('analytics-badge', {
+                                    'analytics-badge--real': analyticsData.isReal && !analyticsData.isEmpty,
+                                    'analytics-badge--simulated': !analyticsData.isReal || analyticsData.isEmpty,
+                                })}
+                            >
+                                {analyticsData.isReal && !analyticsData.isEmpty
+                                    ? '🟢 Live Account'
+                                    : '✨ Simulated Demo'}
                             </span>
                         </div>
                         <div className='analytics-header-row__right'>
@@ -977,7 +1075,13 @@ const RiskCalculator = observer(() => {
                                 </button>
                             )}
                             {(!analyticsData.isReal || analyticsData.isEmpty) && isAuthenticated && (
-                                <button className='rc-refresh-btn rc-refresh-btn--primary' onClick={() => { setUseSimulatedData(false); runDiagnostics(false); }}>
+                                <button
+                                    className='rc-refresh-btn rc-refresh-btn--primary'
+                                    onClick={() => {
+                                        setUseSimulatedData(false);
+                                        runDiagnostics(false);
+                                    }}
+                                >
                                     🚀 Scan Live Account
                                 </button>
                             )}
@@ -994,13 +1098,16 @@ const RiskCalculator = observer(() => {
                     <div className='diagnostics-start__icon'>🛡️</div>
                     <h2>Run Account Diagnostics</h2>
                     <p>
-                        This tool performs a complete lifetime analysis of your account. We will securely retrieve 
-                        your transaction logs, trade history, deposits, and withdrawals to construct a detailed health report.
+                        This tool performs a complete lifetime analysis of your account. We will securely retrieve your
+                        transaction logs, trade history, deposits, and withdrawals to construct a detailed health
+                        report.
                     </p>
                     <button className='rc-save-btn' onClick={() => runDiagnostics(false)}>
                         🚀 Start Diagnostics Scan
                     </button>
-                    <span className='diagnostics-start__hint'>All processing runs securely within your local session sandbox.</span>
+                    <span className='diagnostics-start__hint'>
+                        All processing runs securely within your local session sandbox.
+                    </span>
                 </div>
             </div>
         );
@@ -1012,37 +1119,57 @@ const RiskCalculator = observer(() => {
             <div className='risk-calculator-page__header'>
                 <div className='risk-calculator-page__header-title'>
                     <Text as='h1'>Mesoflix Risk Tools</Text>
-                    
+
                     <div className='risk-calculator-page__toggle'>
                         <button
                             className={classNames('toggle-btn', { 'toggle-btn--active': active_view === 'calculator' })}
                             onClick={() => setActiveView('calculator')}
                         >
-                            <LabelPairedChartMixedCaptionBoldIcon width='16px' height='16px' fill={active_view === 'calculator' ? 'white' : 'var(--text-general)'} />
+                            <LabelPairedChartMixedCaptionBoldIcon
+                                width='16px'
+                                height='16px'
+                                fill={active_view === 'calculator' ? 'white' : 'var(--text-general)'}
+                            />
                             <span>{localize('Calculator')}</span>
                         </button>
                         <button
                             className={classNames('toggle-btn', { 'toggle-btn--active': active_view === 'journal' })}
                             onClick={() => setActiveView('journal')}
                         >
-                            <LabelPairedMemoPadCaptionBoldIcon width='16px' height='16px' fill={active_view === 'journal' ? 'white' : 'var(--text-general)'} />
+                            <LabelPairedMemoPadCaptionBoldIcon
+                                width='16px'
+                                height='16px'
+                                fill={active_view === 'journal' ? 'white' : 'var(--text-general)'}
+                            />
                             <span>{localize('Journal')}</span>
                         </button>
                         <button
                             className={classNames('toggle-btn', { 'toggle-btn--active': active_view === 'analytics' })}
                             onClick={() => setActiveView('analytics')}
                         >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill={active_view === 'analytics' ? 'white' : 'var(--text-general)'} xmlns="http://www.w3.org/2000/svg" style={{ transition: 'fill 0.25s ease', marginRight: '0.6rem' }}>
-                                <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM11 11H9V17H11V11ZM15 7H13V17H15V7ZM17 13H15V17H17V13Z" />
+                            <svg
+                                width='16'
+                                height='16'
+                                viewBox='0 0 24 24'
+                                fill={active_view === 'analytics' ? 'white' : 'var(--text-general)'}
+                                xmlns='http://www.w3.org/2000/svg'
+                                style={{ transition: 'fill 0.25s ease', marginRight: '0.6rem' }}
+                            >
+                                <path d='M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM11 11H9V17H11V11ZM15 7H13V17H15V7ZM17 13H15V17H17V13Z' />
                             </svg>
                             <span>{localize('Analytics')}</span>
                         </button>
                     </div>
                 </div>
                 <Text color='less-prominent'>
-                    {active_view === 'calculator' && localize('AI-powered trade planner — enter your balance, target & stake to get your session plan.')}
-                    {active_view === 'journal' && localize('Log your trades, strategies, results, and notes to track your progress.')}
-                    {active_view === 'analytics' && localize('Live account diagnostics — scan your account performance metrics and trade records.')}
+                    {active_view === 'calculator' &&
+                        localize(
+                            'AI-powered trade planner — enter your balance, target & stake to get your session plan.'
+                        )}
+                    {active_view === 'journal' &&
+                        localize('Log your trades, strategies, results, and notes to track your progress.')}
+                    {active_view === 'analytics' &&
+                        localize('Live account diagnostics — scan your account performance metrics and trade records.')}
                 </Text>
             </div>
 
@@ -1050,8 +1177,8 @@ const RiskCalculator = observer(() => {
             <div className='risk-calculator-page__scroll-container'>
                 <div className='risk-calculator-page__content'>
                     {active_view === 'calculator' && renderCalculator()}
-                    {active_view === 'journal'    && renderJournal()}
-                    {active_view === 'analytics'  && renderAnalytics()}
+                    {active_view === 'journal' && renderJournal()}
+                    {active_view === 'analytics' && renderAnalytics()}
                 </div>
             </div>
         </div>

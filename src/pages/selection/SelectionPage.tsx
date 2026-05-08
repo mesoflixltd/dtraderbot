@@ -34,46 +34,45 @@ const SelectionPage = () => {
         }
     };
 
-
     return (
-        <div className="selection-page">
-            <div className="selection-page__container">
-                <header className="selection-page__header">
-                    <h1 className="selection-page__title">Mesoflix</h1>
-                    <p className="selection-page__subtitle">
+        <div className='selection-page'>
+            <div className='selection-page__container'>
+                <header className='selection-page__header'>
+                    <h1 className='selection-page__title'>Mesoflix</h1>
+                    <p className='selection-page__subtitle'>
                         {localize('Please select your Deriv account type to continue')}
                     </p>
                 </header>
 
-                <div className="selection-page__choices">
-                    <div className="selection-card" onClick={handleLegacyClick}>
-                        <div className="selection-card__icon selection-card__icon--legacy">
-                            <span className="icon-legacy">L</span>
+                <div className='selection-page__choices'>
+                    <div className='selection-card' onClick={handleLegacyClick}>
+                        <div className='selection-card__icon selection-card__icon--legacy'>
+                            <span className='icon-legacy'>L</span>
                         </div>
-                        <h2 className="selection-card__title">{localize('Legacy Account')}</h2>
-                        <p className="selection-card__description">
+                        <h2 className='selection-card__title'>{localize('Legacy Account')}</h2>
+                        <p className='selection-card__description'>
                             {localize('Access the original trading platform and legacy bots.')}
                         </p>
-                        <button className="selection-card__button selection-card__button--legacy">
+                        <button className='selection-card__button selection-card__button--legacy'>
                             {localize('Go to Legacy')}
                         </button>
                     </div>
 
-                    <div className="selection-card" onClick={handleNewV2Click}>
-                        <div className="selection-card__icon selection-card__icon--v2">
-                            <span className="icon-v2">V2</span>
+                    <div className='selection-card' onClick={handleNewV2Click}>
+                        <div className='selection-card__icon selection-card__icon--v2'>
+                            <span className='icon-v2'>V2</span>
                         </div>
-                        <h2 className="selection-card__title">{localize('New Account V2')}</h2>
-                        <p className="selection-card__description">
+                        <h2 className='selection-card__title'>{localize('New Account V2')}</h2>
+                        <p className='selection-card__description'>
                             {localize('Experience the next generation trading hub with advanced features.')}
                         </p>
-                        <button className="selection-card__button selection-card__button--v2">
+                        <button className='selection-card__button selection-card__button--v2'>
                             {localize('Open V2 Hub')}
                         </button>
                     </div>
                 </div>
 
-                <footer className="selection-page__footer">
+                <footer className='selection-page__footer'>
                     <p>&copy; {new Date().getFullYear()} Mesoflix. All rights reserved.</p>
                 </footer>
             </div>

@@ -165,7 +165,9 @@
                         background: var(--general-section-1);
                         border-radius: 50%;
                         @include flex-center;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+                        box-shadow:
+                            0 4px 6px rgba(0, 0, 0, 0.1),
+                            inset 0 1px 1px rgba(255, 255, 255, 0.1);
                         border: 1px solid var(--general-section-2);
                         transition: all 0.3s ease;
 
@@ -184,10 +186,18 @@
                             border-color: var(--brand-red-coral);
                         }
 
-                        &.social-link--whatsapp .icon-wrapper { box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
-                        &.social-link--telegram .icon-wrapper { box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
-                        &.social-link--youtube .icon-wrapper { box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); }
-                        &.social-link--tiktok .icon-wrapper { box-shadow: 0 0 15px rgba(0, 242, 234, 0.4); }
+                        &.social-link--whatsapp .icon-wrapper {
+                            box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+                        }
+                        &.social-link--telegram .icon-wrapper {
+                            box-shadow: 0 0 15px rgba(0, 136, 204, 0.4);
+                        }
+                        &.social-link--youtube .icon-wrapper {
+                            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+                        }
+                        &.social-link--tiktok .icon-wrapper {
+                            box-shadow: 0 0 15px rgba(0, 242, 234, 0.4);
+                        }
                     }
                 }
             }

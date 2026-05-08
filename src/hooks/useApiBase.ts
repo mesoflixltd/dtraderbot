@@ -34,7 +34,14 @@ export const useApiBase = () => {
         });
         const authDataSubscription = authData$.subscribe(authData => {
             setAuthData(authData);
-            setActiveLoginid(authData?.loginid ?? '');
+            const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+            const isMarketingMode = localStorage.getItem('marketing_mode_active') === 'true' && isLegacy;
+            if (isMarketingMode) {
+                const selectedLoginid = localStorage.getItem('active_loginid') || authData?.loginid || '';
+                setActiveLoginid(selectedLoginid);
+            } else {
+                setActiveLoginid(authData?.loginid ?? '');
+            }
         });
 
         return () => {

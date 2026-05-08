@@ -9,11 +9,11 @@ import './scanner.scss';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 const SCAN_SYMBOLS = [
-    { symbol: 'R_10',   name: 'Volatility 10 Index',      pip: 3 },
-    { symbol: 'R_25',   name: 'Volatility 25 Index',      pip: 3 },
-    { symbol: 'R_50',   name: 'Volatility 50 Index',      pip: 2 },
-    { symbol: 'R_75',   name: 'Volatility 75 Index',      pip: 2 },
-    { symbol: 'R_100',  name: 'Volatility 100 Index',     pip: 2 },
+    { symbol: 'R_10', name: 'Volatility 10 Index', pip: 3 },
+    { symbol: 'R_25', name: 'Volatility 25 Index', pip: 3 },
+    { symbol: 'R_50', name: 'Volatility 50 Index', pip: 2 },
+    { symbol: 'R_75', name: 'Volatility 75 Index', pip: 2 },
+    { symbol: 'R_100', name: 'Volatility 100 Index', pip: 2 },
     { symbol: '1HZ10V', name: 'Volatility 10 (1s) Index', pip: 3 },
     { symbol: '1HZ25V', name: 'Volatility 25 (1s) Index', pip: 3 },
     { symbol: '1HZ50V', name: 'Volatility 50 (1s) Index', pip: 2 },
@@ -379,7 +379,7 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
     const [currentScanningSymbol, setCurrentScanningSymbol] = useState<string | null>(null);
     const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
     const [selectedSignal, setSelectedSignal] = useState<ISignal | null>(null);
-    
+
     const [stake, setStake] = useState('0.35');
     const [martingale, setMartingale] = useState('2.0');
     const [takeProfit, setTakeProfit] = useState('10');
@@ -396,13 +396,13 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
         const initialStats: Record<string, IMarketData> = {};
         SCAN_SYMBOLS.forEach(s => {
             initialStats[s.symbol] = {
-                symbol: s.symbol, 
-                prices: [], 
-                digits: [], 
+                symbol: s.symbol,
+                prices: [],
+                digits: [],
                 frequencies: new Array(10).fill(10), // Start with neutral 10%
-                pip_size: s.pip, 
-                last_price: 0, 
-                last_update: Date.now()
+                pip_size: s.pip,
+                last_price: 0,
+                last_update: Date.now(),
             };
         });
         setMarketStats(initialStats);
@@ -435,20 +435,20 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             const prices = (history?.prices ?? []).map(Number);
             const pip = Number(msg.pip_size ?? 2);
             const digits = prices.map((p: number) => getDigit(p, pip));
-            
+
             setMarketStats(prev => ({
                 ...prev,
-                [sym]: { 
-                    ...prev[sym], 
-                    prices, 
+                [sym]: {
+                    ...prev[sym],
+                    prices,
                     digits,
                     frequencies: calculateFrequencies(digits),
-                    pip_size: pip, 
+                    pip_size: pip,
                     last_price: prices[prices.length - 1] || 0,
-                    last_update: Date.now() 
-                }
+                    last_update: Date.now(),
+                },
             }));
-            
+
             syncCount.current += 1;
         }
 
@@ -459,23 +459,23 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             const quote = Number(tick.quote);
             const pip = Number(tick.pip_size ?? 2);
             const digit = getDigit(quote, pip);
-            
+
             setMarketStats(prev => {
                 const current = prev[sym];
                 if (!current) return prev;
                 const newDigits = [...current.digits, digit].slice(-WINDOW_SIZE);
                 return {
                     ...prev,
-                    [sym]: { 
-                        ...current, 
+                    [sym]: {
+                        ...current,
                         prices: [...current.prices, quote].slice(-WINDOW_SIZE),
                         digits: newDigits,
                         frequencies: calculateFrequencies(newDigits),
-                        pip_size: pip, 
-                        last_price: quote, 
+                        pip_size: pip,
+                        last_price: quote,
                         last_update: Date.now(),
-                        tick_pulse: Date.now()
-                    }
+                        tick_pulse: Date.now(),
+                    },
                 };
             });
         }
@@ -510,18 +510,18 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
         if (!api_base.api) return;
         setIsScanning(true);
         setFavorableSymbols([]);
-        
+
         for (let i = 0; i < SCAN_SYMBOLS.length; i++) {
             const s = SCAN_SYMBOLS[i];
             setCurrentScanningSymbol(s.symbol);
-            
+
             api_base.api.send({
                 ticks_history: s.symbol,
-                count: WINDOW_SIZE, 
-                end: 'latest', 
-                style: 'ticks', 
-                subscribe: 1, 
-                req_id: 3000 + i
+                count: WINDOW_SIZE,
+                end: 'latest',
+                style: 'ticks',
+                subscribe: 1,
+                req_id: 3000 + i,
             });
 
             // Wait for analysis period
@@ -551,10 +551,10 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
 
     const handleLaunchBot = useCallback(() => {
         if (!selectedSignal) return;
-        
+
         let contract_type = 'overunder';
         let purchase_list = 'DIGITOVER';
-        
+
         if (selectedSignal.type === 'UNDER') {
             contract_type = 'overunder';
             purchase_list = 'DIGITUNDER';
@@ -575,8 +575,10 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             stopLoss,
             maxTrades,
             targetWins,
-            maxLosses
-        }).replace('overunder', contract_type).replace('DIGITOVER', purchase_list);
+            maxLosses,
+        })
+            .replace('overunder', contract_type)
+            .replace('DIGITOVER', purchase_list);
 
         try {
             const workspace = (window.Blockly as any)?.derivWorkspace;
@@ -584,9 +586,17 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             const dom = window.Blockly.utils.xml.textToDom(adaptiveXml);
             workspace.clear();
             window.Blockly.Xml.domToWorkspace(dom, workspace);
-            globalObserver.emit('ui.log.info', `[DSS] Executing ${selectedSignal.type} strategy on ${selectedSignal.symbol}`);
-            setTimeout(() => { DBot.runBot(); navigate('/'); }, 500);
-        } catch (e: any) { console.error('Launch failed:', e); }
+            globalObserver.emit(
+                'ui.log.info',
+                `[DSS] Executing ${selectedSignal.type} strategy on ${selectedSignal.symbol}`
+            );
+            setTimeout(() => {
+                DBot.runBot();
+                navigate('/');
+            }, 500);
+        } catch (e: any) {
+            console.error('Launch failed:', e);
+        }
     }, [selectedSignal, stake, martingale, takeProfit, stopLoss, navigate]);
 
     const signals = useMemo(() => {
@@ -595,36 +605,44 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             // Only show signals for symbols that passed the scan
             if (!favorableSymbols.includes(data.symbol) && data.symbol !== currentScanningSymbol) return;
             if (data.digits.length < 50) return;
-            
+
             const probabilityAbove1 = data.frequencies.slice(2).reduce((a, b) => a + b, 0);
-            
+
             if (probabilityAbove1 > 65) {
                 results.push({
-                    symbol: data.symbol, 
-                    type: 'OVER', 
+                    symbol: data.symbol,
+                    type: 'OVER',
                     prediction: 1,
                     confidence: Math.round(probabilityAbove1),
-                    reason: `Probability of digits 2-9 is ${probabilityAbove1.toFixed(1)}%`
+                    reason: `Probability of digits 2-9 is ${probabilityAbove1.toFixed(1)}%`,
                 });
             }
         });
-        return results.sort((a,b) => b.confidence - a.confidence);
+        return results.sort((a, b) => b.confidence - a.confidence);
     }, [marketStats, favorableSymbols, currentScanningSymbol]);
 
     return (
-        <div className="dss-scanner dss-scanner--full">
-            <div className="dss-scanner__header">
-                <div className="dss-scanner__title">
+        <div className='dss-scanner dss-scanner--full'>
+            <div className='dss-scanner__header'>
+                <div className='dss-scanner__title'>
                     <h2>AI Market Intelligence</h2>
                     <div className={`dss-status dss-status--${wsStatus}`}>
-                        {isScanning ? `Scanning Matrix: ${currentScanningSymbol || '...'}` : (favorableSymbols.length > 0 ? `${favorableSymbols.length} Favorable Markets Found` : 'Matrix Standby')}
+                        {isScanning
+                            ? `Scanning Matrix: ${currentScanningSymbol || '...'}`
+                            : favorableSymbols.length > 0
+                              ? `${favorableSymbols.length} Favorable Markets Found`
+                              : 'Matrix Standby'}
                     </div>
                 </div>
-                <div className="dss-scanner__actions">
-                    <select className="dss-mode-select" value={scanMode} onChange={e => setScanMode(e.target.value as any)}>
-                        <option value="multi">Scan Multimarket</option>
+                <div className='dss-scanner__actions'>
+                    <select
+                        className='dss-mode-select'
+                        value={scanMode}
+                        onChange={e => setScanMode(e.target.value as any)}
+                    >
+                        <option value='multi'>Scan Multimarket</option>
                     </select>
-                    <button 
+                    <button
                         className={`dss-scan-btn ${isScanning ? 'dss-scan-btn--active' : ''}`}
                         onClick={startScan}
                         disabled={isScanning}
@@ -634,67 +652,82 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
                 </div>
             </div>
 
-            <div className="dss-grid-wrapper">
-                <div className="dss-grid">
-                    {SCAN_SYMBOLS.filter(s => favorableSymbols.includes(s.symbol) || s.symbol === currentScanningSymbol).map(s => {
+            <div className='dss-grid-wrapper'>
+                <div className='dss-grid'>
+                    {SCAN_SYMBOLS.filter(
+                        s => favorableSymbols.includes(s.symbol) || s.symbol === currentScanningSymbol
+                    ).map(s => {
                         const data = marketStats[s.symbol];
                         const signal = signals.find(sig => sig.symbol === s.symbol);
-                        const isNewTick = data?.tick_pulse && (Date.now() - data.tick_pulse < 300);
+                        const isNewTick = data?.tick_pulse && Date.now() - data.tick_pulse < 300;
                         const isCurrentlyScanning = s.symbol === currentScanningSymbol;
 
                         return (
-                            <div key={s.symbol} className={`dss-card ${signal ? 'dss-card--has-signal' : 'dss-card--scanning'} ${isNewTick ? 'dss-card--active' : ''} ${isCurrentlyScanning ? 'dss-card--scanning-active' : ''}`}>
-                                <div className="dss-card__market">
-                                    <div className="dss-card__market-left">
-                                        <span className="dss-card__name">{s.name}</span>
-                                        <span className="dss-card__symbol">{s.symbol}</span>
+                            <div
+                                key={s.symbol}
+                                className={`dss-card ${signal ? 'dss-card--has-signal' : 'dss-card--scanning'} ${isNewTick ? 'dss-card--active' : ''} ${isCurrentlyScanning ? 'dss-card--scanning-active' : ''}`}
+                            >
+                                <div className='dss-card__market'>
+                                    <div className='dss-card__market-left'>
+                                        <span className='dss-card__name'>{s.name}</span>
+                                        <span className='dss-card__symbol'>{s.symbol}</span>
                                     </div>
-                                    <div className="dss-card__market-right">
-                                        <span className="dss-price">{data?.last_price?.toFixed(data?.pip_size || 2)}</span>
+                                    <div className='dss-card__market-right'>
+                                        <span className='dss-price'>
+                                            {data?.last_price?.toFixed(data?.pip_size || 2)}
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="dss-card__visual">
-                                    <div className="dss-distribution">
+                                <div className='dss-card__visual'>
+                                    <div className='dss-distribution'>
                                         {data?.frequencies.map((pct, d) => {
                                             const deviation = pct - 10;
                                             return (
-                                                <div key={d} className="dss-dist-bar">
-                                                    <div 
-                                                        className={`dss-dist-fill ${deviation > 2 ? 'high' : (deviation < -2 ? 'low' : '')}`}
+                                                <div key={d} className='dss-dist-bar'>
+                                                    <div
+                                                        className={`dss-dist-fill ${deviation > 2 ? 'high' : deviation < -2 ? 'low' : ''}`}
                                                         style={{ height: `${Math.max(5, Math.min(pct * 3.5, 100))}%` }}
                                                     >
-                                                        <span className="pct-text">{pct.toFixed(0)}%</span>
+                                                        <span className='pct-text'>{pct.toFixed(0)}%</span>
                                                     </div>
-                                                    <span className="dss-dist-label">{d}</span>
+                                                    <span className='dss-dist-label'>{d}</span>
                                                 </div>
                                             );
                                         })}
                                     </div>
                                 </div>
                                 {signal ? (
-                                    <div className="dss-signal animated pulse">
-                                        <div className="dss-signal__type">
-                                            <span className="label">ANALYSIS RESULT:</span>
-                                            <span className={`value ${signal.type.toLowerCase()}`}>{signal.type} {signal.prediction}</span>
+                                    <div className='dss-signal animated pulse'>
+                                        <div className='dss-signal__type'>
+                                            <span className='label'>ANALYSIS RESULT:</span>
+                                            <span className={`value ${signal.type.toLowerCase()}`}>
+                                                {signal.type} {signal.prediction}
+                                            </span>
                                         </div>
-                                        <div className="dss-signal__confidence">
-                                            <div className="conf-bar"><div className="conf-fill" style={{ width: `${signal.confidence}%` }} /></div>
-                                            <span className="conf-text">{signal.confidence}% Accuracy</span>
+                                        <div className='dss-signal__confidence'>
+                                            <div className='conf-bar'>
+                                                <div className='conf-fill' style={{ width: `${signal.confidence}%` }} />
+                                            </div>
+                                            <span className='conf-text'>{signal.confidence}% Accuracy</span>
                                         </div>
-                                        <button className="dss-trade-btn" onClick={() => setSelectedSignal(signal)}>LOAD & SELECT STRATEGY</button>
+                                        <button className='dss-trade-btn' onClick={() => setSelectedSignal(signal)}>
+                                            LOAD & SELECT STRATEGY
+                                        </button>
                                     </div>
                                 ) : (
-                                    <div className="dss-no-signal">
-                                        <div className="dss-search-loader" />
-                                        <span>{isCurrentlyScanning ? 'Gathering Intelligence...' : 'Awaiting Matrix...'}</span>
+                                    <div className='dss-no-signal'>
+                                        <div className='dss-search-loader' />
+                                        <span>
+                                            {isCurrentlyScanning ? 'Gathering Intelligence...' : 'Awaiting Matrix...'}
+                                        </span>
                                     </div>
                                 )}
                             </div>
                         );
                     })}
                     {!isScanning && favorableSymbols.length === 0 && (
-                        <div className="dss-empty-state">
-                            <div className="dss-empty-state__icon">📡</div>
+                        <div className='dss-empty-state'>
+                            <div className='dss-empty-state__icon'>📡</div>
                             <h3>No Active Signals</h3>
                             <p>Click 'START SCAN' to begin multi-market intelligence gathering.</p>
                         </div>
@@ -703,51 +736,83 @@ const AIScannerPage: React.FC = observer((): JSX.Element => {
             </div>
 
             {selectedSignal && (
-                <div className="dss-modal-overlay">
-                    <div className="dss-modal">
-                        <div className="dss-modal__header">
+                <div className='dss-modal-overlay'>
+                    <div className='dss-modal'>
+                        <div className='dss-modal__header'>
                             <h3>Initialise AI Strategy</h3>
                             <button onClick={() => setSelectedSignal(null)}>×</button>
                         </div>
-                        <div className="dss-modal__body">
-                            <div className="dss-modal__signal-info">
-                                <span className="market">{selectedSignal.symbol}</span>
-                                <span className={`type ${selectedSignal.type.toLowerCase()}`}>{selectedSignal.type} {selectedSignal.prediction}</span>
+                        <div className='dss-modal__body'>
+                            <div className='dss-modal__signal-info'>
+                                <span className='market'>{selectedSignal.symbol}</span>
+                                <span className={`type ${selectedSignal.type.toLowerCase()}`}>
+                                    {selectedSignal.type} {selectedSignal.prediction}
+                                </span>
                             </div>
-                            <div className="dss-form-grid">
-                                <div className="dss-input-group">
+                            <div className='dss-form-grid'>
+                                <div className='dss-input-group'>
                                     <label>Stake (USD)</label>
-                                    <input type="number" step="0.1" value={stake} onChange={e => setStake(e.target.value)} />
+                                    <input
+                                        type='number'
+                                        step='0.1'
+                                        value={stake}
+                                        onChange={e => setStake(e.target.value)}
+                                    />
                                 </div>
-                                <div className="dss-input-group">
+                                <div className='dss-input-group'>
                                     <label>Martingale Factor</label>
-                                    <input type="number" step="0.1" value={martingale} onChange={e => setMartingale(e.target.value)} />
+                                    <input
+                                        type='number'
+                                        step='0.1'
+                                        value={martingale}
+                                        onChange={e => setMartingale(e.target.value)}
+                                    />
                                 </div>
-                                <div className="dss-input-group">
+                                <div className='dss-input-group'>
                                     <label>Target Profit (USD)</label>
-                                    <input type="number" value={takeProfit} onChange={e => setTakeProfit(e.target.value)} />
+                                    <input
+                                        type='number'
+                                        value={takeProfit}
+                                        onChange={e => setTakeProfit(e.target.value)}
+                                    />
                                 </div>
-                                <div className="dss-input-group">
+                                <div className='dss-input-group'>
                                     <label>Stop Loss (USD)</label>
-                                    <input type="number" value={stopLoss} onChange={e => setStopLoss(e.target.value)} />
+                                    <input type='number' value={stopLoss} onChange={e => setStopLoss(e.target.value)} />
                                 </div>
-                                <div className="dss-input-group">
+                                <div className='dss-input-group'>
                                     <label>Max Trades</label>
-                                    <input type="number" value={maxTrades} onChange={e => setMaxTrades(e.target.value)} />
+                                    <input
+                                        type='number'
+                                        value={maxTrades}
+                                        onChange={e => setMaxTrades(e.target.value)}
+                                    />
                                 </div>
-                                <div className="dss-input-group">
+                                <div className='dss-input-group'>
                                     <label>Number of Wins</label>
-                                    <input type="number" value={targetWins} onChange={e => setTargetWins(e.target.value)} />
+                                    <input
+                                        type='number'
+                                        value={targetWins}
+                                        onChange={e => setTargetWins(e.target.value)}
+                                    />
                                 </div>
-                                <div className="dss-input-group">
+                                <div className='dss-input-group'>
                                     <label>Number of Losses</label>
-                                    <input type="number" value={maxLosses} onChange={e => setMaxLosses(e.target.value)} />
+                                    <input
+                                        type='number'
+                                        value={maxLosses}
+                                        onChange={e => setMaxLosses(e.target.value)}
+                                    />
                                 </div>
                             </div>
                         </div>
-                        <div className="dss-modal__footer">
-                            <button className="cancel-btn" onClick={() => setSelectedSignal(null)}>Cancel</button>
-                            <button className="launch-btn" onClick={handleLaunchBot}>LOAD & RUN STRATEGY →</button>
+                        <div className='dss-modal__footer'>
+                            <button className='cancel-btn' onClick={() => setSelectedSignal(null)}>
+                                Cancel
+                            </button>
+                            <button className='launch-btn' onClick={handleLaunchBot}>
+                                LOAD & RUN STRATEGY →
+                            </button>
                         </div>
                     </div>
                 </div>

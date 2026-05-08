@@ -89,9 +89,9 @@ class APIBase {
     private isContractClosed(contract: Record<string, any> = {}) {
         return Boolean(
             contract.is_sold ||
-                contract.is_expired ||
-                contract.is_settleable ||
-                (contract.status && contract.status !== 'open')
+            contract.is_expired ||
+            contract.is_settleable ||
+            (contract.status && contract.status !== 'open')
         );
     }
 
@@ -163,7 +163,7 @@ class APIBase {
     onsocketclose() {
         console.log('[APIBase] Socket closed, state:', this.api?.connection?.readyState);
         setConnectionStatus(CONNECTION_STATUS.CLOSED);
-        
+
         // Add a slight delay before reconnecting to prevent infinite loops if disconnect triggers close
         setTimeout(() => {
             this.reconnectIfNotConnected();
@@ -202,7 +202,7 @@ class APIBase {
                             if (this.onsocketcloseBound) {
                                 this.api.connection.removeEventListener('close', this.onsocketcloseBound);
                             }
-                            
+
                             ApiHelpers.disposeInstance();
                             setConnectionStatus(CONNECTION_STATUS.CLOSED);
                             this.api.disconnect();
@@ -213,7 +213,7 @@ class APIBase {
 
                     console.log('[APIBase] Requesting new API instance...');
                     this.api = await generateDerivApiInstance(force_create_connection);
-                    
+
                     // Critical: Reset authorization state for the NEW socket instance
                     this.is_authorized = false;
                     this.token = '';
@@ -234,7 +234,7 @@ class APIBase {
                             // Unwrap the { name: 'message', data: { ... } } structure
                             const message = envelope?.data || {};
                             const msg_type = message.msg_type;
-                            
+
                             if (!msg_type || !message[msg_type]) return;
 
                             const data = message[msg_type];
@@ -245,7 +245,11 @@ class APIBase {
                                 const current_account_list = current_auth_data?.account_list || [];
                                 const mapped_account_list = current_account_list.map((account: Record<string, any>) =>
                                     account.loginid === data.loginid
-                                        ? { ...account, balance: data.balance, currency: data.currency || account.currency }
+                                        ? {
+                                              ...account,
+                                              balance: data.balance,
+                                              currency: data.currency || account.currency,
+                                          }
                                         : account
                                 );
                                 const account_exists = mapped_account_list.some(
@@ -366,7 +370,8 @@ class APIBase {
         if (this.is_initializing) return;
 
         const readyState = this.api?.connection?.readyState;
-        if (readyState === undefined || readyState > 1) { // 2: CLOSING, 3: CLOSED, or non-existent
+        if (readyState === undefined || readyState > 1) {
+            // 2: CLOSING, 3: CLOSED, or non-existent
             this.reconnection_attempts += 1;
 
             if (this.reconnection_attempts >= this.MAX_RECONNECTION_ATTEMPTS) {
@@ -387,7 +392,7 @@ class APIBase {
     };
 
     async authorizeAndSubscribe() {
-        if (!this.api || this.is_authorized && this.token === getAccountId()) return;
+        if (!this.api || (this.is_authorized && this.token === getAccountId())) return;
 
         const { token, account_id } = getToken();
         if (!token) {
@@ -401,7 +406,7 @@ class APIBase {
         try {
             console.log('[APIBase] Authorizing...');
             const authResponse = await this.api.authorize(token);
-            
+
             if (authResponse.error) {
                 console.error('[APIBase] Authorization failed:', authResponse.error);
                 throw authResponse.error;
@@ -412,7 +417,9 @@ class APIBase {
             const { balance, error } = await this.api.send({ balance: 1 });
 
             if (error) {
-                const errorMessage = isBackendError(error) ? handleBackendError(error) : error.message || 'Authorization failed';
+                const errorMessage = isBackendError(error)
+                    ? handleBackendError(error)
+                    : error.message || 'Authorization failed';
                 console.error('Authorization error:', errorMessage);
                 setIsAuthorizing(false);
                 return { ...error, localizedMessage: errorMessage };
@@ -441,10 +448,10 @@ class APIBase {
                     ? storedAccounts
                           .filter(a => !a.status || a.status === 'active')
                           .map(a => ({
-                                balance: parseFloat(a.balance) || 0,
-                                currency: a.currency || 'USD',
-                                is_virtual: a.account_type === 'demo' ? 1 : 0,
-                                loginid: a.account_id,
+                              balance: parseFloat(a.balance) || 0,
+                              currency: a.currency || 'USD',
+                              is_virtual: a.account_type === 'demo' ? 1 : 0,
+                              loginid: a.account_id,
                           }))
                     : currentAccount
                       ? [currentAccount]
@@ -504,7 +511,7 @@ class APIBase {
 
     async subscribe() {
         const streamsToSubscribe = ['balance', 'transaction', 'proposal_open_contract'];
-        
+
         for (const streamName of streamsToSubscribe) {
             try {
                 await doUntilDone(

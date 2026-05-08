@@ -7,11 +7,7 @@ const BlocklyLoading = observer(() => {
     const { blockly_store } = useStore();
     const { is_loading } = blockly_store;
 
-    return (
-        <>
-            {is_loading && <AmazingLoader message={'Loading Blockly...'} />}
-        </>
-    );
+    return <>{is_loading && <AmazingLoader message={'Loading Blockly...'} />}</>;
 });
 
 export default BlocklyLoading;

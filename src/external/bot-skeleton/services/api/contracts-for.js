@@ -214,7 +214,9 @@ export default class ContractsFor {
                     const response = await api_base.api.send({ contracts_for: symbol });
 
                     if (response?.error?.code === 'InternalServerError' && attempt < 2) {
-                        console.warn(`[ContractsFor] InternalServerError for ${symbol}. Retrying (Attempt ${attempt + 1})...`);
+                        console.warn(
+                            `[ContractsFor] InternalServerError for ${symbol}. Retrying (Attempt ${attempt + 1})...`
+                        );
                         await new Promise(resolve => setTimeout(resolve, 1500));
                         return sendRequest(attempt + 1);
                     }

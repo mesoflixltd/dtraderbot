@@ -72,7 +72,7 @@ export const useOAuthCallback = (): OAuthCallbackResult => {
         url.searchParams.delete('scope');
         url.searchParams.delete('error');
         url.searchParams.delete('error_description');
-        
+
         let index = 1;
         while (url.searchParams.has(`acct${index}`)) {
             url.searchParams.delete(`acct${index}`);
@@ -80,7 +80,7 @@ export const useOAuthCallback = (): OAuthCallbackResult => {
             url.searchParams.delete(`cur${index}`);
             index++;
         }
-        
+
         window.history.replaceState({}, '', url.toString());
     }, []);
 

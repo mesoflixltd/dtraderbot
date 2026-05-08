@@ -4,11 +4,11 @@ import { observer } from 'mobx-react-lite';
 import ContractResultOverlay from '@/components/contract-result-overlay';
 import { contract_stages } from '@/constants/contract-stage';
 import { useStore } from '@/hooks/useStore';
-import { 
-    LabelPairedPlayLgFillIcon, 
+import {
+    LabelPairedPlayLgFillIcon,
     LabelPairedSquareLgFillIcon,
     LabelPairedXmarkMdBoldIcon,
-    LabelPairedChevronLeftLgBoldIcon
+    LabelPairedChevronLeftLgBoldIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
@@ -31,14 +31,14 @@ const TradeAnimation = observer(({ className, should_show_overlay }: TTradeAnima
     const { isMobile, isDesktop } = useDevice();
 
     const { is_contract_completed, profit } = summary_card;
-    const { 
-        contract_stage, 
-        is_stop_button_visible, 
-        is_stop_button_disabled, 
-        onRunButtonClick, 
+    const {
+        contract_stage,
+        is_stop_button_visible,
+        is_stop_button_disabled,
+        onRunButtonClick,
         onStopBotClick,
         is_run_panel_minimized,
-        setRunPanelMinimized 
+        setRunPanelMinimized,
     } = run_panel;
     const [shouldDisable, setShouldDisable] = React.useState(false);
     const is_unavailable_for_payment_agent = false;
@@ -167,14 +167,13 @@ const TradeAnimation = observer(({ className, should_show_overlay }: TTradeAnima
     };
 
     return (
-        <div className={classNames('animation__wrapper', className, {
-            'animation__wrapper--minimized': is_run_panel_minimized && isDesktop
-        })}>
+        <div
+            className={classNames('animation__wrapper', className, {
+                'animation__wrapper--minimized': is_run_panel_minimized && isDesktop,
+            })}
+        >
             {isDesktop && (
-                <div 
-                    className="animation__minimize-icon"
-                    onClick={() => setRunPanelMinimized(!is_run_panel_minimized)}
-                >
+                <div className='animation__minimize-icon' onClick={() => setRunPanelMinimized(!is_run_panel_minimized)}>
                     {is_run_panel_minimized ? (
                         <LabelPairedChevronLeftLgBoldIcon fill='var(--text-prominent)' width='24px' height='24px' />
                     ) : (

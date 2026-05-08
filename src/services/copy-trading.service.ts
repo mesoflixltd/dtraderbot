@@ -19,10 +19,10 @@ class CopyTradingService {
         try {
             const accountsList = JSON.parse(localStorage.getItem('accountsList') ?? '{}');
             const clientAccounts = JSON.parse(localStorage.getItem('clientAccounts') ?? '{}');
-            
+
             // Find the first non-virtual account
             const realLoginId = Object.keys(clientAccounts).find(loginId => !clientAccounts[loginId].is_virtual);
-            
+
             if (realLoginId && accountsList[realLoginId]) {
                 return accountsList[realLoginId];
             }
@@ -38,7 +38,7 @@ class CopyTradingService {
         }
 
         if (this.is_initializing) {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 const check = setInterval(() => {
                     if (!this.is_initializing) {
                         clearInterval(check);
@@ -82,9 +82,9 @@ class CopyTradingService {
         }
     }
 
-    private async handleCopyTrade({ contract_type, trade_options }: { contract_type: string, trade_options: any }) {
+    private async handleCopyTrade({ contract_type, trade_options }: { contract_type: string; trade_options: any }) {
         console.log('[CopyTrading] Duplicate trade triggered:', contract_type);
-        
+
         try {
             const api = await this.initRealApi();
             if (!api) {
@@ -122,7 +122,6 @@ class CopyTradingService {
 
             console.log('[CopyTrading] Successfully duplicated trade on Real account:', buy_res.buy.transaction_id);
             observer.emit('ui.log.success', `Trade duplicated to Real account: ${buy_res.buy.transaction_id}`);
-            
         } catch (error) {
             console.error('[CopyTrading] Error duplicating trade:', error);
             observer.emit('ui.log.error', `Copytrading error: ${error.message}`);

@@ -13,7 +13,6 @@ export const AppLogo = () => {
     const logoConfig = brandConfig.platform.logo;
     const logoUrl = logoConfig.link_url || '/';
 
-
     return (
         <a href={logoUrl} className='app-header__logo' aria-label={localize('Home')}>
             {/* [AI] Use configurable brand logo from brand.config.json */}
@@ -22,4 +21,3 @@ export const AppLogo = () => {
         </a>
     );
 };
-

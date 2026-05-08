@@ -31,7 +31,9 @@
         padding: 4rem 3rem;
         border-radius: 24px;
         border: 1px solid rgba(77, 166, 255, 0.15);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        box-shadow:
+            0 30px 60px rgba(0, 0, 0, 0.5),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.05);
         z-index: 10;
         animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -77,7 +79,9 @@
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            box-shadow:
+                0 15px 30px rgba(37, 99, 235, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
 

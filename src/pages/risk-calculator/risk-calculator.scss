@@ -13,7 +13,7 @@
     flex-direction: column;
     background: var(--general-main-1);
     color: var(--text-general);
-    overflow: hidden;   // parent clips; scroll-container handles scrolling
+    overflow: hidden; // parent clips; scroll-container handles scrolling
 
     @include mobile-or-tablet-screen {
         height: auto;
@@ -78,7 +78,9 @@
             &--active {
                 background: var(--brand-red-coral);
                 box-shadow: 0 4px 12px rgba(255, 68, 55, 0.3);
-                span { color: white; }
+                span {
+                    color: white;
+                }
             }
 
             &:not(&--active):hover {
@@ -95,10 +97,19 @@
         -webkit-overflow-scrolling: touch;
 
         // Slim custom scrollbar
-        &::-webkit-scrollbar          { width: 5px; }
-        &::-webkit-scrollbar-track    { background: transparent; }
-        &::-webkit-scrollbar-thumb    { background: var(--general-section-2); border-radius: 4px; }
-        &::-webkit-scrollbar-thumb:hover { background: var(--text-less-prominent); }
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: var(--general-section-2);
+            border-radius: 4px;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+            background: var(--text-less-prominent);
+        }
     }
 
     // ─── Content grid ──────────────────────────────────────────────────────
@@ -204,7 +215,9 @@
             width: 100%;
             box-sizing: border-box;
 
-            &:focus { border-color: var(--brand-red-coral); }
+            &:focus {
+                border-color: var(--brand-red-coral);
+            }
         }
     }
 
@@ -242,7 +255,9 @@
         background: linear-gradient(135deg, #7f5cff, #00b4ff);
         color: white;
 
-        &::before { content: '🤖'; }
+        &::before {
+            content: '🤖';
+        }
     }
 
     &__roi {
@@ -273,7 +288,9 @@
         line-height: 1.7;
         color: var(--text-general);
 
-        strong { color: var(--text-prominent); }
+        strong {
+            color: var(--text-prominent);
+        }
     }
 
     &--invalid {
@@ -302,7 +319,9 @@
     text-align: center;
     transition: transform 0.15s ease;
 
-    &:hover { transform: translateY(-2px); }
+    &:hover {
+        transform: translateY(-2px);
+    }
 
     &__value {
         font-size: 1.8rem;
@@ -320,19 +339,25 @@
     &--primary {
         border-color: rgba(127, 92, 255, 0.4);
         background: rgba(127, 92, 255, 0.06);
-        .rc-stat__value { color: #7f5cff; }
+        .rc-stat__value {
+            color: #7f5cff;
+        }
     }
 
     &--accent {
         border-color: rgba(0, 180, 255, 0.4);
         background: rgba(0, 180, 255, 0.06);
-        .rc-stat__value { color: #00b4ff; }
+        .rc-stat__value {
+            color: #00b4ff;
+        }
     }
 
     &--danger {
         border-color: rgba(255, 82, 82, 0.4);
         background: rgba(255, 82, 82, 0.05);
-        .rc-stat__value { color: #ff5252; }
+        .rc-stat__value {
+            color: #ff5252;
+        }
     }
 }
 
@@ -347,12 +372,22 @@
     font-size: 1.3rem;
     font-weight: 700;
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s;
+    transition:
+        opacity 0.2s,
+        transform 0.15s;
     letter-spacing: 0.02em;
 
-    &:hover    { opacity: 0.88; transform: translateY(-1px); }
-    &:active   { transform: translateY(0); }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:hover {
+        opacity: 0.88;
+        transform: translateY(-1px);
+    }
+    &:active {
+        transform: translateY(0);
+    }
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
 }
 
 /* ── Journal add button ─────────────────────────────────────────────────────── */
@@ -401,7 +436,9 @@
         box-sizing: border-box;
         line-height: 1.6;
 
-        &:focus { border-color: var(--brand-red-coral); }
+        &:focus {
+            border-color: var(--brand-red-coral);
+        }
     }
 }
 
@@ -419,7 +456,9 @@
     transition: all 0.2s;
     color: var(--text-general);
 
-    input[type='radio'] { display: none; }
+    input[type='radio'] {
+        display: none;
+    }
 
     &--active {
         border-color: #7f5cff;
@@ -427,7 +466,9 @@
         color: var(--text-prominent);
     }
 
-    &:hover:not(&--active) { background: var(--general-section-2); }
+    &:hover:not(&--active) {
+        background: var(--general-section-2);
+    }
 }
 
 /* ── Journal list ─────────────────────────────────────────────────────────── */
@@ -448,8 +489,13 @@
     border-radius: 1.2rem;
     color: var(--text-less-prominent);
 
-    strong { font-size: 1.4rem; color: var(--text-prominent); }
-    span   { font-size: 1.2rem; }
+    strong {
+        font-size: 1.4rem;
+        color: var(--text-prominent);
+    }
+    span {
+        font-size: 1.2rem;
+    }
 }
 
 .rc-journal-item {
@@ -529,19 +575,38 @@
 
 /* ── Animations ────────────────────────────────────────────────────────────── */
 @keyframes rc-slide-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes pulse-scanner {
-    0% { transform: scale(0.95); opacity: 0.5; }
-    50% { transform: scale(1.05); opacity: 0.9; }
-    100% { transform: scale(0.95); opacity: 0.5; }
+    0% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
 }
 
 @keyframes progress-loading {
-    0% { width: 0%; }
-    100% { width: 100%; }
+    0% {
+        width: 0%;
+    }
+    100% {
+        width: 100%;
+    }
 }
 
 /* ── Analytics & Diagnostics Dashboard Styles ───────────────────────────────── */
@@ -775,7 +840,7 @@
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
-        
+
         &__left {
             flex-direction: column;
             align-items: flex-start;
@@ -960,7 +1025,9 @@
     display: flex;
     align-items: center;
     gap: 1.2rem;
-    transition: transform 0.2s, border-color 0.2s;
+    transition:
+        transform 0.2s,
+        border-color 0.2s;
 
     &:hover {
         transform: translateY(-2px);
@@ -992,8 +1059,12 @@
         font-family: 'Roboto Mono', monospace;
         color: var(--text-prominent);
 
-        &--gain { color: #2ecc71 !important; }
-        &--loss { color: #e74c3c !important; }
+        &--gain {
+            color: #2ecc71 !important;
+        }
+        &--loss {
+            color: #e74c3c !important;
+        }
     }
 
     &--secondary {
@@ -1012,7 +1083,7 @@
     @include mobile-screen {
         padding: 1rem;
         gap: 0.8rem;
-        
+
         &__icon {
             font-size: 2rem;
         }
@@ -1116,8 +1187,12 @@
         color: var(--text-prominent);
     }
 
-    .text-success { color: #2ecc71; }
-    .text-danger { color: #e74c3c; }
+    .text-success {
+        color: #2ecc71;
+    }
+    .text-danger {
+        color: #e74c3c;
+    }
 }
 
 .analytics-progress-wrapper {
@@ -1177,12 +1252,16 @@
 
     &--win {
         border-color: rgba(46, 204, 113, 0.2);
-        .streak-tile__num { color: #2ecc71; }
+        .streak-tile__num {
+            color: #2ecc71;
+        }
     }
 
     &--loss {
         border-color: rgba(231, 76, 60, 0.2);
-        .streak-tile__num { color: #e74c3c; }
+        .streak-tile__num {
+            color: #e74c3c;
+        }
     }
 }
 
@@ -1204,8 +1283,12 @@
         font-family: 'Roboto Mono', monospace;
     }
 
-    .text-success { color: #2ecc71; }
-    .text-danger { color: #e74c3c; }
+    .text-success {
+        color: #2ecc71;
+    }
+    .text-danger {
+        color: #e74c3c;
+    }
 }
 
 // Analytics Logs Tables
@@ -1280,10 +1363,19 @@
         }
     }
 
-    .text-right { text-align: right; }
-    .text-mono { font-family: 'Roboto Mono', monospace; font-weight: 600; }
-    .text-success { color: #2ecc71; }
-    .text-danger { color: #e74c3c; }
+    .text-right {
+        text-align: right;
+    }
+    .text-mono {
+        font-family: 'Roboto Mono', monospace;
+        font-weight: 600;
+    }
+    .text-success {
+        color: #2ecc71;
+    }
+    .text-danger {
+        color: #e74c3c;
+    }
 
     .log-desc-col {
         max-width: 250px;
@@ -1301,7 +1393,8 @@
             display: none;
         }
 
-        th, td {
+        th,
+        td {
             padding: 0.8rem 0.4rem;
         }
     }
@@ -1334,4 +1427,3 @@
         color: #f39c12;
     }
 }
-

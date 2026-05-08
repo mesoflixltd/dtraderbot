@@ -9,34 +9,47 @@ import { observer as globalObserver } from '@/external/bot-skeleton/utils/observ
 import './bulk-trading.scss';
 
 // ── Constants (Synced with DCircles) ──────────────────────────────────────────
-const RING_R       = 38;
-const RING_C       = 2 * Math.PI * RING_R;
+const RING_R = 38;
+const RING_C = 2 * Math.PI * RING_R;
 const RING_MAX_PCT = 16;
 
 const FALLBACK_SYMBOLS = [
-    { symbol: 'R_10',   name: 'Volatility 10 Index',      pip: 3 },
-    { symbol: 'R_25',   name: 'Volatility 25 Index',      pip: 3 },
-    { symbol: 'R_50',   name: 'Volatility 50 Index',      pip: 2 },
-    { symbol: 'R_75',   name: 'Volatility 75 Index',      pip: 2 },
-    { symbol: 'R_100',  name: 'Volatility 100 Index',     pip: 2 },
+    { symbol: 'R_10', name: 'Volatility 10 Index', pip: 3 },
+    { symbol: 'R_25', name: 'Volatility 25 Index', pip: 3 },
+    { symbol: 'R_50', name: 'Volatility 50 Index', pip: 2 },
+    { symbol: 'R_75', name: 'Volatility 75 Index', pip: 2 },
+    { symbol: 'R_100', name: 'Volatility 100 Index', pip: 2 },
     { symbol: '1HZ10V', name: 'Volatility 10 (1s) Index', pip: 3 },
     { symbol: '1HZ25V', name: 'Volatility 25 (1s) Index', pip: 3 },
     { symbol: '1HZ50V', name: 'Volatility 50 (1s) Index', pip: 2 },
     { symbol: '1HZ75V', name: 'Volatility 75 (1s) Index', pip: 2 },
     { symbol: '1HZ100V', name: 'Volatility 100 (1s) Index', pip: 2 },
 ];
-const KNOWN_PIPS: Record<string, number> = Object.fromEntries(
-    FALLBACK_SYMBOLS.map(s => [s.symbol, s.pip])
-);
+const KNOWN_PIPS: Record<string, number> = Object.fromEntries(FALLBACK_SYMBOLS.map(s => [s.symbol, s.pip]));
 
 type TTradeType = 'over_under' | 'even_odd' | 'rise_fall' | 'matches_differs';
 type THeat = 'hot' | 'warm' | 'neutral' | 'cold';
 
 const TRADE_TYPES: { id: TTradeType; label: string; icon: string; desc: string }[] = [
-    { id: 'over_under',       label: 'Over / Under',       icon: '📈', desc: 'Predict whether the last digit will be over or under a chosen digit' },
-    { id: 'even_odd',         label: 'Even / Odd',         icon: '⚖️', desc: 'Predict whether the last digit will be even or odd' },
-    { id: 'rise_fall',        label: 'Rise / Fall',        icon: '🔼', desc: 'Predict whether the next tick will be higher or lower' },
-    { id: 'matches_differs',  label: 'Matches / Differs',  icon: '🎯', desc: 'Predict whether the last digit will match or differ from a chosen digit' },
+    {
+        id: 'over_under',
+        label: 'Over / Under',
+        icon: '📈',
+        desc: 'Predict whether the last digit will be over or under a chosen digit',
+    },
+    { id: 'even_odd', label: 'Even / Odd', icon: '⚖️', desc: 'Predict whether the last digit will be even or odd' },
+    {
+        id: 'rise_fall',
+        label: 'Rise / Fall',
+        icon: '🔼',
+        desc: 'Predict whether the next tick will be higher or lower',
+    },
+    {
+        id: 'matches_differs',
+        label: 'Matches / Differs',
+        icon: '🎯',
+        desc: 'Predict whether the last digit will match or differ from a chosen digit',
+    },
 ];
 
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -50,7 +63,7 @@ const getDigit = (price: number, pip: number) => {
 const getHeat = (pct: number): THeat => {
     if (pct >= 12.5) return 'hot';
     if (pct >= 10.5) return 'warm';
-    if (pct >= 8.5)  return 'neutral';
+    if (pct >= 8.5) return 'neutral';
     return 'cold';
 };
 
@@ -77,8 +90,8 @@ interface IPopupData {
 
 // ── useAuthWS hook ─────────────────────────────────────────────────────────────
 function useAuthWS() {
-    const wsRef         = useRef<WebSocket | null>(null);
-    const [wsUrl, setWsUrl]   = useState<string | null>(null);
+    const wsRef = useRef<WebSocket | null>(null);
+    const [wsUrl, setWsUrl] = useState<string | null>(null);
     const [status, setStatus] = useState<'connecting' | 'connected' | 'error' | 'unauthenticated'>('connecting');
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
@@ -120,18 +133,21 @@ function useAuthWS() {
                 }
             }
         })();
-        return () => { cancelled = true; };
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     return { wsRef, wsUrl, status, setStatus, isAuthenticated };
 }
 
-
 const BulkTradingPage: React.FC = observer(() => {
-    const [tradeType,   setTradeType]   = useState<TTradeType>(() => (localStorage.getItem('bulk_trade_type') as TTradeType) ?? 'over_under');
-    const [symbol,      setSymbol]      = useState<string>(() => localStorage.getItem('bulk_symbol') ?? '1HZ10V');
-    const [tickCount,   setTickCount]   = useState<number>(() => Number(localStorage.getItem('bulk_ticks')) || 1000);
-    const [tickInput,   setTickInput]   = useState<string>(() => localStorage.getItem('bulk_ticks') ?? '1000');
+    const [tradeType, setTradeType] = useState<TTradeType>(
+        () => (localStorage.getItem('bulk_trade_type') as TTradeType) ?? 'over_under'
+    );
+    const [symbol, setSymbol] = useState<string>(() => localStorage.getItem('bulk_symbol') ?? '1HZ10V');
+    const [tickCount, setTickCount] = useState<number>(() => Number(localStorage.getItem('bulk_ticks')) || 1000);
+    const [tickInput, setTickInput] = useState<string>(() => localStorage.getItem('bulk_ticks') ?? '1000');
 
     // ── Trading Config State ──
     const [stake, setStake] = useState<string>('0.35');
@@ -142,19 +158,21 @@ const BulkTradingPage: React.FC = observer(() => {
     const [runMode, setRunMode] = useState<'once' | 'frequent'>('once');
     const [resultsTab, setResultsTab] = useState<'transactions' | 'analytics'>('transactions');
 
-    const [priceWindow,  setPriceWindow]  = useState<number[]>([]);
+    const [priceWindow, setPriceWindow] = useState<number[]>([]);
     const [digitsWindow, setDigitsWindow] = useState<number[]>([]);
-    const [livePrice,  setLivePrice]  = useState<number | null>(null);
-    const [lastDigit,  setLastDigit]  = useState<number | null>(null);
-    const [loading,    setLoading]    = useState(true);
-    const [executing,  setExecuting]  = useState(false);
+    const [livePrice, setLivePrice] = useState<number | null>(null);
+    const [lastDigit, setLastDigit] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [executing, setExecuting] = useState(false);
 
     // ── Persistence ──
     const [trades, setTrades] = useState<ITradeResult[]>(() => {
         try {
             const saved = localStorage.getItem('bt_trades');
             return saved ? JSON.parse(saved) : [];
-        } catch (e) { return []; }
+        } catch (e) {
+            return [];
+        }
     });
 
     useEffect(() => {
@@ -163,42 +181,51 @@ const BulkTradingPage: React.FC = observer(() => {
 
     const [popup, setPopup] = useState<{ data: IPopupData; timeout?: any } | null>(null);
 
-    const symbolRef    = useRef(symbol);
+    const symbolRef = useRef(symbol);
     const tickCountRef = useRef(tickCount);
-    const pipRef       = useRef<Record<string, number>>({ ...KNOWN_PIPS });
-    const subIdRef     = useRef<string | null>(null);
-    const reconnTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const flashTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const destroyed    = useRef(false);
+    const pipRef = useRef<Record<string, number>>({ ...KNOWN_PIPS });
+    const subIdRef = useRef<string | null>(null);
+    const reconnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const destroyed = useRef(false);
 
-    useEffect(() => { symbolRef.current   = symbol;    }, [symbol]);
-    useEffect(() => { tickCountRef.current = tickCount; }, [tickCount]);
-    useEffect(() => { localStorage.setItem('bulk_trade_type', tradeType); }, [tradeType]);
+    useEffect(() => {
+        symbolRef.current = symbol;
+    }, [symbol]);
+    useEffect(() => {
+        tickCountRef.current = tickCount;
+    }, [tickCount]);
+    useEffect(() => {
+        localStorage.setItem('bulk_trade_type', tradeType);
+    }, [tradeType]);
 
     const { wsRef, wsUrl, status, setStatus, isAuthenticated } = useAuthWS();
 
-    const subscribe = useCallback((sym: string) => {
-        const ws = wsRef.current;
-        if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    const subscribe = useCallback(
+        (sym: string) => {
+            const ws = wsRef.current;
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
 
-        if (subIdRef.current) {
-            ws.send(JSON.stringify({ forget: subIdRef.current }));
-            subIdRef.current = null;
-        }
-        setLoading(true);
-        setPriceWindow([]);
-        setDigitsWindow([]);
+            if (subIdRef.current) {
+                ws.send(JSON.stringify({ forget: subIdRef.current }));
+                subIdRef.current = null;
+            }
+            setLoading(true);
+            setPriceWindow([]);
+            setDigitsWindow([]);
 
-        const req = {
-            ticks_history: sym,
-            end:           'latest',
-            count:         tickCountRef.current,
-            style:         'ticks',
-            subscribe:     1,
-            req_id:        1001,
-        };
-        ws.send(JSON.stringify(req));
-    }, [wsRef]);
+            const req = {
+                ticks_history: sym,
+                end: 'latest',
+                count: tickCountRef.current,
+                style: 'ticks',
+                subscribe: 1,
+                req_id: 1001,
+            };
+            ws.send(JSON.stringify(req));
+        },
+        [wsRef]
+    );
 
     useEffect(() => {
         if (!wsUrl) return;
@@ -224,7 +251,7 @@ const BulkTradingPage: React.FC = observer(() => {
                     if (msg_type === 'history' && msg.req_id === 1001) {
                         subIdRef.current = msg.subscription?.id ?? null;
                         const prices: number[] = (msg.history?.prices ?? []).map(Number);
-                        
+
                         if (msg.pip_size != null) {
                             pipRef.current = { ...pipRef.current, [symbolRef.current]: Number(msg.pip_size) };
                         }
@@ -248,15 +275,19 @@ const BulkTradingPage: React.FC = observer(() => {
                         }
 
                         const quote: number | undefined =
-                            t.quote !== undefined ? Number(t.quote)  :
-                            t.ask   !== undefined ? Number(t.ask)    :
-                            t.bid   !== undefined ? Number(t.bid)    : undefined;
+                            t.quote !== undefined
+                                ? Number(t.quote)
+                                : t.ask !== undefined
+                                  ? Number(t.ask)
+                                  : t.bid !== undefined
+                                    ? Number(t.bid)
+                                    : undefined;
 
                         const tickSym = t.symbol ?? t.underlying ?? '';
                         const sameStream = !tickSym || tickSym === symbolRef.current || tickSubId === subIdRef.current;
 
                         if (quote !== undefined && sameStream) {
-                            const pip  = pipRef.current[symbolRef.current] ?? 2;
+                            const pip = pipRef.current[symbolRef.current] ?? 2;
                             const digit = getDigit(quote, pip);
                             setPriceWindow(prev => {
                                 const nw = [...prev, quote];
@@ -278,22 +309,25 @@ const BulkTradingPage: React.FC = observer(() => {
                     if (msg_type === 'proposal_open_contract') {
                         const poc = msg.proposal_open_contract;
                         if (poc) {
-                            setTrades(prev => prev.map(tr => {
-                                if (String(tr.contract_id) === String(poc.contract_id)) {
-                                    return {
-                                        ...tr,
-                                        status: poc.status === 'won' ? 'won' : (poc.status === 'lost' ? 'lost' : 'open'),
-                                        exit: poc.exit_tick_display_value ?? poc.exit_tick ?? tr.exit,
-                                        profit: Number(poc.profit ?? 0)
-                                    };
-                                }
-                                return tr;
-                            }));
+                            setTrades(prev =>
+                                prev.map(tr => {
+                                    if (String(tr.contract_id) === String(poc.contract_id)) {
+                                        return {
+                                            ...tr,
+                                            status:
+                                                poc.status === 'won' ? 'won' : poc.status === 'lost' ? 'lost' : 'open',
+                                            exit: poc.exit_tick_display_value ?? poc.exit_tick ?? tr.exit,
+                                            profit: Number(poc.profit ?? 0),
+                                        };
+                                    }
+                                    return tr;
+                                })
+                            );
                         }
                     }
 
                     if (msg.error) setLoading(false);
-                } catch (err) { }
+                } catch (err) {}
             };
 
             ws.onerror = () => {
@@ -324,7 +358,7 @@ const BulkTradingPage: React.FC = observer(() => {
             destroyed.current = true;
             document.removeEventListener('visibilitychange', onFocus);
             if (reconnTimer.current) clearTimeout(reconnTimer.current);
-            if (flashTimer.current)  clearTimeout(flashTimer.current);
+            if (flashTimer.current) clearTimeout(flashTimer.current);
             wsRef.current?.close();
         };
     }, [wsUrl, subscribe, setStatus, wsRef]);
@@ -337,37 +371,43 @@ const BulkTradingPage: React.FC = observer(() => {
     useEffect(() => {
         const handleBotContract = (poc: any) => {
             if (poc) {
-                console.log(`[BulkTrade] Received global POC for ${poc.contract_id}, is_sold: ${poc.is_sold}, status: ${poc.status}`);
-                setTrades(prev => prev.map(tr => {
-                    if (String(tr.contract_id) === String(poc.contract_id)) {
-                        const isSold = !!poc.is_sold;
-                        const finalStatus = isSold ? (poc.status === 'won' ? 'won' : 'lost') : 'open';
-                        
-                        return {
-                            ...tr,
-                            status: finalStatus,
-                            exit: poc.exit_tick_display_value ?? poc.exit_tick ?? poc.sell_price ?? tr.exit,
-                            profit: Number(poc.profit_display_value ?? poc.profit ?? 0)
-                        };
-                    }
-                    return tr;
-                }));
+                console.log(
+                    `[BulkTrade] Received global POC for ${poc.contract_id}, is_sold: ${poc.is_sold}, status: ${poc.status}`
+                );
+                setTrades(prev =>
+                    prev.map(tr => {
+                        if (String(tr.contract_id) === String(poc.contract_id)) {
+                            const isSold = !!poc.is_sold;
+                            const finalStatus = isSold ? (poc.status === 'won' ? 'won' : 'lost') : 'open';
+
+                            return {
+                                ...tr,
+                                status: finalStatus,
+                                exit: poc.exit_tick_display_value ?? poc.exit_tick ?? poc.sell_price ?? tr.exit,
+                                profit: Number(poc.profit_display_value ?? poc.profit ?? 0),
+                            };
+                        }
+                        return tr;
+                    })
+                );
             }
         };
 
         const handleBotTransaction = (tx: any) => {
             if (tx) {
                 if (tx.action === 'sell') {
-                    setTrades(prev => prev.map(tr => {
-                        if (String(tr.contract_id) === String(tx.contract_id)) {
-                            return {
-                                ...tr,
-                                status: tx.amount > 0 ? 'won' : 'lost',
-                                profit: Number(tx.amount || 0)
-                            };
-                        }
-                        return tr;
-                    }));
+                    setTrades(prev =>
+                        prev.map(tr => {
+                            if (String(tr.contract_id) === String(tx.contract_id)) {
+                                return {
+                                    ...tr,
+                                    status: tx.amount > 0 ? 'won' : 'lost',
+                                    profit: Number(tx.amount || 0),
+                                };
+                            }
+                            return tr;
+                        })
+                    );
                 }
             }
         };
@@ -412,9 +452,9 @@ const BulkTradingPage: React.FC = observer(() => {
                 barrier = prediction.toString();
             }
 
-// 2. Execute Direct Batch Buy (Bypasses proposal/caching issues)
+            // 2. Execute Direct Batch Buy (Bypasses proposal/caching issues)
             console.log(`[BulkTrade] Executing direct batch-buy for ${bulkCount} positions...`);
-            
+
             const buyPromises = [];
             for (let i = 0; i < bulkCount; i++) {
                 // We use "buy: 1" with parameters to bypass the need for a proposal ID
@@ -429,10 +469,10 @@ const BulkTradingPage: React.FC = observer(() => {
                         duration: 1,
                         duration_unit: 't',
                         underlying_symbol: currentSymbol,
-                        barrier: barrier ? barrier.toString() : undefined
+                        barrier: barrier ? barrier.toString() : undefined,
                     },
                     subscribe: 1,
-                    req_id: 3000 + i
+                    req_id: 3000 + i,
                 };
                 buyPromises.push(api_base.api.send(buyReq));
             }
@@ -440,34 +480,37 @@ const BulkTradingPage: React.FC = observer(() => {
             console.log(`[BulkTrade] Sending ${bulkCount} parallel buy requests...`);
             const buyResponses = await Promise.all(buyPromises);
 
-            const newTrades: ITradeResult[] = buyResponses.map((res, i) => {
-                if (res.error) {
-                    console.error(`[BulkTrade] Position ${i + 1} failed:`, res.error.message);
-                    return null;
-                }
-                const buy = res.buy;
-                console.log(`[BulkTrade] ✅ Position ${i + 1} Success! Contract: ${buy.contract_id}`);
-                return {
-                    id: `bulk-${Date.now()}-${i}`,
-                    contract_id: buy.contract_id,
-                    type: side.toUpperCase(),
-                    symbol: currentSymbol,
-                    status: 'open',
-                    entry: livePrice?.toFixed(pipRef.current[currentSymbol] ?? 2) ?? '—',
-                    profit: 0,
-                    stake: currentStake,
-                    time: Date.now()
-                } as ITradeResult;
-            }).filter(t => t !== null) as ITradeResult[];
+            const newTrades: ITradeResult[] = buyResponses
+                .map((res, i) => {
+                    if (res.error) {
+                        console.error(`[BulkTrade] Position ${i + 1} failed:`, res.error.message);
+                        return null;
+                    }
+                    const buy = res.buy;
+                    console.log(`[BulkTrade] ✅ Position ${i + 1} Success! Contract: ${buy.contract_id}`);
+                    return {
+                        id: `bulk-${Date.now()}-${i}`,
+                        contract_id: buy.contract_id,
+                        type: side.toUpperCase(),
+                        symbol: currentSymbol,
+                        status: 'open',
+                        entry: livePrice?.toFixed(pipRef.current[currentSymbol] ?? 2) ?? '—',
+                        profit: 0,
+                        stake: currentStake,
+                        time: Date.now(),
+                    } as ITradeResult;
+                })
+                .filter(t => t !== null) as ITradeResult[];
 
             setTrades(prev => [...newTrades, ...prev]);
 
             if (newTrades.length < bulkCount) {
                 console.warn(`[BulkTrade] Partial success: ${newTrades.length}/${bulkCount} positions filled.`);
             } else {
-                console.log(`[BulkTrade] 🎉 Bulk Execution Complete. ${newTrades.length} positions filled simultaneously.`);
+                console.log(
+                    `[BulkTrade] 🎉 Bulk Execution Complete. ${newTrades.length} positions filled simultaneously.`
+                );
             }
-
         } catch (err: any) {
             console.error('[BulkTrade] FATAL ERROR:', err);
             alert(`Execution Error: ${err.message || 'Check Console for details'}`);
@@ -476,12 +519,15 @@ const BulkTradingPage: React.FC = observer(() => {
         }
     };
 
-    const handleSymbolChange = useCallback((sym: string) => {
-        setSymbol(sym);
-        symbolRef.current = sym;
-        localStorage.setItem('bulk_symbol', sym);
-        subscribe(sym);
-    }, [subscribe]);
+    const handleSymbolChange = useCallback(
+        (sym: string) => {
+            setSymbol(sym);
+            symbolRef.current = sym;
+            localStorage.setItem('bulk_symbol', sym);
+            subscribe(sym);
+        },
+        [subscribe]
+    );
 
     const handleTickCountChange = useCallback(() => {
         const val = tickInput.trim();
@@ -508,18 +554,19 @@ const BulkTradingPage: React.FC = observer(() => {
         const pct = freq.map(f => (n > 0 ? (f / n) * 100 : 0));
 
         const evenCount = digitsWindow.filter(d => d % 2 === 0).length;
-        const oddCount  = n - evenCount;
-        const evenPct   = (evenCount / n) * 100;
-        const oddPct    = (oddCount  / n) * 100;
+        const oddCount = n - evenCount;
+        const evenPct = (evenCount / n) * 100;
+        const oddPct = (oddCount / n) * 100;
 
-        let rises = 0, falls = 0;
+        let rises = 0,
+            falls = 0;
         for (let i = 1; i < priceWindow.length; i++) {
             if (priceWindow[i] > priceWindow[i - 1]) rises++;
             else if (priceWindow[i] < priceWindow[i - 1]) falls++;
         }
         const total_rf = rises + falls || 1;
-        const risePct  = (rises / total_rf) * 100;
-        const fallPct  = (falls / total_rf) * 100;
+        const risePct = (rises / total_rf) * 100;
+        const fallPct = (falls / total_rf) * 100;
 
         return { freq, pct, evenCount, oddCount, evenPct, oddPct, rises, falls, risePct, fallPct };
     }, [digitsWindow, priceWindow]);
@@ -551,13 +598,13 @@ const BulkTradingPage: React.FC = observer(() => {
             <div className='bt-section-header'>
                 <h3>⚡ Trade Configuration</h3>
                 <div className='bt-run-mode'>
-                    <button 
+                    <button
                         className={`bt-mode-btn ${runMode === 'once' ? 'active' : ''}`}
                         onClick={() => setRunMode('once')}
                     >
                         Once
                     </button>
-                    <button 
+                    <button
                         className={`bt-mode-btn ${runMode === 'frequent' ? 'active' : ''}`}
                         onClick={() => setRunMode('frequent')}
                     >
@@ -565,7 +612,9 @@ const BulkTradingPage: React.FC = observer(() => {
                     </button>
                     <div className='bt-live-wallet'>
                         <span className='bt-wallet-label'>Balance:</span>
-                        <span className='bt-wallet-value'>{balance} {currency}</span>
+                        <span className='bt-wallet-value'>
+                            {balance} {currency}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -576,8 +625,8 @@ const BulkTradingPage: React.FC = observer(() => {
                         <label>Target Digit (0-9)</label>
                         <div className='bt-digit-selector'>
                             {DIGITS.map(d => (
-                                <button 
-                                    key={d} 
+                                <button
+                                    key={d}
                                     className={prediction === d ? 'active' : ''}
                                     onClick={() => setPrediction(d)}
                                 >
@@ -595,7 +644,13 @@ const BulkTradingPage: React.FC = observer(() => {
 
                 <div className='bt-config-item'>
                     <label>Bulk Positions</label>
-                    <input type='number' value={bulkCount} min={1} max={10} onChange={e => setBulkCount(Number(e.target.value))} />
+                    <input
+                        type='number'
+                        value={bulkCount}
+                        min={1}
+                        max={10}
+                        onChange={e => setBulkCount(Number(e.target.value))}
+                    />
                 </div>
 
                 <div className='bt-config-item'>
@@ -612,40 +667,72 @@ const BulkTradingPage: React.FC = observer(() => {
             <div className='bt-action-buttons'>
                 {tradeType === 'over_under' && (
                     <div className='bt-btn-row'>
-                        <button className='bt-exec-btn bt-exec-btn--over' onClick={() => executeBulkTrade('over')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--over'
+                            onClick={() => executeBulkTrade('over')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : `BULK OVER ${prediction}`}
                         </button>
-                        <button className='bt-exec-btn bt-exec-btn--under' onClick={() => executeBulkTrade('under')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--under'
+                            onClick={() => executeBulkTrade('under')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : `BULK UNDER ${prediction}`}
                         </button>
                     </div>
                 )}
                 {tradeType === 'even_odd' && (
                     <div className='bt-btn-row'>
-                        <button className='bt-exec-btn bt-exec-btn--even' onClick={() => executeBulkTrade('even')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--even'
+                            onClick={() => executeBulkTrade('even')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : 'BULK EVEN'}
                         </button>
-                        <button className='bt-exec-btn bt-exec-btn--odd' onClick={() => executeBulkTrade('odd')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--odd'
+                            onClick={() => executeBulkTrade('odd')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : 'BULK ODD'}
                         </button>
                     </div>
                 )}
                 {tradeType === 'rise_fall' && (
                     <div className='bt-btn-row'>
-                        <button className='bt-exec-btn bt-exec-btn--rise' onClick={() => executeBulkTrade('rise')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--rise'
+                            onClick={() => executeBulkTrade('rise')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : 'BULK RISE'}
                         </button>
-                        <button className='bt-exec-btn bt-exec-btn--fall' onClick={() => executeBulkTrade('fall')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--fall'
+                            onClick={() => executeBulkTrade('fall')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : 'BULK FALL'}
                         </button>
                     </div>
                 )}
                 {tradeType === 'matches_differs' && (
                     <div className='bt-btn-row'>
-                        <button className='bt-exec-btn bt-exec-btn--matches' onClick={() => executeBulkTrade('matches')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--matches'
+                            onClick={() => executeBulkTrade('matches')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : `BULK MATCH ${prediction}`}
                         </button>
-                        <button className='bt-exec-btn bt-exec-btn--differs' onClick={() => executeBulkTrade('differs')} disabled={executing}>
+                        <button
+                            className='bt-exec-btn bt-exec-btn--differs'
+                            onClick={() => executeBulkTrade('differs')}
+                            disabled={executing}
+                        >
                             {executing ? '...' : `BULK DIFFER ${prediction}`}
                         </button>
                     </div>
@@ -664,14 +751,22 @@ const BulkTradingPage: React.FC = observer(() => {
             <div className='bt-results-panel'>
                 <div className='bt-results-header'>
                     <div className='bt-results-tabs'>
-                        <button className={resultsTab === 'transactions' ? 'active' : ''} onClick={() => setResultsTab('transactions')}>
+                        <button
+                            className={resultsTab === 'transactions' ? 'active' : ''}
+                            onClick={() => setResultsTab('transactions')}
+                        >
                             Transactions
                         </button>
-                        <button className={resultsTab === 'analytics' ? 'active' : ''} onClick={() => setResultsTab('analytics')}>
+                        <button
+                            className={resultsTab === 'analytics' ? 'active' : ''}
+                            onClick={() => setResultsTab('analytics')}
+                        >
                             Analytics & Insights
                         </button>
                     </div>
-                    <button className='bt-clear-btn' onClick={() => setTrades([])}>Clear Storage</button>
+                    <button className='bt-clear-btn' onClick={() => setTrades([])}>
+                        Clear Storage
+                    </button>
                 </div>
 
                 {resultsTab === 'transactions' ? (
@@ -698,7 +793,11 @@ const BulkTradingPage: React.FC = observer(() => {
                                         <td>{trade.stake}</td>
                                         <td>{trade.entry}</td>
                                         <td>{trade.exit || '—'}</td>
-                                        <td className={trade.profit > 0 ? 'txt-profit' : (trade.profit < 0 ? 'txt-loss' : '')}>
+                                        <td
+                                            className={
+                                                trade.profit > 0 ? 'txt-profit' : trade.profit < 0 ? 'txt-loss' : ''
+                                            }
+                                        >
                                             {trade.profit > 0 ? `+${trade.profit.toFixed(2)}` : trade.profit.toFixed(2)}
                                         </td>
                                         <td>
@@ -708,7 +807,13 @@ const BulkTradingPage: React.FC = observer(() => {
                                         </td>
                                     </tr>
                                 ))}
-                                {!trades.length && <tr><td colSpan={8} align='center'>No bulk orders placed yet.</td></tr>}
+                                {!trades.length && (
+                                    <tr>
+                                        <td colSpan={8} align='center'>
+                                            No bulk orders placed yet.
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -735,17 +840,22 @@ const BulkTradingPage: React.FC = observer(() => {
                             </div>
                         </div>
                         <div className='bt-insights'>
-                             <h4>💡 Session Insights</h4>
-                             <p>You are performing best on {tradeType.replace('_', ' ')} with a win rate of {winRate}%.</p>
-                             <div className='bt-spark-chart'>
-                                {trades.slice(0, 20).reverse().map((t, idx) => (
-                                    <div 
-                                        key={idx} 
-                                        className={`bt-spark-bar ${t.status}`}
-                                        style={{ height: `${Math.abs(t.profit) * 100}%` }}
-                                    />
-                                ))}
-                             </div>
+                            <h4>💡 Session Insights</h4>
+                            <p>
+                                You are performing best on {tradeType.replace('_', ' ')} with a win rate of {winRate}%.
+                            </p>
+                            <div className='bt-spark-chart'>
+                                {trades
+                                    .slice(0, 20)
+                                    .reverse()
+                                    .map((t, idx) => (
+                                        <div
+                                            key={idx}
+                                            className={`bt-spark-bar ${t.status}`}
+                                            style={{ height: `${Math.abs(t.profit) * 100}%` }}
+                                        />
+                                    ))}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -760,15 +870,15 @@ const BulkTradingPage: React.FC = observer(() => {
                 <span>Digit Distribution</span>
                 <span className='bt-analysis__subtitle'>Last {digitsWindow.length} ticks</span>
             </div>
-            
+
             <div className='bt-dc-grid'>
                 {DIGITS.map(d => {
-                    const pct       = stats?.pct[d]  ?? 0;
-                    const freq      = stats?.freq[d] ?? 0;
-                    const heat      = getHeat(pct);
+                    const pct = stats?.pct[d] ?? 0;
+                    const freq = stats?.freq[d] ?? 0;
+                    const heat = getHeat(pct);
                     const isHottest = d === hottestDigit;
-                    const isLowest  = d === coldestDigit;
-                    const isFlash   = d === lastDigit;
+                    const isLowest = d === coldestDigit;
+                    const isFlash = d === lastDigit;
 
                     return (
                         <div
@@ -777,22 +887,26 @@ const BulkTradingPage: React.FC = observer(() => {
                                 'bt-dc-card',
                                 `bt-dc-card--${heat}`,
                                 isHottest ? 'bt-dc-card--highest' : '',
-                                isLowest  ? 'bt-dc-card--lowest'  : '',
-                                isFlash   ? 'bt-dc-card--flash'   : '',
+                                isLowest ? 'bt-dc-card--lowest' : '',
+                                isFlash ? 'bt-dc-card--flash' : '',
                             ].join(' ')}
-                            onClick={() => triggerPopup({ 
-                                id: `digit-${d}`, 
-                                title: `Digit ${d}`, 
-                                value: `${pct.toFixed(2)}%`, 
-                                extra: `${freq} counts` 
-                            })}
+                            onClick={() =>
+                                triggerPopup({
+                                    id: `digit-${d}`,
+                                    title: `Digit ${d}`,
+                                    value: `${pct.toFixed(2)}%`,
+                                    extra: `${freq} counts`,
+                                })
+                            }
                         >
                             {isFlash && <div className='bt-dc-card__cursor'>▼</div>}
                             <div className='bt-dc-card__ring'>
                                 <svg viewBox='0 0 100 100' className='bt-dc-card__svg'>
                                     <circle cx='50' cy='50' r={RING_R} className='bt-dc-card__track' />
                                     <circle
-                                        cx='50' cy='50' r={RING_R}
+                                        cx='50'
+                                        cy='50'
+                                        r={RING_R}
                                         className='bt-dc-card__arc'
                                         strokeDasharray={RING_C}
                                         strokeDashoffset={RING_C * (1 - Math.min(pct / RING_MAX_PCT, 1))}
@@ -810,27 +924,32 @@ const BulkTradingPage: React.FC = observer(() => {
             <div className='bt-trail'>
                 <div className='bt-trail__label'>Most Recent Digits (Newest First)</div>
                 <div className='bt-trail__row'>
-                    {[...digitsWindow].reverse().slice(0, 50).map((d, i) => {
-                         const realIdx = digitsWindow.length - 1 - i;
-                         const p = priceWindow[realIdx];
-                         return (
-                            <span
-                                key={i}
-                                className={`bt-trail__pill ${
-                                    d >= 5 ? 'bt-trail__pill--high' : 'bt-trail__pill--low'
-                                } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
-                                onClick={() => triggerPopup({
-                                    id: `trail-${i}`,
-                                    title: `Digit ${d}`,
-                                    value: `Price: ${p?.toFixed(pip) ?? '—'}`,
-                                    extra: d >= 5 ? 'Prediction: Over' : 'Prediction: Under'
-                                })}
-                            >
-                                {d}
-                                {renderPopupUI(`trail-${i}`)}
-                            </span>
-                         );
-                    })}
+                    {[...digitsWindow]
+                        .reverse()
+                        .slice(0, 50)
+                        .map((d, i) => {
+                            const realIdx = digitsWindow.length - 1 - i;
+                            const p = priceWindow[realIdx];
+                            return (
+                                <span
+                                    key={i}
+                                    className={`bt-trail__pill ${
+                                        d >= 5 ? 'bt-trail__pill--high' : 'bt-trail__pill--low'
+                                    } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                                    onClick={() =>
+                                        triggerPopup({
+                                            id: `trail-${i}`,
+                                            title: `Digit ${d}`,
+                                            value: `Price: ${p?.toFixed(pip) ?? '—'}`,
+                                            extra: d >= 5 ? 'Prediction: Over' : 'Prediction: Under',
+                                        })
+                                    }
+                                >
+                                    {d}
+                                    {renderPopupUI(`trail-${i}`)}
+                                </span>
+                            );
+                        })}
                 </div>
             </div>
         </div>
@@ -845,12 +964,17 @@ const BulkTradingPage: React.FC = observer(() => {
             </div>
 
             <div className='bt-eo-bars'>
-                <div className='bt-eo-bar-row' onClick={() => triggerPopup({ 
-                    id: 'even', 
-                    title: 'Even Distribution', 
-                    value: `${(stats?.evenPct ?? 0).toFixed(2)}%`, 
-                    extra: `${stats?.evenCount} ticks total` 
-                })}>
+                <div
+                    className='bt-eo-bar-row'
+                    onClick={() =>
+                        triggerPopup({
+                            id: 'even',
+                            title: 'Even Distribution',
+                            value: `${(stats?.evenPct ?? 0).toFixed(2)}%`,
+                            extra: `${stats?.evenCount} ticks total`,
+                        })
+                    }
+                >
                     <span className='bt-eo-bar-row__label'>Even</span>
                     <div className='bt-eo-bar-row__track'>
                         <div
@@ -861,12 +985,17 @@ const BulkTradingPage: React.FC = observer(() => {
                     <span className='bt-eo-bar-row__pct'>{(stats?.evenPct ?? 0).toFixed(1)}%</span>
                     {renderPopupUI('even')}
                 </div>
-                <div className='bt-eo-bar-row' onClick={() => triggerPopup({ 
-                    id: 'odd', 
-                    title: 'Odd Distribution', 
-                    value: `${(stats?.oddPct ?? 0).toFixed(2)}%`, 
-                    extra: `${stats?.oddCount} ticks total` 
-                })}>
+                <div
+                    className='bt-eo-bar-row'
+                    onClick={() =>
+                        triggerPopup({
+                            id: 'odd',
+                            title: 'Odd Distribution',
+                            value: `${(stats?.oddPct ?? 0).toFixed(2)}%`,
+                            extra: `${stats?.oddCount} ticks total`,
+                        })
+                    }
+                >
                     <span className='bt-eo-bar-row__label'>Odd</span>
                     <div className='bt-eo-bar-row__track'>
                         <div
@@ -880,46 +1009,51 @@ const BulkTradingPage: React.FC = observer(() => {
             </div>
 
             <div className='bt-streak-box'>
-                 <div className='bt-streak-item'>
+                <div className='bt-streak-item'>
                     <span className='bt-streak-label'>Current Streak</span>
                     <span className='bt-streak-value'>
                         {(() => {
-                           if (!digitsWindow.length) return '—';
-                           const rev = [...digitsWindow].reverse();
-                           const type = rev[0] % 2 === 0 ? 'EVEN' : 'ODD';
-                           let count = 0;
-                           for (const d of rev) {
-                               if ((d % 2 === 0 ? 'EVEN' : 'ODD') === type) count++;
-                               else break;
-                           }
-                           return `${count} ${type}`;
+                            if (!digitsWindow.length) return '—';
+                            const rev = [...digitsWindow].reverse();
+                            const type = rev[0] % 2 === 0 ? 'EVEN' : 'ODD';
+                            let count = 0;
+                            for (const d of rev) {
+                                if ((d % 2 === 0 ? 'EVEN' : 'ODD') === type) count++;
+                                else break;
+                            }
+                            return `${count} ${type}`;
                         })()}
                     </span>
-                 </div>
+                </div>
             </div>
 
             <div className='bt-trail'>
                 <div className='bt-trail__label'>Pattern Streak (Newest First)</div>
                 <div className='bt-trail__row'>
-                    {[...digitsWindow].reverse().slice(0, 50).map((d, i) => {
-                        const realIdx = digitsWindow.length - 1 - i;
-                        const p = priceWindow[realIdx];
-                        return (
-                            <span
-                                key={i}
-                                className={`bt-trail__pill ${d % 2 === 0 ? 'bt-trail__pill--even' : 'bt-trail__pill--odd'} ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
-                                onClick={() => triggerPopup({
-                                    id: `eo-trail-${i}`,
-                                    title: d % 2 === 0 ? 'Even Digit' : 'Odd Digit',
-                                    value: `Price: ${p?.toFixed(pip) ?? '—'}`,
-                                    extra: `Digit Value: ${d}`
-                                })}
-                            >
-                                {d % 2 === 0 ? 'E' : 'O'}
-                                {renderPopupUI(`eo-trail-${i}`)}
-                            </span>
-                        );
-                    })}
+                    {[...digitsWindow]
+                        .reverse()
+                        .slice(0, 50)
+                        .map((d, i) => {
+                            const realIdx = digitsWindow.length - 1 - i;
+                            const p = priceWindow[realIdx];
+                            return (
+                                <span
+                                    key={i}
+                                    className={`bt-trail__pill ${d % 2 === 0 ? 'bt-trail__pill--even' : 'bt-trail__pill--odd'} ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                                    onClick={() =>
+                                        triggerPopup({
+                                            id: `eo-trail-${i}`,
+                                            title: d % 2 === 0 ? 'Even Digit' : 'Odd Digit',
+                                            value: `Price: ${p?.toFixed(pip) ?? '—'}`,
+                                            extra: `Digit Value: ${d}`,
+                                        })
+                                    }
+                                >
+                                    {d % 2 === 0 ? 'E' : 'O'}
+                                    {renderPopupUI(`eo-trail-${i}`)}
+                                </span>
+                            );
+                        })}
                 </div>
             </div>
         </div>
@@ -934,12 +1068,17 @@ const BulkTradingPage: React.FC = observer(() => {
             </div>
 
             <div className='bt-eo-bars'>
-                <div className='bt-eo-bar-row' onClick={() => triggerPopup({ 
-                    id: 'rise', 
-                    title: 'Market Rise', 
-                    value: `${(stats?.risePct ?? 0).toFixed(2)}%`, 
-                    extra: `${stats?.rises} momentum ticks` 
-                })}>
+                <div
+                    className='bt-eo-bar-row'
+                    onClick={() =>
+                        triggerPopup({
+                            id: 'rise',
+                            title: 'Market Rise',
+                            value: `${(stats?.risePct ?? 0).toFixed(2)}%`,
+                            extra: `${stats?.rises} momentum ticks`,
+                        })
+                    }
+                >
                     <span className='bt-eo-bar-row__label'>🔼 Rise</span>
                     <div className='bt-eo-bar-row__track'>
                         <div
@@ -950,12 +1089,17 @@ const BulkTradingPage: React.FC = observer(() => {
                     <span className='bt-eo-bar-row__pct'>{(stats?.risePct ?? 0).toFixed(1)}%</span>
                     {renderPopupUI('rise')}
                 </div>
-                <div className='bt-eo-bar-row' onClick={() => triggerPopup({ 
-                    id: 'fall', 
-                    title: 'Market Fall', 
-                    value: `${(stats?.fallPct ?? 0).toFixed(2)}%`, 
-                    extra: `${stats?.falls} momentum ticks` 
-                })}>
+                <div
+                    className='bt-eo-bar-row'
+                    onClick={() =>
+                        triggerPopup({
+                            id: 'fall',
+                            title: 'Market Fall',
+                            value: `${(stats?.fallPct ?? 0).toFixed(2)}%`,
+                            extra: `${stats?.falls} momentum ticks`,
+                        })
+                    }
+                >
                     <span className='bt-eo-bar-row__label'>🔽 Fall</span>
                     <div className='bt-eo-bar-row__track'>
                         <div
@@ -971,30 +1115,35 @@ const BulkTradingPage: React.FC = observer(() => {
             <div className='bt-trail'>
                 <div className='bt-trail__label'>Tick Direction (Newest First)</div>
                 <div className='bt-trail__row'>
-                    {[...priceWindow].reverse().slice(0, 50).map((p, i, arr) => {
-                        const next = arr[i + 1];
-                        if (next === undefined) return null;
-                        const isRise = p > next;
-                        const diff = p - next;
-                        const diffPct = (diff / next) * 100;
+                    {[...priceWindow]
+                        .reverse()
+                        .slice(0, 50)
+                        .map((p, i, arr) => {
+                            const next = arr[i + 1];
+                            if (next === undefined) return null;
+                            const isRise = p > next;
+                            const diff = p - next;
+                            const diffPct = (diff / next) * 100;
 
-                        return (
-                            <span
-                                key={i}
-                                className={`bt-trail__pill ${isRise ? 'bt-trail__pill--rise' : 'bt-trail__pill--fall'} ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
-                                onClick={() => triggerPopup({
-                                    id: `rf-${i}`,
-                                    title: isRise ? '🔼 Rise Momentum' : '🔽 Fall Momentum',
-                                    value: `Price: ${p.toFixed(pip)}`,
-                                    extra: `Change: ${diff > 0 ? '+' : ''}${diff.toFixed(pip)} (${diffPct.toFixed(4)}%)`
-                                })}
-                                style={{ position: 'relative' }}
-                            >
-                                {isRise ? '▲' : '▼'}
-                                {renderPopupUI(`rf-${i}`)}
-                            </span>
-                        );
-                    })}
+                            return (
+                                <span
+                                    key={i}
+                                    className={`bt-trail__pill ${isRise ? 'bt-trail__pill--rise' : 'bt-trail__pill--fall'} ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                                    onClick={() =>
+                                        triggerPopup({
+                                            id: `rf-${i}`,
+                                            title: isRise ? '🔼 Rise Momentum' : '🔽 Fall Momentum',
+                                            value: `Price: ${p.toFixed(pip)}`,
+                                            extra: `Change: ${diff > 0 ? '+' : ''}${diff.toFixed(pip)} (${diffPct.toFixed(4)}%)`,
+                                        })
+                                    }
+                                    style={{ position: 'relative' }}
+                                >
+                                    {isRise ? '▲' : '▼'}
+                                    {renderPopupUI(`rf-${i}`)}
+                                </span>
+                            );
+                        })}
                 </div>
             </div>
         </div>
@@ -1007,47 +1156,53 @@ const BulkTradingPage: React.FC = observer(() => {
             <div className='bt-mobile-ticker'>
                 <span className='bt-mobile-ticker__label'>Live Stats:</span>
                 <div className='bt-mobile-ticker__row'>
-                    {(tradeType === 'over_under' || tradeType === 'matches_differs') && (
-                        [...digitsWindow].reverse().slice(0, 15).map((d, i) => (
-                            <span
-                                key={i}
-                                className={`bt-trail__pill bt-trail__pill--compact ${
-                                    d >= 5 ? 'bt-trail__pill--high' : 'bt-trail__pill--low'
-                                } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
-                            >
-                                {d}
-                            </span>
-                        ))
-                    )}
-                    {tradeType === 'even_odd' && (
-                        [...digitsWindow].reverse().slice(0, 15).map((d, i) => (
-                            <span
-                                key={i}
-                                className={`bt-trail__pill bt-trail__pill--compact ${
-                                    d % 2 === 0 ? 'bt-trail__pill--even' : 'bt-trail__pill--odd'
-                                } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
-                            >
-                                {d % 2 === 0 ? 'E' : 'O'}
-                            </span>
-                        ))
-                    )}
-                    {tradeType === 'rise_fall' && (
-                        [...priceWindow].reverse().slice(0, 15).map((p, i, arr) => {
-                            const next = arr[i + 1];
-                            if (next === undefined) return null;
-                            const isRise = p > next;
-                            return (
+                    {(tradeType === 'over_under' || tradeType === 'matches_differs') &&
+                        [...digitsWindow]
+                            .reverse()
+                            .slice(0, 15)
+                            .map((d, i) => (
                                 <span
                                     key={i}
                                     className={`bt-trail__pill bt-trail__pill--compact ${
-                                        isRise ? 'bt-trail__pill--rise' : 'bt-trail__pill--fall'
+                                        d >= 5 ? 'bt-trail__pill--high' : 'bt-trail__pill--low'
                                     } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
                                 >
-                                    {isRise ? '▲' : '▼'}
+                                    {d}
                                 </span>
-                            );
-                        })
-                    )}
+                            ))}
+                    {tradeType === 'even_odd' &&
+                        [...digitsWindow]
+                            .reverse()
+                            .slice(0, 15)
+                            .map((d, i) => (
+                                <span
+                                    key={i}
+                                    className={`bt-trail__pill bt-trail__pill--compact ${
+                                        d % 2 === 0 ? 'bt-trail__pill--even' : 'bt-trail__pill--odd'
+                                    } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                                >
+                                    {d % 2 === 0 ? 'E' : 'O'}
+                                </span>
+                            ))}
+                    {tradeType === 'rise_fall' &&
+                        [...priceWindow]
+                            .reverse()
+                            .slice(0, 15)
+                            .map((p, i, arr) => {
+                                const next = arr[i + 1];
+                                if (next === undefined) return null;
+                                const isRise = p > next;
+                                return (
+                                    <span
+                                        key={i}
+                                        className={`bt-trail__pill bt-trail__pill--compact ${
+                                            isRise ? 'bt-trail__pill--rise' : 'bt-trail__pill--fall'
+                                        } ${i === 0 ? 'bt-trail__pill--latest' : ''}`}
+                                    >
+                                        {isRise ? '▲' : '▼'}
+                                    </span>
+                                );
+                            })}
                 </div>
             </div>
         );
@@ -1055,8 +1210,10 @@ const BulkTradingPage: React.FC = observer(() => {
 
     const renderStatusBanner = () => {
         if (!isAuthenticated) {
-            if (status === 'connected') return <div className='bt-banner bt-banner--warn'>⚠️ Guest Mode (Ticks Live)</div>;
-            if (status === 'connecting') return <div className='bt-banner bt-banner--info'>⟳ Connecting to Public Feed…</div>;
+            if (status === 'connected')
+                return <div className='bt-banner bt-banner--warn'>⚠️ Guest Mode (Ticks Live)</div>;
+            if (status === 'connecting')
+                return <div className='bt-banner bt-banner--info'>⟳ Connecting to Public Feed…</div>;
             return <div className='bt-banner bt-banner--warn'>⚠️ Not Logged In</div>;
         }
         if (status === 'error') return <div className='bt-banner bt-banner--error'>✖ Error</div>;
@@ -1074,21 +1231,17 @@ const BulkTradingPage: React.FC = observer(() => {
                             <div className='bt-live-price'>
                                 <span className='bt-live-price__label'>{symbol}</span>
                                 <span className='bt-live-price__value'>{livePrice.toFixed(pip)}</span>
-                                {lastDigit !== null && (
-                                    <span className='bt-live-price__digit'>{lastDigit}</span>
-                                )}
+                                {lastDigit !== null && <span className='bt-live-price__digit'>{lastDigit}</span>}
                             </div>
                         )}
                     </div>
 
                     <div className='bt-controls__right'>
-                        <select
-                            className='bt-select'
-                            value={symbol}
-                            onChange={e => handleSymbolChange(e.target.value)}
-                        >
+                        <select className='bt-select' value={symbol} onChange={e => handleSymbolChange(e.target.value)}>
                             {FALLBACK_SYMBOLS.map(s => (
-                                <option key={s.symbol} value={s.symbol}>{s.name}</option>
+                                <option key={s.symbol} value={s.symbol}>
+                                    {s.name}
+                                </option>
                             ))}
                         </select>
                         <div className='bt-tick-input'>
@@ -1123,9 +1276,7 @@ const BulkTradingPage: React.FC = observer(() => {
             </div>
 
             <div className='bt-type-desc'>
-                <div className='bt-inner'>
-                    {tradeTypeInfo.desc}
-                </div>
+                <div className='bt-inner'>{tradeTypeInfo.desc}</div>
             </div>
 
             <div className='bt-content'>
@@ -1138,9 +1289,9 @@ const BulkTradingPage: React.FC = observer(() => {
                     ) : (
                         <>
                             {(tradeType === 'over_under' || tradeType === 'matches_differs') && renderDigitAnalysis()}
-                            {tradeType === 'even_odd'   && renderEvenOdd()}
-                            {tradeType === 'rise_fall'  && renderRiseFall()}
-                            
+                            {tradeType === 'even_odd' && renderEvenOdd()}
+                            {tradeType === 'rise_fall' && renderRiseFall()}
+
                             {/* ── New Trading Interface Sections ── */}
                             {renderConfig()}
                             {renderResults()}

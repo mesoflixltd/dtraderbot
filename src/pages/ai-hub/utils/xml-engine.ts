@@ -3,17 +3,17 @@
  */
 
 export const updateScannerBotXML = (
-    xmlString: string, 
-    settings: { 
-        symbol: string, 
-        stake: string, 
-        prediction: number,
-        martingale: string,
-        takeProfit: string,
-        stopLoss: string,
-        maxTrades: string,
-        targetWins: string,
-        maxLosses: string
+    xmlString: string,
+    settings: {
+        symbol: string;
+        stake: string;
+        prediction: number;
+        martingale: string;
+        takeProfit: string;
+        stopLoss: string;
+        maxTrades: string;
+        targetWins: string;
+        maxLosses: string;
     }
 ) => {
     const parser = new DOMParser();
@@ -39,9 +39,9 @@ export const updateScannerBotXML = (
         const field = fields[i];
         const parent = field.parentNode as Element | null;
         if (!parent) continue;
-        
+
         const parentId = parent.getAttribute('id');
-        
+
         if (parentId === 'amount_id_001') field.textContent = settings.stake;
         if (parentId === 'predict_id_001') field.textContent = settings.prediction.toString();
         if (parentId === 'martingale_id_001') field.textContent = settings.martingale;

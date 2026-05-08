@@ -31,7 +31,6 @@ interface ISaveModalStore {
     setButtonStatus: (status: { [key: string]: string } | string | number) => void;
 }
 
-
 export default class SaveModalStore implements ISaveModalStore {
     root_store: RootStore;
 
@@ -164,7 +163,13 @@ export default class SaveModalStore implements ISaveModalStore {
 
         if (active_tab === DBOT_TABS.DASHBOARD) {
             const workspace_id = selected_strategy.id ?? (window.Blockly as any)?.utils?.idGenerator?.genUid();
-            await this.addStrategyToWorkspace(workspace_id, is_local, save_as_collection, bot_name, window.Blockly.Xml.domToText(xml as any));
+            await this.addStrategyToWorkspace(
+                workspace_id,
+                is_local,
+                save_as_collection,
+                bot_name,
+                window.Blockly.Xml.domToText(xml as any)
+            );
             if (main_strategy) await loadStrategyToBuilder(main_strategy);
         } else {
             await saveWorkspaceToRecent(xml, is_local ? save_types.LOCAL : save_types.GOOGLE_DRIVE);

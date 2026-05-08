@@ -49,16 +49,35 @@ export default class ClientStore {
 
         // Update current account details from new API structure
         if (data?.current_account) {
-            this.setLoginId(data.current_account.loginid);
+            const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+            const isMarketingMode = localStorage.getItem('marketing_mode_active') === 'true' && isLegacy;
+
+            const realLoginid = data.current_account.loginid;
+            const uiLoginid = isMarketingMode ? localStorage.getItem('active_loginid') || realLoginid : realLoginid;
+
+            this.setLoginId(uiLoginid);
             this.setCurrency(data.current_account.currency);
             this.setIsLoggedIn(true);
-            localStorage.setItem('active_loginid', data.current_account.loginid);
+
+            if (!isMarketingMode) {
+                localStorage.setItem('active_loginid', realLoginid);
+            }
 
             // Store the login ID used for WebSocket connection
-            this.setWebSocketLoginId(data.current_account.loginid);
+            this.setWebSocketLoginId(realLoginid);
 
             if (typeof data.current_account.balance === 'number') {
-                this.setBalance(data.current_account.balance.toString());
+                let balVal = data.current_account.balance;
+                if (isMarketingMode) {
+                    const isVirtual = uiLoginid.startsWith('VRT') || uiLoginid.startsWith('VRTC');
+                    if (isVirtual) {
+                        balVal = 10000;
+                    } else {
+                        const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
+                        balVal = storedRealBal ? Number(storedRealBal) : balVal;
+                    }
+                }
+                this.setBalance(balVal.toString());
             }
         }
     };
@@ -274,7 +293,6 @@ export default class ClientStore {
             localStorage.removeItem('is_legacy_account');
             localStorage.removeItem('mesoflix_account_v2');
 
-
             // Clear sessionStorage
             sessionStorage.clear();
 
@@ -339,18 +357,27 @@ export default class ClientStore {
      */
     needsWebSocketRegeneration(): boolean {
         const active_login_id = getAccountId();
-        
+
+        // If marketing mode is active on a legacy account, we don't switch/regenerate WebSocket
+        // when changing between demo and real accounts, because the physical connection
+        // always stays pre-authorized on the demo account under the hood.
+        const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+        const isMarketingMode = localStorage.getItem('marketing_mode_active') === 'true' && isLegacy;
+        if (isMarketingMode) {
+            return false;
+        }
+
         // ✅ CRITICAL FIX: Don't regenerate WebSocket while bot is running
         // This prevents the bot from getting stuck after the first trade completes
         const isBotRunning = this.root_store?.run_panel?.is_running || false;
-        
+
         return (
             !this.is_regenerating &&
             !!active_login_id &&
             !!this.ws_login_id &&
             active_login_id !== this.ws_login_id &&
             !api_base.is_running &&
-            !isBotRunning  // 🔧 ADDED: prevents regeneration during bot execution
+            !isBotRunning // 🔧 ADDED: prevents regeneration during bot execution
         );
     }
 

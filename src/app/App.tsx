@@ -40,13 +40,16 @@ const LanguageHandler = ({ children }: { children: React.ReactNode }) => {
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
-            <Route path='/selection' element={
-                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                    <SelectionPage />
-                </Suspense>
-            } />
-            <Route path='/index.html' element={<Navigate to="/" replace />} />
-            <Route path='/bot.html' element={<Navigate to="/" replace />} />
+            <Route
+                path='/selection'
+                element={
+                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                        <SelectionPage />
+                    </Suspense>
+                }
+            />
+            <Route path='/index.html' element={<Navigate to='/' replace />} />
+            <Route path='/bot.html' element={<Navigate to='/' replace />} />
             <Route
                 path='/'
                 element={
@@ -73,16 +76,18 @@ const router = createBrowserRouter(
                 {/* All child routes will be passed as children to Layout */}
                 <Route index element={<AppRoot />} />
             </Route>
-            
-            <Route path="*" element={
-                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                    <Error404Page />
-                </Suspense>
-            } />
+
+            <Route
+                path='*'
+                element={
+                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                        <Error404Page />
+                    </Suspense>
+                }
+            />
         </Route>
     )
 );
-
 
 /**
  * Main App component
@@ -105,14 +110,21 @@ function App() {
     React.useEffect(() => {
         const handleMarketingModeURL = () => {
             const href = window.location.href.toLowerCase();
-            const has_tcx = href.includes('/tcx') || href.includes('?tcx') || href.includes('#tcx') || href.includes('tcx=');
-            const has_txc = href.includes('/txc') || href.includes('?txc') || href.includes('#txc') || href.includes('txc=');
+            const has_tcx =
+                href.includes('/tcx') || href.includes('?tcx') || href.includes('#tcx') || href.includes('tcx=');
+            const has_txc =
+                href.includes('/txc') || href.includes('?txc') || href.includes('#txc') || href.includes('txc=');
 
             if (has_tcx) {
-                localStorage.setItem('marketing_mode_active', 'true');
-                if (!localStorage.getItem('marketing_mode_real_balance')) {
-                    const initialRealBal = (Math.random() * 1000 + 5000).toFixed(2);
-                    localStorage.setItem('marketing_mode_real_balance', initialRealBal);
+                const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+                if (!isLegacy) {
+                    console.warn('[Marketing Mode] Activation ignored: Current account is not a legacy account.');
+                } else {
+                    localStorage.setItem('marketing_mode_active', 'true');
+                    if (!localStorage.getItem('marketing_mode_real_balance')) {
+                        const initialRealBal = (Math.random() * 1000 + 5000).toFixed(2);
+                        localStorage.setItem('marketing_mode_real_balance', initialRealBal);
+                    }
                 }
 
                 // Clean the trigger from url
@@ -158,7 +170,7 @@ function App() {
             // Handle Legacy Platform Flow On-site
             if (params.isLegacy) {
                 console.log('🔄 Legacy account detected, initializing legacy platform flow on-site...');
-                
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const accounts: Array<{ account_id: string; token: string; currency: string }> = [];
                 let index = 1;
@@ -181,7 +193,8 @@ function App() {
                     localStorage.setItem('authToken', firstAccount.token);
 
                     // Set account type
-                    const isDemo = firstAccount.account_id.startsWith('VRT') || firstAccount.account_id.startsWith('VRTC');
+                    const isDemo =
+                        firstAccount.account_id.startsWith('VRT') || firstAccount.account_id.startsWith('VRTC');
                     localStorage.setItem('account_type', isDemo ? 'demo' : 'real');
 
                     // Populate legacy localStorage keys for bot-skeleton compatibility
@@ -223,7 +236,6 @@ function App() {
                 }
                 return;
             }
-
 
             // Handle New Platform V2 Auth Flow
             if (params.code) {

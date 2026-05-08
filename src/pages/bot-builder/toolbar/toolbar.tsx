@@ -16,7 +16,7 @@ const Toolbar = observer(() => {
     const { setFormVisibility } = quick_strategy;
     const confirm_button_text = is_running ? localize('Yes') : localize('OK');
     const cancel_button_text = is_running ? localize('No') : localize('Cancel');
-    
+
     const handleQuickStrategyOpen = () => {
         setFormVisibility(true);
     };
@@ -48,7 +48,11 @@ const Toolbar = observer(() => {
                                         'toolbar__btn--start': !run_panel.is_copy_trading,
                                     })}
                                     buttonOnClick={() => run_panel.setIsCopyTrading(!run_panel.is_copy_trading)}
-                                    button_text={run_panel.is_copy_trading ? localize('Stop Demo to Real') : localize('Start Demo to Real')}
+                                    button_text={
+                                        run_panel.is_copy_trading
+                                            ? localize('Stop Demo to Real')
+                                            : localize('Start Demo to Real')
+                                    }
                                     is_bot_running={run_panel.is_running}
                                 />
                             )}

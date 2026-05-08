@@ -26,7 +26,7 @@ export const CONTEXT_MENU = [
         icon: <LabelPairedPageCircleArrowRightSmRegularIcon fill='var(--text-general)' />,
         label: <Localize i18n_default_text='Open' />,
     },
-/* [AI] - Saving disabled as per user request to prevent strategy downloads */
+    /* [AI] - Saving disabled as per user request to prevent strategy downloads */
     // {
     //     type: STRATEGY.SAVE,
     //     icon: (
@@ -40,7 +40,7 @@ export const CONTEXT_MENU = [
     //     ),
     //     label: <Localize i18n_default_text='Save' />,
     // },
-/* [/AI] */
+    /* [/AI] */
     {
         type: STRATEGY.DELETE,
         icon: <LabelPairedTrashSmRegularIcon fill='var(--text-general)' />,

@@ -134,9 +134,10 @@ export class OAuthTokenExchangeService {
             // - code_verifier: the PKCE code verifier (proves we initiated the auth flow)
 
             const clientIdFromEnv = process.env.CLIENT_ID;
-            const clientId = (clientIdFromEnv && clientIdFromEnv !== 'undefined' && clientIdFromEnv !== 'null') 
-                ? clientIdFromEnv 
-                : (brandConfig as any).platform?.client_id;
+            const clientId =
+                clientIdFromEnv && clientIdFromEnv !== 'undefined' && clientIdFromEnv !== 'null'
+                    ? clientIdFromEnv
+                    : (brandConfig as any).platform?.client_id;
             if (!clientId) {
                 ErrorLogger.error('OAuth', 'CLIENT_ID is not set in environment or brand config');
                 return {
@@ -148,10 +149,10 @@ export class OAuthTokenExchangeService {
             const protocol = window.location.protocol;
             const host = window.location.host;
             const currentOrigin = `${protocol}//${host}/`;
-            
+
             // Use the configured redirect URI if we're on the production domain, otherwise use current origin
             let redirectUrl = (brandConfig as any).platform?.oauth_redirect_uri || currentOrigin;
-            
+
             // If we are on localhost or a staging domain, always use the current origin to avoid mismatch
             if (host.includes('localhost') || host.includes('netlify.app') || host.includes('vercel.app')) {
                 redirectUrl = currentOrigin;
@@ -306,9 +307,10 @@ export class OAuthTokenExchangeService {
             const tokenEndpoint = `${baseURL}token`;
 
             const clientIdFromEnv = process.env.CLIENT_ID;
-            const clientId = (clientIdFromEnv && clientIdFromEnv !== 'undefined' && clientIdFromEnv !== 'null') 
-                ? clientIdFromEnv 
-                : (brandConfig as any).platform?.client_id;
+            const clientId =
+                clientIdFromEnv && clientIdFromEnv !== 'undefined' && clientIdFromEnv !== 'null'
+                    ? clientIdFromEnv
+                    : (brandConfig as any).platform?.client_id;
 
             const requestBody = new URLSearchParams({
                 grant_type: 'refresh_token',

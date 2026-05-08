@@ -63,7 +63,9 @@ const Toolbox = observer(() => {
                             'toolbar__btn--start': !run_panel.is_copy_trading,
                         })}
                         buttonOnClick={() => run_panel.setIsCopyTrading(!run_panel.is_copy_trading)}
-                        button_text={run_panel.is_copy_trading ? localize('Stop Demo to Real') : localize('Start Demo to Real')}
+                        button_text={
+                            run_panel.is_copy_trading ? localize('Stop Demo to Real') : localize('Start Demo to Real')
+                        }
                     />
                 )}
             </div>

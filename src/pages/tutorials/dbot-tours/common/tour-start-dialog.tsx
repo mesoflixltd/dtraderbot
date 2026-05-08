@@ -80,7 +80,8 @@ const TourStartDialog = observer(() => {
     const header_text_size = isDesktop ? 's' : 'xs';
     const content_text_size = isDesktop ? 'xs' : 'xxs';
 
-    const tour_headers = active_tab === DBOT_TABS.DASHBOARD ? onboarding_tour_header : getBotBuilderTourHeader(!isDesktop);
+    const tour_headers =
+        active_tab === DBOT_TABS.DASHBOARD ? onboarding_tour_header : getBotBuilderTourHeader(!isDesktop);
     return (
         <div>
             <Dialog

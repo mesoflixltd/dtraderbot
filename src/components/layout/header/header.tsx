@@ -144,10 +144,12 @@ const AppHeader = observer(() => {
                     return (
                         <div className='auth-actions'>
                             <div className='account-info'>
-                                <AccountSwitcher 
-                                    activeAccount={activeAccount} 
+                                <AccountSwitcher
+                                    activeAccount={activeAccount}
                                     onTransferClick={!isDesktop ? handleTransfer : undefined}
-                                    isTransferDisabled={!isDesktop ? (client?.is_logging_out || !authData?.currency) : undefined}
+                                    isTransferDisabled={
+                                        !isDesktop ? client?.is_logging_out || !authData?.currency : undefined
+                                    }
                                 />
                             </div>
                         </div>

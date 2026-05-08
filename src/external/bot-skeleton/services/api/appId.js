@@ -58,9 +58,9 @@ export const generateDerivApiInstance = async (forceNew = false) => {
     derivApiPromise = (async () => {
         try {
             const wsURL = await getSocketURL();
-            
+
             // Handle URL changes (Account switcher)
-            // Fix: Compare only the base URL path, ignoring query parameters like OTP 
+            // Fix: Compare only the base URL path, ignoring query parameters like OTP
             // which change on every call and were causing infinite resets.
             const currentBase = currentWebSocketURL ? currentWebSocketURL.split('?')[0] : null;
             const newBase = wsURL ? wsURL.split('?')[0] : null;
@@ -94,7 +94,7 @@ export const generateDerivApiInstance = async (forceNew = false) => {
                     resolve(api);
                 };
 
-                const onError = (err) => {
+                const onError = err => {
                     cleanup();
                     console.error('[DerivAPI] Connection error');
                     clearDerivApiInstance(); // Ensure we don't reuse failed instances
@@ -133,7 +133,7 @@ export const V2GetActiveAccountId = () => {
 
 export const getToken = () => {
     let active_loginid = getLoginId();
-    
+
     // Check if marketing mode is active
     if (localStorage.getItem('marketing_mode_active') === 'true') {
         const client_accounts = JSON.parse(localStorage.getItem('accountsList')) ?? {};
@@ -147,7 +147,7 @@ export const getToken = () => {
             };
         }
     }
-    
+
     const client_accounts = JSON.parse(localStorage.getItem('accountsList')) ?? undefined;
     const active_account = (client_accounts && client_accounts[active_loginid]) || {};
     return {

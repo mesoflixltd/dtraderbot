@@ -46,22 +46,46 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                             })}
                         >
                             <div className='dashboard__social-links'>
-                                <a href='https://wa.me/+254791253166' target='_blank' rel='noopener noreferrer' className='social-link social-link--whatsapp' title='WhatsApp'>
+                                <a
+                                    href='https://wa.me/+254791253166'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='social-link social-link--whatsapp'
+                                    title='WhatsApp'
+                                >
                                     <div className='icon-wrapper'>
                                         <LabelPairedWhatsappCaptionIcon width='24px' height='24px' fill='#25D366' />
                                     </div>
                                 </a>
-                                <a href='https://t.me/mesoflix' target='_blank' rel='noopener noreferrer' className='social-link social-link--telegram' title='Telegram'>
+                                <a
+                                    href='https://t.me/mesoflix'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='social-link social-link--telegram'
+                                    title='Telegram'
+                                >
                                     <div className='icon-wrapper'>
                                         <LabelPairedTelegramCaptionIcon width='24px' height='24px' fill='#0088cc' />
                                     </div>
                                 </a>
-                                <a href='https://youtube.com' target='_blank' rel='noopener noreferrer' className='social-link social-link--youtube' title='YouTube'>
+                                <a
+                                    href='https://youtube.com'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='social-link social-link--youtube'
+                                    title='YouTube'
+                                >
                                     <div className='icon-wrapper'>
                                         <LabelPairedYoutubeCaptionIcon width='24px' height='24px' fill='#FF0000' />
                                     </div>
                                 </a>
-                                <a href='https://www.tiktok.com/@brian._fx?_r=1&_t=ZS-95r0BlOXqWj' target='_blank' rel='noopener noreferrer' className='social-link social-link--tiktok' title='TikTok'>
+                                <a
+                                    href='https://www.tiktok.com/@brian._fx?_r=1&_t=ZS-95r0BlOXqWj'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='social-link social-link--tiktok'
+                                    title='TikTok'
+                                >
                                     <div className='icon-wrapper'>
                                         <LabelPairedTiktokCaptionIcon width='24px' height='24px' fill='#00F2EA' />
                                     </div>

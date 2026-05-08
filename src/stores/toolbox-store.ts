@@ -438,7 +438,9 @@ export default class ToolboxStore {
                                     .replace(/[^\w\s]/gi, '')
                                     .split(' ');
 
-                                return search_words.some(word => block_meta_strings.some((meta: any) => meta.includes(word)));
+                                return search_words.some(word =>
+                                    block_meta_strings.some((meta: any) => meta.includes(word))
+                                );
                             });
 
                         if (matched_meta && matched_meta.length) {
@@ -457,7 +459,9 @@ export default class ToolboxStore {
         priority_order.forEach(priority => pushBlockWithPriority(priority));
 
         // block_variable_name matched
-        const matched_variables = all_variables.filter((variable: any) => variable.name.toUpperCase().includes(search_term));
+        const matched_variables = all_variables.filter((variable: any) =>
+            variable.name.toUpperCase().includes(search_term)
+        );
         const variables_blocks = (window.Blockly as any).DataCategory.search(matched_variables);
         // eslint-disable-next-line consistent-return
         const unique_var_blocks = variables_blocks.filter((variable_block: any) => {

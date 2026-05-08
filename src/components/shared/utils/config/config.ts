@@ -92,7 +92,6 @@ export const getSocketURL = async (): Promise<string> => {
     }
 };
 
-
 export const getDebugServiceWorker = () => {
     const debug_service_worker_flag = window.localStorage.getItem('debug_service_worker');
     if (debug_service_worker_flag) return !!parseInt(debug_service_worker_flag);
@@ -243,9 +242,10 @@ export const generateOAuthURL = async (prompt?: string) => {
         const environment = isProduction() ? 'production' : 'staging';
         const hostname = brandConfig?.platform.auth2_url?.[environment];
         const clientIdFromEnv = process.env.CLIENT_ID;
-        const clientId = (clientIdFromEnv && clientIdFromEnv !== 'undefined' && clientIdFromEnv !== 'null') 
-            ? clientIdFromEnv 
-            : (brandConfig as any).platform?.client_id;
+        const clientId =
+            clientIdFromEnv && clientIdFromEnv !== 'undefined' && clientIdFromEnv !== 'null'
+                ? clientIdFromEnv
+                : (brandConfig as any).platform?.client_id;
 
         if (hostname && clientId) {
             // Generate CSRF token for security
@@ -265,10 +265,10 @@ export const generateOAuthURL = async (prompt?: string) => {
             const protocol = window.location.protocol;
             const host = window.location.host;
             const currentOrigin = `${protocol}//${host}/`;
-            
+
             // Prioritize the configured redirect URI, but fallback to current origin for staging/local
             let redirectUrl = (brandConfig as any).platform?.oauth_redirect_uri || currentOrigin;
-            
+
             if (host.includes('localhost') || host.includes('netlify.app') || host.includes('vercel.app')) {
                 redirectUrl = currentOrigin;
             }
@@ -280,12 +280,13 @@ export const generateOAuthURL = async (prompt?: string) => {
             const scopes = 'trade account_manage';
 
             const appIdFromEnv = process.env.APP_ID;
-            const appId = (appIdFromEnv && appIdFromEnv !== 'undefined' && appIdFromEnv !== 'null')
-                ? appIdFromEnv
-                : (brandConfig as any).platform?.app_id;
+            const appId =
+                appIdFromEnv && appIdFromEnv !== 'undefined' && appIdFromEnv !== 'null'
+                    ? appIdFromEnv
+                    : (brandConfig as any).platform?.app_id;
             // Build OAuth URL with PKCE parameters
             console.log('[OAuth Service] Redirecting to Deriv with:', { clientId, redirectUrl, appId });
-            
+
             // Format the URL according to Deriv's documentation
             let oauthUrl = `${hostname}auth?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUrl)}&scope=${encodeURIComponent(scopes)}&state=${csrfToken}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 

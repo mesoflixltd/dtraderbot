@@ -22,7 +22,7 @@ export const tradeOptionToProposal = (trade_option, purchase_reference) => {
             },
             proposal: 1,
         };
-        
+
         if (isLegacy) {
             proposal.symbol = trade_option.symbol;
         } else {
@@ -319,7 +319,7 @@ export const createDetails = contract => {
     const result = profit < 0 ? 'loss' : 'win';
 
     return [
-        contract.transaction_ids ? contract.transaction_ids.buy : (contract.transaction_id || ''),
+        contract.transaction_ids ? contract.transaction_ids.buy : contract.transaction_id || '',
         +contract.buy_price,
         +contract.sell_price,
         profit,

@@ -15,17 +15,36 @@ import './account-switcher.scss';
 
 const RealIcon = () => (
     <svg width='20' height='20' viewBox='0 0 20 20' fill='none' className='acc-info__icon'>
-        <path d='M10 2L3 5V10C3 14.41 6.13 18.23 10 19.5C13.87 18.23 17 14.41 17 10V5L10 2Z' fill='#4BB463' fillOpacity='0.15' stroke='#4BB463' strokeWidth='1.5' strokeLinejoin='round'/>
-        <path d='M7 10.5L9 12.5L13 8.5' stroke='#4BB463' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/>
-        <path d='M10 6V7' stroke='#4BB463' strokeWidth='1.5' strokeLinecap='round'/>
+        <path
+            d='M10 2L3 5V10C3 14.41 6.13 18.23 10 19.5C13.87 18.23 17 14.41 17 10V5L10 2Z'
+            fill='#4BB463'
+            fillOpacity='0.15'
+            stroke='#4BB463'
+            strokeWidth='1.5'
+            strokeLinejoin='round'
+        />
+        <path
+            d='M7 10.5L9 12.5L13 8.5'
+            stroke='#4BB463'
+            strokeWidth='1.8'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+        />
+        <path d='M10 6V7' stroke='#4BB463' strokeWidth='1.5' strokeLinecap='round' />
     </svg>
 );
 
 const DemoIcon = () => (
     <svg width='20' height='20' viewBox='0 0 20 20' fill='none' className='acc-info__icon'>
-        <path d='M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2Z' fill='#FFAD3A' fillOpacity='0.15' stroke='#FFAD3A' strokeWidth='1.5'/>
-        <path d='M10 6V11L13 13' stroke='#FFAD3A' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/>
-        <circle cx='10' cy='10' r='1' fill='#FFAD3A'/>
+        <path
+            d='M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2Z'
+            fill='#FFAD3A'
+            fillOpacity='0.15'
+            stroke='#FFAD3A'
+            strokeWidth='1.5'
+        />
+        <path d='M10 6V11L13 13' stroke='#FFAD3A' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' />
+        <circle cx='10' cy='10' r='1' fill='#FFAD3A' />
     </svg>
 );
 
@@ -85,8 +104,9 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
             .map(account => {
                 let bal = Number(account.balance ?? 0);
                 const isVirtual = isDemoAccount(account.loginid);
-                
-                if (localStorage.getItem('marketing_mode_active') === 'true') {
+
+                const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+                if (localStorage.getItem('marketing_mode_active') === 'true' && isLegacy) {
                     if (isVirtual) {
                         bal = 10000;
                     } else if (account.currency === 'USD' || (!account.currency && account.loginid.startsWith('CR'))) {
@@ -125,19 +145,21 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
     const handleResetDemoBalance = useCallback(async () => {
         if (!activeLoginid) return;
 
-        // Check if marketing mode is active
-        if (localStorage.getItem('marketing_mode_active') === 'true') {
+        // Check if marketing mode is active on a legacy account
+        const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+        if (localStorage.getItem('marketing_mode_active') === 'true' && isLegacy) {
             try {
                 setIsResettingBalance(true);
                 // Simulate a slight delay for realism
                 await new Promise(resolve => setTimeout(resolve, 800));
-                
+
                 // Generate a random real balance between 5000 and 6000
                 const newRealBal = (Math.random() * 1000 + 5000).toFixed(2);
                 localStorage.setItem('marketing_mode_real_balance', newRealBal);
-                
+
                 // Trigger a reactive update of account list balance in connection-status-stream
-                const { authData$, setAccountList } = await import('@/external/bot-skeleton/services/api/observables/connection-status-stream');
+                const { authData$, setAccountList } =
+                    await import('@/external/bot-skeleton/services/api/observables/connection-status-stream');
                 const current_auth_data = authData$.value;
                 if (current_auth_data) {
                     const next_list = (current_auth_data.account_list || []).map((acc: any) => {
@@ -152,13 +174,13 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                     });
                     authData$.next({
                         ...current_auth_data,
-                        account_list: next_list
+                        account_list: next_list,
                     });
                     setAccountList(next_list);
                 }
 
                 alert(`Balances reset successfully! (Demo set to 10,000.00 USD, Real set to ${newRealBal} USD)`);
-                
+
                 if (client) {
                     client.checkAndRegenerateWebSocket();
                 }
@@ -172,7 +194,7 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
 
         try {
             setIsResettingBalance(true);
-            
+
             const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
             if (isLegacy) {
                 const response = await api_base.api?.send({ topup_virtual: 1 });
@@ -188,15 +210,14 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
             // Get valid OAuth token
             const { OAuthTokenExchangeService } = await import('@/services/oauth-token-exchange.service');
             const token = OAuthTokenExchangeService.getAccessToken();
-            
+
             if (!token) {
                 throw new Error('Authentication token is missing. Please re-login.');
             }
 
-
             const appId = process.env.APP_ID || (brandConfig as any).platform?.app_id;
             const endpoint = `https://api.derivws.com/trading/v1/options/accounts/${activeLoginid}/reset-demo-balance`;
-            
+
             const reqResponse = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
@@ -210,7 +231,8 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
 
             if (!reqResponse.ok || responseData.errors) {
                 const errorObj = responseData.errors?.[0];
-                const errorMessage = errorObj?.message || responseData.error_description || 'Unable to reset demo balance';
+                const errorMessage =
+                    errorObj?.message || responseData.error_description || 'Unable to reset demo balance';
                 console.error('[AccountSwitcher] Reset response error:', responseData);
                 throw new Error(errorMessage);
             }
@@ -218,7 +240,7 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
             // Immediately send a balance request to prompt a UI update
             await api_base.api?.send({ balance: 1 });
             client?.checkAndRegenerateWebSocket();
-            
+
             // Show success
             alert('Demo balance successfully reset to 10,000 USD');
         } catch (error: any) {
@@ -365,10 +387,14 @@ const AccountSwitcher = observer(({ activeAccount, onTransferClick, isTransferDi
                                     <span className='acc-dropdown__loginid-tag'> ({account.loginid})</span>
                                 </Text>
                             </div>
-                            <Text size='xs' weight='bold' className={classNames('acc-dropdown__balance', {
-                                'acc-dropdown__balance--virtual': account.isVirtual,
-                                'acc-dropdown__balance--real': !account.isVirtual,
-                            })}>
+                            <Text
+                                size='xs'
+                                weight='bold'
+                                className={classNames('acc-dropdown__balance', {
+                                    'acc-dropdown__balance--virtual': account.isVirtual,
+                                    'acc-dropdown__balance--real': !account.isVirtual,
+                                })}
+                            >
                                 {account.currency ? (
                                     `${account.balance} ${getCurrencyDisplayCode(account.currency)}`
                                 ) : (

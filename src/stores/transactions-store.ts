@@ -126,9 +126,16 @@ export default class TransactionsStore {
             run_id,
             date_start: formatDate(data.date_start, 'YYYY-M-D HH:mm:ss [GMT]'),
             entry_tick: entry_spot_val,
-            entry_tick_time: (data.entry_tick_time || (data as any).entry_spot_time) && formatDate(data.entry_tick_time || (data as any).entry_spot_time, 'YYYY-M-D HH:mm:ss [GMT]'),
+            entry_tick_time:
+                (data.entry_tick_time || (data as any).entry_spot_time) &&
+                formatDate(data.entry_tick_time || (data as any).entry_spot_time, 'YYYY-M-D HH:mm:ss [GMT]'),
             exit_tick: exit_spot_val,
-            exit_tick_time: (data.exit_tick_time || (data as any).sell_spot_time || (data as any).exit_spot_time) && formatDate(data.exit_tick_time || (data as any).sell_spot_time || (data as any).exit_spot_time, 'YYYY-M-D HH:mm:ss [GMT]'),
+            exit_tick_time:
+                (data.exit_tick_time || (data as any).sell_spot_time || (data as any).exit_spot_time) &&
+                formatDate(
+                    data.exit_tick_time || (data as any).sell_spot_time || (data as any).exit_spot_time,
+                    'YYYY-M-D HH:mm:ss [GMT]'
+                ),
             profit: is_completed ? data.profit : 0,
         };
 

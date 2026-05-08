@@ -150,7 +150,7 @@ class DBot {
                 this.workspace.addChangeListener(event => this.workspace.dispatchBlockEventEffects(event));
                 this.workspace.addChangeListener(event => {
                     if (event.type === 'drag' && !event.isStart && !is_mobile) validateErrorOnBlockDelete();
-                    
+
                     const workspace_change_events = [
                         window.Blockly.Events.BLOCK_CREATE,
                         window.Blockly.Events.BLOCK_DELETE,

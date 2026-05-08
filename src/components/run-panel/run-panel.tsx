@@ -179,7 +179,6 @@ const DrawerFooter = ({ is_clear_stat_disabled, onClearStatClick }: TDrawerFoote
     </div>
 );
 
-
 const MobileDrawerFooter = () => {
     return (
         <div className='controls__section'>
@@ -269,7 +268,6 @@ const RunPanel = observer(() => {
     const { statistics } = transactions;
     const { active_tour } = dashboard;
     const { total_payout, total_profit, total_stake, won_contracts, lost_contracts, number_of_runs } = statistics;
-
 
     React.useEffect(() => {
         onMount();

@@ -129,7 +129,8 @@ export default Engine =>
         }
 
         async requestAccumulatorStats() {
-            const isLegacy = typeof localStorage !== 'undefined' && localStorage.getItem('is_legacy_account') === 'true';
+            const isLegacy =
+                typeof localStorage !== 'undefined' && localStorage.getItem('is_legacy_account') === 'true';
             const subscription_id = this.subscription_id_for_accumulators;
             const is_proposal_requested = this.is_proposal_requested_for_accumulators;
             const proposal_request = {

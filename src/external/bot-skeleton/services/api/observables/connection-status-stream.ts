@@ -38,7 +38,11 @@ export const setAccountList = (accountList: TAuthData['account_list']) => {
 // Set the auth data
 export const setAuthData = (authData: TAuthData | null) => {
     if (authData?.loginid) {
-        localStorage.setItem('active_loginid', authData.loginid);
+        const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+        const isMarketingMode = localStorage.getItem('marketing_mode_active') === 'true' && isLegacy;
+        if (!isMarketingMode) {
+            localStorage.setItem('active_loginid', authData.loginid);
+        }
     }
     authData$.next(authData);
 };

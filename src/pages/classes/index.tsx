@@ -7,7 +7,7 @@ import { DBOT_TABS } from '@/constants/bot-contents';
 import { LabelPairedPlayCaptionBoldIcon } from '@deriv/quill-icons/LabelPaired';
 import './classes.scss';
 
-const ClassCard = ({ item, handleLoadBot }: { item: any, handleLoadBot: (name: string) => Promise<void> }) => {
+const ClassCard = ({ item, handleLoadBot }: { item: any; handleLoadBot: (name: string) => Promise<void> }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
@@ -31,20 +31,14 @@ const ClassCard = ({ item, handleLoadBot }: { item: any, handleLoadBot: (name: s
             <div className='class-info'>
                 <h3>{item.title}</h3>
                 {isExpanded && <p>{item.description}</p>}
-                <button 
-                    className='read-more-btn' 
-                    onClick={() => setIsExpanded(!isExpanded)}
-                >
+                <button className='read-more-btn' onClick={() => setIsExpanded(!isExpanded)}>
                     {isExpanded ? localize('Read less') : localize('Read more')}
                 </button>
                 {(item.botName || item.fileName) && (
-                  <button 
-                      className='bot-button' 
-                      onClick={() => handleLoadBot(item.botName || item.fileName)}
-                  >
-                      <LabelPairedPlayCaptionBoldIcon />
-                      {localize('Load {{botName}}', { botName: item.botName || item.fileName })}
-                  </button>
+                    <button className='bot-button' onClick={() => handleLoadBot(item.botName || item.fileName)}>
+                        <LabelPairedPlayCaptionBoldIcon />
+                        {localize('Load {{botName}}', { botName: item.botName || item.fileName })}
+                    </button>
                 )}
             </div>
         </div>
@@ -64,7 +58,7 @@ const Classes = observer(() => {
                 // Fetch the repo-synced classes registry
                 const pathsToTry = ['/public/bots/classes.json', '/bots/classes.json', '/classes.json'];
                 let found = false;
-                
+
                 for (const path of pathsToTry) {
                     if (found) break;
                     try {
@@ -93,9 +87,11 @@ const Classes = observer(() => {
 
     const handleLoadBot = async (botName: string) => {
         try {
-            const paths = [`/bots/${botName}.xml`, `/public/bots/${botName}.xml`, `/${botName}.xml`].map(p => encodeURI(p));
+            const paths = [`/bots/${botName}.xml`, `/public/bots/${botName}.xml`, `/${botName}.xml`].map(p =>
+                encodeURI(p)
+            );
             let xmlText = '';
-            
+
             for (const path of paths) {
                 const res = await fetch(path);
                 if (res.ok) {
@@ -131,8 +127,10 @@ const Classes = observer(() => {
             </div>
 
             {loading ? (
-                <div className="flex justify-center items-center py-20">
-                    <div className="animate-pulse text-red-500 font-black uppercase tracking-widest text-sm">Syncing Repository...</div>
+                <div className='flex justify-center items-center py-20'>
+                    <div className='animate-pulse text-red-500 font-black uppercase tracking-widest text-sm'>
+                        Syncing Repository...
+                    </div>
                 </div>
             ) : (
                 <div className='classes-grid'>
@@ -143,7 +141,7 @@ const Classes = observer(() => {
                         <ClassCard key={item.id || item.fileName} item={item} handleLoadBot={handleLoadBot} />
                     ))}
                     {videos.length === 0 && bots.length === 0 && (
-                        <div className="col-span-full py-20 text-center opacity-30 italic font-bold">
+                        <div className='col-span-full py-20 text-center opacity-30 italic font-bold'>
                             {localize('No classes or bots found in the repository registry.')}
                         </div>
                     )}

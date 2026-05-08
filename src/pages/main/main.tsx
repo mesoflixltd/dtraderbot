@@ -86,11 +86,22 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['campaigns', 'dashboard', 'bot_builder', 'chart', 'dcircles', 'freebots', 'ai-hub', 'classes', 'trading-view', 'risk-calculator', 'tutorial'];
+    const hash = [
+        'campaigns',
+        'dashboard',
+        'bot_builder',
+        'chart',
+        'dcircles',
+        'freebots',
+        'ai-hub',
+        'classes',
+        'trading-view',
+        'risk-calculator',
+        'tutorial',
+    ];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
-
 
     // Trade type modal state
     const [tradeTypeModalState, setTradeTypeModalState] = useState(getModalState());
@@ -146,8 +157,6 @@ const AppWrapper = observer(() => {
         resetUrlParamProcessing();
     }, [location.search]);
 
-
-
     React.useEffect(() => {
         if (connectionStatus !== CONNECTION_STATUS.OPENED) {
             const is_bot_running = document.getElementById('db-animation__stop-button') !== null;
@@ -159,8 +168,6 @@ const AppWrapper = observer(() => {
             }
         }
     }, [clear, connectionStatus, setWebSocketState, stopBot]);
-
-
 
     React.useEffect(() => {
         let pollTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -251,7 +258,7 @@ const AppWrapper = observer(() => {
         // Prevent scrolling when specific tabs are active (only on mobile)
         const mainElement = document.querySelector('.main__container');
         const scrollLockedTabs = [DBOT_TABS.TUTORIAL];
-        
+
         if (scrollLockedTabs.includes(active_tab) && !isDesktop) {
             document.body.style.overflow = 'hidden';
             if (mainElement instanceof HTMLElement) {
@@ -334,7 +341,13 @@ const AppWrapper = observer(() => {
                     })}
                 >
                     <div>
-                        <Tabs active_index={active_tab} className='main__tabs' onTabItemClick={handleTabChange} top history={window.history as any}>
+                        <Tabs
+                            active_index={active_tab}
+                            className='main__tabs'
+                            onTabItemClick={handleTabChange}
+                            top
+                            history={window.history as any}
+                        >
                             <div
                                 label={
                                     <>
@@ -514,7 +527,9 @@ const AppWrapper = observer(() => {
                                 id='id-risk-calculator'
                             >
                                 <Suspense
-                                    fallback={<ChunkLoader message={localize('Please wait, loading Risk Calculator...')} />}
+                                    fallback={
+                                        <ChunkLoader message={localize('Please wait, loading Risk Calculator...')} />
+                                    }
                                 >
                                     <RiskCalculator />
                                 </Suspense>
@@ -548,9 +563,11 @@ const AppWrapper = observer(() => {
                 </div>
             </div>
             <DesktopWrapper>
-                <div className={classNames('main__run-strategy-wrapper', {
-                    'main__run-strategy-wrapper--minimized': run_panel.is_run_panel_minimized
-                })}>
+                <div
+                    className={classNames('main__run-strategy-wrapper', {
+                        'main__run-strategy-wrapper--minimized': run_panel.is_run_panel_minimized,
+                    })}
+                >
                     <RunStrategy />
                     <RunPanel />
                 </div>

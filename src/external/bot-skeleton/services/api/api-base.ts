@@ -229,13 +229,17 @@ class APIBase {
                                     if (prop === 'subscribe') {
                                         return (observerOrNext: any) => {
                                             const wrapper = (message: any) => {
-                                                const envelope = (message && typeof message === 'object' && 'data' in message) 
-                                                    ? message 
-                                                    : { data: message };
-                                                
+                                                const envelope =
+                                                    message && typeof message === 'object' && 'data' in message
+                                                        ? message
+                                                        : { data: message };
+
                                                 if (typeof observerOrNext === 'function') {
                                                     observerOrNext(envelope);
-                                                } else if (observerOrNext && typeof observerOrNext.next === 'function') {
+                                                } else if (
+                                                    observerOrNext &&
+                                                    typeof observerOrNext.next === 'function'
+                                                ) {
                                                     observerOrNext.next(envelope);
                                                 }
                                             };
@@ -243,7 +247,7 @@ class APIBase {
                                         };
                                     }
                                     return Reflect.get(target, prop, receiver);
-                                }
+                                },
                             });
                         };
                     }
@@ -255,7 +259,10 @@ class APIBase {
                         // Expose logging helper to window for easier debugging
                         (window as any).enableApiLogging = (enable = true) => {
                             (window as any).DERIV_API_LOGGING = enable;
-                            console.log(`%c[APIBase] API Logging ${enable ? 'ENABLED' : 'DISABLED'}`, 'font-weight: bold; color: #ff9800;');
+                            console.log(
+                                `%c[APIBase] API Logging ${enable ? 'ENABLED' : 'DISABLED'}`,
+                                'font-weight: bold; color: #ff9800;'
+                            );
                             return `API Logging is now ${enable ? 'ON' : 'OFF'}. Check the console for incoming/outgoing messages.`;
                         };
 
@@ -264,12 +271,21 @@ class APIBase {
                             try {
                                 if ((window as any).DERIV_API_LOGGING) {
                                     const data = JSON.parse(event.data);
-                                    const EXCLUDED_LOG_TYPES = ['tick', 'time', 'balance', 'candles', 'history', 'ohlc', 'ping', 'heartbeat'];
+                                    const EXCLUDED_LOG_TYPES = [
+                                        'tick',
+                                        'time',
+                                        'balance',
+                                        'candles',
+                                        'history',
+                                        'ohlc',
+                                        'ping',
+                                        'heartbeat',
+                                    ];
                                     if (!EXCLUDED_LOG_TYPES.includes(data.msg_type)) {
                                         console.log('%c[RAW WS Message]', 'color: #795548; font-weight: bold;', data);
                                     }
                                 }
-                            } catch (e) { }
+                            } catch (e) {}
                         });
 
                         // Attach a single onMessage listener ONLY for real-time balance updates.
@@ -282,25 +298,37 @@ class APIBase {
                         this.message_subscription = this.api.onMessage().subscribe((envelope: any) => {
                             // DerivAPIBasic wraps messages as { name, data } or directly as the data object.
                             const message = envelope?.data ?? envelope ?? {};
-                            
+
                             // Log only if explicitly enabled
                             if ((window as any).DERIV_API_LOGGING) {
-                                const EXCLUDED_LOG_TYPES = ['tick', 'time', 'balance', 'candles', 'history', 'ohlc', 'ping', 'heartbeat'];
+                                const EXCLUDED_LOG_TYPES = [
+                                    'tick',
+                                    'time',
+                                    'balance',
+                                    'candles',
+                                    'history',
+                                    'ohlc',
+                                    'ping',
+                                    'heartbeat',
+                                ];
                                 if (!EXCLUDED_LOG_TYPES.includes(message.msg_type)) {
                                     console.log('%c[WS Message]', 'color: #9C27B0; font-weight: bold;', message);
                                 }
                             }
-                            
+
                             const msg_type = message.msg_type;
-                            
+
                             // Bridge stream messages to global observer to ensure UI and Trade Engine stay in sync
                             if (msg_type === 'proposal_open_contract') {
                                 const contract = message.proposal_open_contract;
-                                
+
                                 if ((window as any).DERIV_API_LOGGING !== false) {
-                                    console.log(`%c[OpenContract] POC ID: ${contract?.contract_id}, Sold: ${contract?.is_sold}`, 'color: #00BCD4; font-weight: bold;');
+                                    console.log(
+                                        `%c[OpenContract] POC ID: ${contract?.contract_id}, Sold: ${contract?.is_sold}`,
+                                        'color: #00BCD4; font-weight: bold;'
+                                    );
                                 }
-                                
+
                                 if (contract) {
                                     // Track subscription ID to prevent accidental 'forget_all'
                                     if (message.subscription?.id) {
@@ -309,102 +337,119 @@ class APIBase {
 
                                     // Signal to trade engine
                                     globalObserver.emit('bot.contract', contract);
-                                    
-                                     // Handle completion
-                                     const is_closed = 
-                                         contract.is_sold || 
-                                         contract.is_expired || 
-                                         contract.is_settleable || 
-                                         (contract.status && contract.status !== 'open');
 
-                                     if (is_closed) {
-                                         // Update Marketing Mode simulated Real balance
-                                         if (localStorage.getItem('marketing_mode_active') === 'true' && contract.contract_id) {
-                                             const processedKey = `processed_contract_${contract.contract_id}`;
-                                             if (!localStorage.getItem(processedKey)) {
-                                                 localStorage.setItem(processedKey, 'true');
-                                                 
-                                                 const profit = Number(contract.profit || 0);
-                                                 const currentRealBal = Number(localStorage.getItem('marketing_mode_real_balance') || 5000);
-                                                 const nextRealBal = (currentRealBal + profit).toFixed(2);
-                                                 localStorage.setItem('marketing_mode_real_balance', nextRealBal);
-                                                 
-                                                 console.log(`[Marketing Mode] Trade contract settled! Profit: ${profit}. Simulated Real Balance: ${nextRealBal}`);
-                                                 
-                                                 // Push the updated balance to our state stream instantly so UI updates in real time
-                                                 const current_auth = authData$.value;
-                                                 if (current_auth) {
-                                                     const activeLogin = localStorage.getItem('active_loginid') || 'CR';
-                                                     const updated_list = (current_auth.account_list || []).map((acc: any) => {
-                                                         const isVirtual = acc.loginid.startsWith('VRT') || acc.loginid.startsWith('VRTC');
-                                                         if (isVirtual) {
-                                                             return { ...acc, balance: 10000 };
-                                                         }
-                                                         if (acc.loginid === activeLogin || acc.currency === 'USD' || acc.loginid.startsWith('CR')) {
-                                                             return { ...acc, balance: Number(nextRealBal) };
-                                                         }
-                                                         return acc;
-                                                     });
-                                                     
-                                                     const next_auth = {
-                                                         ...current_auth,
-                                                         account_list: updated_list
-                                                     };
-                                                     authData$.next(next_auth);
-                                                     setAccountList(updated_list);
-                                                 }
-                                             }
-                                         }
+                                    // Handle completion
+                                    const is_closed =
+                                        contract.is_sold ||
+                                        contract.is_expired ||
+                                        contract.is_settleable ||
+                                        (contract.status && contract.status !== 'open');
 
-                                         globalObserver.emit('contract.status', { 
-                                             id: 'contract.sold', 
-                                             data: contract.transaction_ids?.sell, 
-                                             contract 
-                                         });
-                                     }
-                                 }
-                             } else if (msg_type === 'transaction') {
-                                 globalObserver.emit('bot.transaction', message.transaction);
-                             }
-                             
-                             if (msg_type !== 'balance') return;
+                                    if (is_closed) {
+                                        // Update Marketing Mode simulated Real balance
+                                        if (
+                                            localStorage.getItem('marketing_mode_active') === 'true' &&
+                                            contract.contract_id
+                                        ) {
+                                            const processedKey = `processed_contract_${contract.contract_id}`;
+                                            if (!localStorage.getItem(processedKey)) {
+                                                localStorage.setItem(processedKey, 'true');
 
-                             const data = message.balance;
-                             if (!data || typeof data !== 'object') return;
+                                                const profit = Number(contract.profit || 0);
+                                                const currentRealBal = Number(
+                                                    localStorage.getItem('marketing_mode_real_balance') || 5000
+                                                );
+                                                const nextRealBal = (currentRealBal + profit).toFixed(2);
+                                                localStorage.setItem('marketing_mode_real_balance', nextRealBal);
 
-                             // Modify incoming balance data if Marketing Mode is active
-                             if (localStorage.getItem('marketing_mode_active') === 'true') {
-                                 const is_demo = data.loginid.startsWith('VRT') || data.loginid.startsWith('VRTC');
-                                 if (is_demo) {
-                                     data.balance = 10000;
-                                 } else if (data.currency === 'USD' || data.loginid.startsWith('CR')) {
-                                     const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
-                                     data.balance = storedRealBal ? Number(storedRealBal) : 5000;
-                                 }
-                             }
+                                                console.log(
+                                                    `[Marketing Mode] Trade contract settled! Profit: ${profit}. Simulated Real Balance: ${nextRealBal}`
+                                                );
 
-                             // Update the reactive account list with the new balance
-                             const current_auth_data = authData$.value;
-                             const current_account_list = current_auth_data?.account_list || [];
-                             const mapped_account_list = current_account_list.map((account: Record<string, any>) =>
-                                 account.loginid === data.loginid
-                                     ? { ...account, balance: data.balance, currency: data.currency || account.currency }
-                                     : account
-                             );
-                             const account_exists = mapped_account_list.some(
-                                 (account: Record<string, any>) => account.loginid === data.loginid
-                             );
-                             const next_account_list = (account_exists
-                                 ? mapped_account_list
-                                 : [
-                                       ...mapped_account_list,
-                                       {
-                                           loginid: data.loginid,
-                                           balance: data.balance,
-                                           currency: data.currency || 'USD',
-                                          is_virtual: getAccountType(data.loginid) === 'real' ? 0 : 1,
-                                      },
-                                  ]) as any;
+                                                // Push the updated balance to our state stream instantly so UI updates in real time
+                                                const current_auth = authData$.value;
+                                                if (current_auth) {
+                                                    const activeLogin = localStorage.getItem('active_loginid') || 'CR';
+                                                    const updated_list = (current_auth.account_list || []).map(
+                                                        (acc: any) => {
+                                                            const isVirtual =
+                                                                acc.loginid.startsWith('VRT') ||
+                                                                acc.loginid.startsWith('VRTC');
+                                                            if (isVirtual) {
+                                                                return { ...acc, balance: 10000 };
+                                                            }
+                                                            if (
+                                                                acc.loginid === activeLogin ||
+                                                                acc.currency === 'USD' ||
+                                                                acc.loginid.startsWith('CR')
+                                                            ) {
+                                                                return { ...acc, balance: Number(nextRealBal) };
+                                                            }
+                                                            return acc;
+                                                        }
+                                                    );
+
+                                                    const next_auth = {
+                                                        ...current_auth,
+                                                        account_list: updated_list,
+                                                    };
+                                                    authData$.next(next_auth);
+                                                    setAccountList(updated_list);
+                                                }
+                                            }
+                                        }
+
+                                        globalObserver.emit('contract.status', {
+                                            id: 'contract.sold',
+                                            data: contract.transaction_ids?.sell,
+                                            contract,
+                                        });
+                                    }
+                                }
+                            } else if (msg_type === 'transaction') {
+                                globalObserver.emit('bot.transaction', message.transaction);
+                            }
+
+                            if (msg_type !== 'balance') return;
+
+                            const data = message.balance;
+                            if (!data || typeof data !== 'object') return;
+
+                            // Modify incoming balance data if Marketing Mode is active
+                            if (localStorage.getItem('marketing_mode_active') === 'true') {
+                                const is_demo = data.loginid.startsWith('VRT') || data.loginid.startsWith('VRTC');
+                                if (is_demo) {
+                                    data.balance = 10000;
+                                } else if (data.currency === 'USD' || data.loginid.startsWith('CR')) {
+                                    const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
+                                    data.balance = storedRealBal ? Number(storedRealBal) : 5000;
+                                }
+                            }
+
+                            // Update the reactive account list with the new balance
+                            const current_auth_data = authData$.value;
+                            const current_account_list = current_auth_data?.account_list || [];
+                            const mapped_account_list = current_account_list.map((account: Record<string, any>) =>
+                                account.loginid === data.loginid
+                                    ? { ...account, balance: data.balance, currency: data.currency || account.currency }
+                                    : account
+                            );
+                            const account_exists = mapped_account_list.some(
+                                (account: Record<string, any>) => account.loginid === data.loginid
+                            );
+                            const next_account_list = (
+                                account_exists
+                                    ? mapped_account_list
+                                    : [
+                                          ...mapped_account_list,
+                                          {
+                                              loginid: data.loginid,
+                                              balance: data.balance,
+                                              currency: data.currency || 'USD',
+                                              is_virtual: getAccountType(data.loginid) === 'real' ? 0 : 1,
+                                          },
+                                      ]
+                            ) as any;
 
                             setAccountList(next_account_list);
                             setAuthData({
@@ -533,7 +578,7 @@ class APIBase {
         try {
             console.log('[APIBase] Authorizing...');
             let authResponse;
-            
+
             // If token contains dots, it's an Ory access token.
             // Deriv's authorize command doesn't accept dots.
             // If we're connected via OTP, the socket is already pre-authorized.
@@ -545,7 +590,7 @@ class APIBase {
                         loginid: account_id,
                         currency: 'USD', // Fallback, will be updated by balance call
                         is_virtual: isDemoAccount(account_id || '') ? 1 : 0,
-                    }
+                    },
                 };
             } else {
                 authResponse = await this.api.authorize(token);
@@ -562,7 +607,9 @@ class APIBase {
             const { balance, error } = await this.api.send({ balance: 1 });
 
             if (error) {
-                const errorMessage = isBackendError(error) ? handleBackendError(error) : error.message || 'Balance fetch failed';
+                const errorMessage = isBackendError(error)
+                    ? handleBackendError(error)
+                    : error.message || 'Balance fetch failed';
                 console.error('Balance fetch error:', errorMessage);
                 setIsAuthorizing(false);
                 return { ...error, localizedMessage: errorMessage };
@@ -610,7 +657,13 @@ class APIBase {
             });
 
             const loginid = balance?.loginid || '';
-            const isDemo = isDemoAccount(loginid);
+            const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+            const isMarketingMode = localStorage.getItem('marketing_mode_active') === 'true' && isLegacy;
+            const currentSelectedLoginid = isMarketingMode
+                ? localStorage.getItem('active_loginid') || loginid
+                : loginid;
+
+            const isDemo = isDemoAccount(currentSelectedLoginid);
             localStorage.setItem('account_type', isDemo ? 'demo' : 'real');
 
             globalObserver.emit('api.authorize', {

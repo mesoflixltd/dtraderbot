@@ -114,14 +114,15 @@ export default class TradingTimes {
 
                     symbols?.forEach(symbol_obj => {
                         const { times } = symbol_obj;
-                        const symbol_name = symbol_obj.symbol ?? symbol_obj.underlying_symbol ?? symbol_obj.underlying ?? symbol_obj.code ?? '';
+                        const symbol_name =
+                            symbol_obj.symbol ??
+                            symbol_obj.underlying_symbol ??
+                            symbol_obj.underlying ??
+                            symbol_obj.code ??
+                            '';
 
                         // Validate symbol before processing
-                        if (
-                            !symbol_name ||
-                            typeof symbol_name !== 'string' ||
-                            symbol_name.trim() === ''
-                        ) {
+                        if (!symbol_name || typeof symbol_name !== 'string' || symbol_name.trim() === '') {
                             console.warn(`[TradingTimes] Invalid symbol in API response:`, symbol_obj);
                             return;
                         }

@@ -36,11 +36,15 @@ const useActiveAccount = ({
               ? parseFloat(directBalance)
               : 0;
 
-        // Override if marketing mode is active
-        if (localStorage.getItem('marketing_mode_active') === 'true') {
+        // Override if marketing mode is active on a legacy account
+        const isLegacy = localStorage.getItem('is_legacy_account') === 'true';
+        if (localStorage.getItem('marketing_mode_active') === 'true' && isLegacy) {
             if (isVirtual) {
                 balVal = 10000;
-            } else if (activeAccount.currency === 'USD' || (!activeAccount.currency && activeAccount.loginid.startsWith('CR'))) {
+            } else if (
+                activeAccount.currency === 'USD' ||
+                (!activeAccount.currency && activeAccount.loginid.startsWith('CR'))
+            ) {
                 const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
                 if (storedRealBal) {
                     balVal = Number(storedRealBal);

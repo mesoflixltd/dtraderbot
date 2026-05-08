@@ -19,7 +19,9 @@ const Disclaimer = ({ isMobile }: IDisclaimerProps) => {
     const disclaimer_text = (
         <div className='disclaimer__content'>
             <Text as='p' size='xs' lineHeight='s' color='prominent'>
-                {localize('Deriv offers complex derivatives, such as options and contracts for difference ("CFDs"). These products may not be suitable for all clients, and trading them puts you at risk.')}
+                {localize(
+                    'Deriv offers complex derivatives, such as options and contracts for difference ("CFDs"). These products may not be suitable for all clients, and trading them puts you at risk.'
+                )}
             </Text>
             <br />
             <Text as='p' size='xs' weight='bold' lineHeight='s' color='prominent'>
@@ -27,13 +29,19 @@ const Disclaimer = ({ isMobile }: IDisclaimerProps) => {
             </Text>
             <ul style={{ paddingLeft: '20px', marginTop: '8px', listStyleType: 'disc' }}>
                 <li>
-                    <Text size='xs' lineHeight='s'>{localize('You may lose some or all of your invested capital')}</Text>
+                    <Text size='xs' lineHeight='s'>
+                        {localize('You may lose some or all of your invested capital')}
+                    </Text>
                 </li>
                 <li>
-                    <Text size='xs' lineHeight='s'>{localize('Currency conversion affects your profit/loss')}</Text>
+                    <Text size='xs' lineHeight='s'>
+                        {localize('Currency conversion affects your profit/loss')}
+                    </Text>
                 </li>
                 <li>
-                    <Text size='xs' lineHeight='s'>{localize('Markets can be volatile and unpredictable')}</Text>
+                    <Text size='xs' lineHeight='s'>
+                        {localize('Markets can be volatile and unpredictable')}
+                    </Text>
                 </li>
             </ul>
             <br />
@@ -42,7 +50,9 @@ const Disclaimer = ({ isMobile }: IDisclaimerProps) => {
             </Text>
             <br />
             <Text as='p' size='xs' lineHeight='s' color='prominent'>
-                {localize('By continuing, you confirm that you understand these risks and that you are aware that Deriv does not provide investment advice.')}
+                {localize(
+                    'By continuing, you confirm that you understand these risks and that you are aware that Deriv does not provide investment advice.'
+                )}
             </Text>
         </div>
     );
@@ -68,9 +78,7 @@ const Disclaimer = ({ isMobile }: IDisclaimerProps) => {
                     has_close_icon
                 >
                     <Modal.Body>
-                        <div style={{ padding: '1.6rem' }}>
-                            {disclaimer_text}
-                        </div>
+                        <div style={{ padding: '1.6rem' }}>{disclaimer_text}</div>
                     </Modal.Body>
                 </Modal>
             </>
@@ -95,9 +103,7 @@ const Disclaimer = ({ isMobile }: IDisclaimerProps) => {
                 has_close_icon
             >
                 <Modal.Body>
-                    <div style={{ padding: '2.4rem' }}>
-                        {disclaimer_text}
-                    </div>
+                    <div style={{ padding: '2.4rem' }}>{disclaimer_text}</div>
                 </Modal.Body>
             </Modal>
         </>

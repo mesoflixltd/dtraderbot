@@ -8,8 +8,6 @@
     }
 }
 
-
-
 .main {
     display: flex;
     overflow: hidden;
@@ -34,10 +32,10 @@
         }
 
         @include mobile-or-tablet-screen {
-             overflow-y: auto;
-             overflow-x: hidden;
-             -webkit-overflow-scrolling: touch;
-             height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            height: 100%;
         }
 
         &--active {
@@ -63,7 +61,7 @@
 
             &__active {
                 color: var(--text-prominent) !important;
-                
+
                 body.theme--light & {
                     background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%) !important;
                     border: 1px solid #3b82f6 !important;
@@ -105,7 +103,8 @@
                     }
 
                     // Remove any scroll shadows/gradients
-                    &:before, &:after {
+                    &:before,
+                    &:after {
                         display: none !important;
                     }
                 }
