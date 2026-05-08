@@ -113,13 +113,14 @@ export default class TradingTimes {
                     const { symbols } = submarket;
 
                     symbols?.forEach(symbol_obj => {
-                        const { times, underlying_symbol } = symbol_obj;
+                        const { times } = symbol_obj;
+                        const symbol_name = symbol_obj.symbol ?? symbol_obj.underlying_symbol ?? symbol_obj.underlying ?? symbol_obj.code ?? '';
 
                         // Validate symbol before processing
                         if (
-                            !underlying_symbol ||
-                            typeof underlying_symbol !== 'string' ||
-                            underlying_symbol.trim() === ''
+                            !symbol_name ||
+                            typeof symbol_name !== 'string' ||
+                            symbol_name.trim() === ''
                         ) {
                             console.warn(`[TradingTimes] Invalid symbol in API response:`, symbol_obj);
                             return;
@@ -127,7 +128,7 @@ export default class TradingTimes {
 
                         // Validate times data
                         if (!times || !times.open || !times.close) {
-                            console.warn(`[TradingTimes] Invalid times data for symbol ${underlying_symbol}:`, times);
+                            console.warn(`[TradingTimes] Invalid times data for symbol ${symbol_name}:`, times);
                             return;
                         }
                         const { open, close } = times;
@@ -142,7 +143,7 @@ export default class TradingTimes {
                                 close: getUTCDate(close[index]),
                             }));
                         }
-                        this.trading_times[underlying_symbol] = {
+                        this.trading_times[symbol_name] = {
                             is_open_all_day,
                             is_closed_all_day,
                             times: processed_times,
