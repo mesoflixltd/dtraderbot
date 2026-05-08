@@ -287,7 +287,7 @@ export const generateOAuthURL = async (prompt?: string) => {
             console.log('[OAuth Service] Redirecting to Deriv with:', { clientId, redirectUrl, appId });
             
             // Format the URL according to Deriv's documentation
-            let oauthUrl = `${hostname}auth?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUrl)}&scope=trade%20account_manage&state=${csrfToken}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+            let oauthUrl = `${hostname}auth?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUrl)}&scope=${encodeURIComponent(scopes)}&state=${csrfToken}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 
             // Optional: prompt parameter (e.g. 'registration' for signup flow)
             if (prompt) {
