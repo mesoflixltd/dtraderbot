@@ -21,6 +21,42 @@ const KNOWN_PIPS: Record<string, number> = {
     '1HZ10V': 3, '1HZ25V': 3, '1HZ50V': 2, '1HZ75V': 2, '1HZ100V': 2,
 };
 
+const MARKET_NAME_MAP: Record<string, string> = {
+    R_10: 'Volatility 10 Index',
+    R_25: 'Volatility 25 Index',
+    R_50: 'Volatility 50 Index',
+    R_75: 'Volatility 75 Index',
+    R_100: 'Volatility 100 Index',
+    '1HZ10V': 'Volatility 10 (1s) Index',
+    '1HZ15V': 'Volatility 15 (1s) Index',
+    '1HZ25V': 'Volatility 25 (1s) Index',
+    '1HZ30V': 'Volatility 30 (1s) Index',
+    '1HZ50V': 'Volatility 50 (1s) Index',
+    '1HZ75V': 'Volatility 75 (1s) Index',
+    '1HZ90V': 'Volatility 90 (1s) Index',
+    '1HZ100V': 'Volatility 100 (1s) Index',
+};
+
+const getMarketDisplayName = (symbol: string, defaultName?: string): string => {
+    if (MARKET_NAME_MAP[symbol]) {
+        return MARKET_NAME_MAP[symbol];
+    }
+    const cleanSym = symbol.toUpperCase();
+    if (MARKET_NAME_MAP[cleanSym]) {
+        return MARKET_NAME_MAP[cleanSym];
+    }
+    // Parse symbol dynamically if not in map
+    if (cleanSym.startsWith('1HZ')) {
+        const num = cleanSym.replace('1HZ', '').replace('V', '');
+        return `Volatility ${num} (1s) Index`;
+    }
+    if (cleanSym.startsWith('R_')) {
+        const num = cleanSym.replace('R_', '');
+        return `Volatility ${num} Index`;
+    }
+    return defaultName && defaultName !== symbol ? defaultName : symbol;
+};
+
 // Fallback symbol list shown while API loads
 const FALLBACK_SYMBOLS: TSymbol[] = [
     { symbol: 'R_10',    display_name: 'Volatility 10 Index'       },
@@ -173,7 +209,7 @@ const DCircles = observer(() => {
                         const name: string =
                             item.display_name ?? item.name ?? item.description ?? item.verbose_name ?? item.display_underlying ?? sym;
                         if (!sym) return null;
-                        return { symbol: sym, display_name: name };
+                        return { symbol: sym, display_name: getMarketDisplayName(sym, name) };
                     };
 
                     const fetched: TSymbol[] = (raw as any[])

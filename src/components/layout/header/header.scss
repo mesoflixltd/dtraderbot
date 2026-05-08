@@ -287,6 +287,95 @@
         margin-inline-end: 1.6rem;
     }
 
+    &--glassmorphic {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 0.4rem 0.6rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        margin-inline-end: 1.2rem;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            background: rgba(18, 18, 22, 0.4);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        button {
+            font-weight: 600 !important;
+            font-size: 1.3rem !important;
+            height: 3.2rem !important;
+            border-radius: 14px !important;
+            margin-inline-end: 0 !important;
+            padding: 0 1.6rem !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .btn-login {
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-prominent) !important;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.1) !important;
+                transform: translateY(-1px);
+            }
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #ff444f 0%, #ff5c66 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(255, 68, 79, 0.3) !important;
+
+            &:hover {
+                filter: brightness(1.1);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 15px rgba(255, 68, 79, 0.45) !important;
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 576px) {
+            padding: 0.3rem 0.4rem;
+            border-radius: 16px;
+            gap: 0.4rem;
+            margin-inline-end: 0.4rem;
+
+            button {
+                font-size: 1.1rem !important;
+                height: 2.8rem !important;
+                border-radius: 11px !important;
+                padding: 0 1rem !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            padding: 0.2rem 0.3rem;
+            gap: 0.2rem;
+
+            button {
+                font-size: 1rem !important;
+                height: 2.6rem !important;
+                padding: 0 0.8rem !important;
+            }
+        }
+    }
+
     &__spinner {
         width: 2rem;
         height: 2rem;

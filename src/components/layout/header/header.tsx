@@ -181,11 +181,11 @@ const AppHeader = observer(() => {
                 ((!is_account_regenerating && !isAuthorizing && !activeLoginid) || authTimeout)
             ) {
                 return (
-                    <div className='auth-actions'>
-                        <Button tertiary onClick={handleLogin}>
+                    <div className='auth-actions auth-actions--glassmorphic'>
+                        <Button tertiary className='btn-login' onClick={handleLogin}>
                             <Localize i18n_default_text='Log in' />
                         </Button>
-                        <Button primary_light onClick={handleSignup}>
+                        <Button primary_light className='btn-signup' onClick={handleSignup}>
                             <Localize i18n_default_text='Sign up' />
                         </Button>
                     </div>

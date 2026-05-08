@@ -8,6 +8,42 @@ const getChartUrl = () => atob(_0x4f2a[0]);
 
 const WS_URL = 'wss://api.derivws.com/trading/v1/options/ws/public?app_id=114343';
 
+const MARKET_NAME_MAP: Record<string, string> = {
+    R_10: 'Volatility 10 Index',
+    R_25: 'Volatility 25 Index',
+    R_50: 'Volatility 50 Index',
+    R_75: 'Volatility 75 Index',
+    R_100: 'Volatility 100 Index',
+    '1HZ10V': 'Volatility 10 (1s) Index',
+    '1HZ15V': 'Volatility 15 (1s) Index',
+    '1HZ25V': 'Volatility 25 (1s) Index',
+    '1HZ30V': 'Volatility 30 (1s) Index',
+    '1HZ50V': 'Volatility 50 (1s) Index',
+    '1HZ75V': 'Volatility 75 (1s) Index',
+    '1HZ90V': 'Volatility 90 (1s) Index',
+    '1HZ100V': 'Volatility 100 (1s) Index',
+};
+
+const getMarketDisplayName = (symbol: string, defaultName?: string): string => {
+    if (MARKET_NAME_MAP[symbol]) {
+        return MARKET_NAME_MAP[symbol];
+    }
+    const cleanSym = symbol.toUpperCase();
+    if (MARKET_NAME_MAP[cleanSym]) {
+        return MARKET_NAME_MAP[cleanSym];
+    }
+    // Parse symbol dynamically if not in map
+    if (cleanSym.startsWith('1HZ')) {
+        const num = cleanSym.replace('1HZ', '').replace('V', '');
+        return `Volatility ${num} (1s) Index`;
+    }
+    if (cleanSym.startsWith('R_')) {
+        const num = cleanSym.replace('R_', '');
+        return `Volatility ${num} Index`;
+    }
+    return defaultName && defaultName !== symbol ? defaultName : symbol;
+};
+
 const AnalysisPanel = observer(() => {
     const [selectedSymbol, setSelectedSymbol] = useState('R_10');
     const [symbols, setSymbols] = useState<{symbol: string, name: string}[]>([]);
@@ -54,8 +90,8 @@ const AnalysisPanel = observer(() => {
             if (data.msg_type === 'active_symbols') {
                 if (data.active_symbols && Array.isArray(data.active_symbols)) {
                     const filtered = data.active_symbols
-                        .filter((s: any) => s.market === 'synthetic_index')
-                        .map((s: any) => ({ symbol: s.symbol, name: s.display_name }));
+                        .filter((s: any) => s.market === 'synthetic_index' || s.market === 'synthetic_indices' || /^(R_|1HZ)/.test(s.symbol))
+                        .map((s: any) => ({ symbol: s.symbol, name: getMarketDisplayName(s.symbol, s.display_name) }));
                     if (filtered.length > 0) setSymbols(filtered);
                 } else {
                     console.warn('[TradingView Analysis] No active symbols found in response');
