@@ -294,8 +294,8 @@ export default class TransactionsStore {
 
     sortOutPositionsBeforeAction(positions: TPortfolioPosition[], element_id?: number) {
         positions?.forEach(position => {
-            if (!element_id || (element_id && position.id === element_id)) {
-                const contract_details = position.contract_info;
+            if (!element_id || (element_id && (position as any).id === element_id)) {
+                const contract_details = position.contract_info as ProposalOpenContract;
                 this.updateResultsCompletedContract(contract_details);
             }
         });

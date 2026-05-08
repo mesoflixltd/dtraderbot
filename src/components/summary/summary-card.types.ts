@@ -1,6 +1,6 @@
 import { ProposalOpenContract } from '@deriv/api-types';
 
-type TDateType = string | number | undefined;
+type TDateType = string | number | null | undefined;
 
 export type TContractInfo = Omit<
     ProposalOpenContract,
