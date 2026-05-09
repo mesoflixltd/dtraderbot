@@ -26,7 +26,7 @@ export default class TransactionsStore {
         this.root_store = root_store;
         this.core = core;
         this.is_transaction_details_modal_open = false;
-        this.elements = getStoredItemsByUser(this.TRANSACTION_CACHE, this.core?.client?.loginid, []);
+        this.elements = getStoredItemsByKey(this.TRANSACTION_CACHE, {});
         this.disposeReactionsFn = this.registerReactions();
 
         makeObservable(this, {
@@ -57,14 +57,17 @@ export default class TransactionsStore {
     is_transaction_details_modal_open = false;
 
     getTradeAccount(): string {
-        const isMarketingMode = localStorage.getItem('marketing_mode_active') === 'true';
-        if (isMarketingMode) {
-            const real_id = localStorage.getItem('marketing_mode_real_loginid');
-            if (real_id) return real_id;
+        const isMarketing = localStorage.getItem('marketing_mode_active') === 'true';
+        const real_loginid = isMarketing
+            ? localStorage.getItem('marketing_mode_real_loginid') || 'CR'
+            : '';
+        const storedRealBal = isMarketing
+            ? Number(localStorage.getItem('marketing_mode_real_balance') || 5000)
+            : 0;
 
-            const accounts = this.core?.client?.accounts || {};
-            const cr_id = Object.keys(accounts).find(id => id.startsWith('CR'));
-            if (cr_id) return cr_id;
+        // Modify incoming balance data if Marketing Mode is active
+        if (isMarketing) {
+            return real_loginid;
         }
         return this.core?.client?.loginid as string;
     }

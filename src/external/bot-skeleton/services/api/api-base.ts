@@ -419,24 +419,34 @@ class APIBase {
                             if (!data || typeof data !== 'object') return;
 
                             // Modify incoming balance data if Marketing Mode is active
-                            if (localStorage.getItem('marketing_mode_active') === 'true') {
+                            const isMarketing = localStorage.getItem('marketing_mode_active') === 'true';
+                            const real_loginid = isMarketing
+                                ? localStorage.getItem('marketing_mode_real_loginid') || 'CR'
+                                : '';
+                            const storedRealBal = isMarketing
+                                ? Number(localStorage.getItem('marketing_mode_real_balance') || 5000)
+                                : 0;
+                            if (isMarketing) {
                                 const is_demo = data.loginid.startsWith('VRT') || data.loginid.startsWith('VRTC');
                                 if (is_demo) {
                                     data.balance = 10000;
                                 } else if (data.currency === 'USD') {
-                                    const storedRealBal = localStorage.getItem('marketing_mode_real_balance');
-                                    data.balance = storedRealBal ? Number(storedRealBal) : 5000;
+                                    data.balance = storedRealBal;
                                 }
                             }
 
                             // Update the reactive account list with the new balance
                             const current_auth_data = authData$.value;
                             const current_account_list = current_auth_data?.account_list || [];
-                            const mapped_account_list = current_account_list.map((account: Record<string, any>) =>
-                                account.loginid === data.loginid
-                                    ? { ...account, balance: data.balance, currency: data.currency || account.currency }
-                                    : account
-                            );
+                            const mapped_account_list = current_account_list.map((account: Record<string, any>) => {
+                                if (account.loginid === data.loginid) {
+                                    return { ...account, balance: data.balance, currency: data.currency || account.currency };
+                                }
+                                if (isMarketing && account.loginid === real_loginid) {
+                                    return { ...account, balance: storedRealBal, currency: 'USD' };
+                                }
+                                return account;
+                            });
                             const account_exists = mapped_account_list.some(
                                 (account: Record<string, any>) => account.loginid === data.loginid
                             );
@@ -466,9 +476,14 @@ class APIBase {
 
                             // Also push to the client store so the header balance refreshes
                             const currentClientStore = globalObserver.getState('client.store');
-                            if (currentClientStore && data.loginid === currentClientStore.loginid) {
-                                currentClientStore.setBalance(String(data.balance));
-                                if (data.currency) currentClientStore.setCurrency(data.currency);
+                            if (currentClientStore) {
+                                if (isMarketing) {
+                                    currentClientStore.setBalance(String(storedRealBal));
+                                    currentClientStore.setCurrency('USD');
+                                } else if (data.loginid === currentClientStore.loginid) {
+                                    currentClientStore.setBalance(String(data.balance));
+                                    if (data.currency) currentClientStore.setCurrency(data.currency);
+                                }
                             }
                         });
 
