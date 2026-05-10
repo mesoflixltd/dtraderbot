@@ -5,7 +5,7 @@ import { ProposalOpenContract } from '@deriv/api-types';
 import { TPortfolioPosition, TStores } from '@deriv/stores/types';
 import { TContractInfo } from '../components/summary/summary-card.types';
 import { transaction_elements } from '../constants/transactions';
-import { getStoredItemsByKey, getStoredItemsByUser, setStoredItemsByKey } from '../utils/session-storage';
+import { getStoredItemsByKey, setStoredItemsByKey } from '../utils/session-storage';
 import RootStore from './root-store';
 
 type TTransaction = {
@@ -61,9 +61,6 @@ export default class TransactionsStore {
         const real_loginid = isMarketing
             ? localStorage.getItem('marketing_mode_real_loginid') || 'CR'
             : '';
-        const storedRealBal = isMarketing
-            ? Number(localStorage.getItem('marketing_mode_real_balance') || 5000)
-            : 0;
 
         // Modify incoming balance data if Marketing Mode is active
         if (isMarketing) {

@@ -285,7 +285,9 @@ class APIBase {
                                         console.log('%c[RAW WS Message]', 'color: #795548; font-weight: bold;', data);
                                     }
                                 }
-                            } catch (e) {}
+                            } catch (e) {
+                                // ignore JSON parse errors
+                            }
                         });
 
                         // Attach a single onMessage listener ONLY for real-time balance updates.
@@ -705,7 +707,10 @@ class APIBase {
             localStorage.setItem('client.country', balance?.country);
 
             if (balance?.loginid) {
-                localStorage.setItem('active_loginid', balance.loginid);
+                const isMarketing = localStorage.getItem('marketing_mode_active') === 'true';
+                if (!isMarketing) {
+                    localStorage.setItem('active_loginid', balance.loginid);
+                }
             }
 
             if (this.has_active_symbols) {
