@@ -58,13 +58,9 @@ export default class TransactionsStore {
 
     getTradeAccount(): string {
         const isMarketing = localStorage.getItem('marketing_mode_active') === 'true';
-        const real_loginid = isMarketing
-            ? localStorage.getItem('marketing_mode_real_loginid') || 'CR'
-            : '';
-
-        // Modify incoming balance data if Marketing Mode is active
-        if (isMarketing) {
-            return real_loginid;
+        const active_loginid = this.core?.client?.loginid || localStorage.getItem('active_loginid');
+        if (isMarketing && active_loginid) {
+            return active_loginid;
         }
         return this.core?.client?.loginid as string;
     }
