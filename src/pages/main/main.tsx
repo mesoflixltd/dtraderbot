@@ -95,11 +95,11 @@ const AppWrapper = observer(() => {
         'dcircles',
         'freebots',
         'ai-hub',
+        'dtrader',
         'classes',
         'trading-view',
         'risk-calculator',
         'tutorial',
-        'dtrader',
     ];
     const { isDesktop } = useDevice();
     const location = useLocation();
@@ -485,6 +485,27 @@ const AppWrapper = observer(() => {
                                             width='24px'
                                             fill='var(--text-general)'
                                         />
+                                        <Localize i18n_default_text='DTrader' />
+                                    </>
+                                }
+                                id='id-dtrader'
+                            >
+                                <Suspense
+                                    fallback={
+                                        <ChunkLoader message={localize('Please wait, redirecting to DTrader...')} />
+                                    }
+                                >
+                                    <DTraderRedirect />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedPlayCaptionBoldIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Classes' />
                                     </>
                                 }
@@ -559,27 +580,6 @@ const AppWrapper = observer(() => {
                                         <Tutorial handleTabChange={handleTabChange} />
                                     </Suspense>
                                 </div>
-                            </div>
-                            <div
-                                label={
-                                    <>
-                                        <LabelPairedPlayCaptionBoldIcon
-                                            height='24px'
-                                            width='24px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='DTrader' />
-                                    </>
-                                }
-                                id='id-dtrader'
-                            >
-                                <Suspense
-                                    fallback={
-                                        <ChunkLoader message={localize('Please wait, redirecting to DTrader...')} />
-                                    }
-                                >
-                                    <DTraderRedirect />
-                                </Suspense>
                             </div>
                         </Tabs>
                     </div>
