@@ -62,7 +62,7 @@
         "name": "Zullufx",
         "app_id": "92384",
         "client_id": "33f2Crptq49vKiVjI3HJv",
-        "oauth_redirect_uri": "http://zullufx.co.ke/",
+        "oauth_redirect_uri": "https://zullufx.co.ke/",
         "logo": {
             "type": "component",
             "component_name": "BrandLogo",
