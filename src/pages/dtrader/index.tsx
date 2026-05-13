@@ -5,7 +5,7 @@ import { LabelPairedPlayCaptionBoldIcon } from '@deriv/quill-icons/LabelPaired';
 import './dtrader.scss';
 
 const DTraderRedirect = observer(() => {
-    const url = 'https://dtrader.zullufx.co.ke/';
+    const url = 'https://dtrader.zullu.co.ke/';
 
     const handleRedirect = () => {
         window.open(url, '_blank');

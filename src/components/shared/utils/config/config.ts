@@ -9,7 +9,7 @@ import brandConfig from '@/../brand.config.json';
 // Production app domains
 export const PRODUCTION_DOMAINS = {
     COM: brandConfig.platform.hostname.production.com,
-    DBOT: 'zullufx.co.ke',
+    DBOT: 'www.zullu.co.ke',
 } as const;
 
 // Staging app domains

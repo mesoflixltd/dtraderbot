@@ -67,7 +67,7 @@ const UltimateTraderPage = () => (
                     launches.
                 </p>
             </div>
-            <a className='aihub-cta__btn' href='https://zullufx.co.ke/' target='_blank' rel='noreferrer'>
+            <a className='aihub-cta__btn' href='https://www.zullu.co.ke/' target='_blank' rel='noreferrer'>
                 Visit Zullufx Site →
             </a>
         </div>

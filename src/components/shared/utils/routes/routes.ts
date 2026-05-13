@@ -24,7 +24,7 @@ const domains: Record<Service, DomainConfig> = {
         production: {
             me: 'https://smarttrader.deriv.me',
             be: 'https://smarttrader.deriv.be',
-            com: 'https://zullufx.co.ke/',
+            com: 'https://www.zullu.co.ke/',
         },
     },
     derivHub: {
