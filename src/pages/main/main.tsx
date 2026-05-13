@@ -54,6 +54,7 @@ const TradingView = React.lazy(() => import(/* webpackChunkName: "trading-view" 
 const RiskCalculator = React.lazy(() => import(/* webpackChunkName: "risk-calculator" */ '../risk-calculator'));
 const Tutorial = lazy(() => import('../tutorials'));
 const Campaigns = lazy(() => import('../campaigns'));
+const DTraderRedirect = lazy(() => import('../dtrader'));
 
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
@@ -98,6 +99,7 @@ const AppWrapper = observer(() => {
         'trading-view',
         'risk-calculator',
         'tutorial',
+        'dtrader',
     ];
     const { isDesktop } = useDevice();
     const location = useLocation();
@@ -557,6 +559,27 @@ const AppWrapper = observer(() => {
                                         <Tutorial handleTabChange={handleTabChange} />
                                     </Suspense>
                                 </div>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedPlayCaptionBoldIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='DTrader' />
+                                    </>
+                                }
+                                id='id-dtrader'
+                            >
+                                <Suspense
+                                    fallback={
+                                        <ChunkLoader message={localize('Please wait, redirecting to DTrader...')} />
+                                    }
+                                >
+                                    <DTraderRedirect />
+                                </Suspense>
                             </div>
                         </Tabs>
                     </div>
