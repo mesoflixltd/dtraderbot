@@ -154,7 +154,7 @@ export class OAuthTokenExchangeService {
             let redirectUrl = (brandConfig as any).platform?.oauth_redirect_uri || currentOrigin;
 
             // If we are on localhost or a staging domain, always use the current origin to avoid mismatch
-            if (host.includes('localhost') || host.includes('netlify.app') || host.includes('vercel.app')) {
+            if (host.includes('localhost')) {
                 redirectUrl = currentOrigin;
             }
 

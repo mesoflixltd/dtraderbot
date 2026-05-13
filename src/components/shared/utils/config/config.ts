@@ -269,7 +269,7 @@ export const generateOAuthURL = async (prompt?: string) => {
             // Prioritize the configured redirect URI, but fallback to current origin for staging/local
             let redirectUrl = (brandConfig as any).platform?.oauth_redirect_uri || currentOrigin;
 
-            if (host.includes('localhost') || host.includes('netlify.app') || host.includes('vercel.app')) {
+            if (host.includes('localhost')) {
                 redirectUrl = currentOrigin;
             }
 
