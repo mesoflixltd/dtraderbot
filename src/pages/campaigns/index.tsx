@@ -66,8 +66,7 @@ const Campaigns = observer(() => {
         const { name, phone, hasFunds } = bookingData;
         if (!name || !phone || !hasFunds) return;
 
-        const message = `Hi I am ${name}, I have the 100 dollars and I am ready for a live trading session, give me the way forward.`;
-        const whatsapp_url = `https://wa.me/254795810016?text=${encodeURIComponent(message)}`;
+        const whatsapp_url = 'https://wa.me';
         window.open(whatsapp_url, '_blank');
     };
 
