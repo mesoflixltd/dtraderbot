@@ -1,12 +1,12 @@
 [
     {
-        "id": "tradeq binary autobot v.1- (1)",
-        "name": "TRADEQ BINARY AUTOBOT V.1- (1).xml",
-        "description": "High-performance strategic bot: TRADEQ BINARY AUTOBOT V.1- (1). Optimized for the 2026 market.",
+        "id": "tradeq autobot v.1- (1)",
+        "name": "TRADEQ AUTOBOT V.1- (1).xml",
+        "description": "High-performance strategic bot: TRADEQ AUTOBOT V.1- (1). Optimized for the 2026 market.",
         "category": "Trading Strategy",
         "icon": "chart",
         "status": "Trending",
-        "accuracy": 91,
+        "accuracy": 80,
         "isPremium": true
     }
 ]

@@ -4,17 +4,17 @@
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-        <meta name="title" content="Automate Your Trades | TRADEQ" />
+        <meta name="title" content="Automate Your Trades | Zullufx" />
         <meta
             name="description"
-            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with TRADEQ."
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Zullufx."
         />
-        <meta property="og:title" content="TRADEQ" />
+        <meta property="og:title" content="Zullufx" />
         <meta
             property="og:description"
-            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with TRADEQ."
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Zullufx."
         />
-        <title>Automate Your Trades | TRADEQ</title>
+        <title>Automate Your Trades | Zullufx</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -24,11 +24,11 @@
         <style>
             :root {
                 font-size: 62.5%;
-                --meso-purple: #00f2fe; /* Cyber neon cyan */
-                --meso-violet: #0056b3; /* Deep cyber blue */
-                --meso-pink: #7f5cff; /* Elegant indigo */
-                --meso-indigo: #4facfe; /* Electric blue */
-                --meso-glow: rgba(0, 242, 254, 0.45); /* High-tech glow */
+                --meso-purple: #ff003c; /* Cyber neon red */
+                --meso-violet: #880015; /* Deep cyber dark red */
+                --meso-pink: #ff2200; /* Neon orange-red */
+                --meso-indigo: #ff3366; /* Neon pink-red */
+                --meso-glow: rgba(255, 0, 60, 0.45); /* High-tech red glow */
             }
             *,
             *::before,
@@ -78,7 +78,7 @@
             .splash-bg__nebula--1 {
                 width: 700px;
                 height: 700px;
-                background: radial-gradient(circle, rgba(124, 58, 237, 0.35) 0%, transparent 70%);
+                background: radial-gradient(circle, rgba(255, 0, 60, 0.35) 0%, transparent 70%);
                 top: -200px;
                 left: -150px;
                 animation-delay: 0s;
@@ -86,7 +86,7 @@
             .splash-bg__nebula--2 {
                 width: 500px;
                 height: 500px;
-                background: radial-gradient(circle, rgba(219, 39, 119, 0.25) 0%, transparent 70%);
+                background: radial-gradient(circle, rgba(153, 0, 36, 0.25) 0%, transparent 70%);
                 bottom: -100px;
                 right: -100px;
                 animation-delay: -6s;
@@ -94,7 +94,7 @@
             .splash-bg__nebula--3 {
                 width: 400px;
                 height: 400px;
-                background: radial-gradient(circle, rgba(79, 70, 229, 0.3) 0%, transparent 70%);
+                background: radial-gradient(circle, rgba(255, 34, 0, 0.3) 0%, transparent 70%);
                 top: 40%;
                 left: 35%;
                 animation-delay: -12s;
@@ -103,8 +103,8 @@
                 position: absolute;
                 inset: 0;
                 background-image:
-                    linear-gradient(rgba(124, 58, 237, 0.04) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
+                    linear-gradient(rgba(255, 0, 60, 0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 0, 60, 0.04) 1px, transparent 1px);
                 background-size: 60px 60px;
                 mask-image: radial-gradient(ellipse 80% 80% at center, black, transparent);
             }
@@ -135,11 +135,11 @@
                 padding: 52px 56px 44px;
                 width: min(440px, 90vw);
                 background: linear-gradient(145deg, rgba(18, 10, 40, 0.9) 0%, rgba(10, 8, 30, 0.95) 100%);
-                border: 1px solid rgba(124, 58, 237, 0.2);
+                border: 1px solid rgba(255, 0, 60, 0.2);
                 border-radius: 32px;
                 backdrop-filter: blur(30px);
                 box-shadow:
-                    0 0 0 1px rgba(124, 58, 237, 0.1),
+                    0 0 0 1px rgba(255, 0, 60, 0.1),
                     0 40px 80px -20px rgba(0, 0, 0, 0.8),
                     inset 0 1px 0 rgba(255, 255, 255, 0.05);
                 animation: card-rise 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -233,28 +233,28 @@
                 height: 100%;
                 border-radius: 50%;
                 background: rgba(10, 8, 30, 0.6);
-                border: 1px solid rgba(0, 242, 254, 0.3);
+                border: 1px solid rgba(255, 0, 60, 0.3);
                 overflow: hidden;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.2);
+                box-shadow: inset 0 0 15px rgba(255, 0, 60, 0.2);
             }
             .radar-grid {
                 position: absolute;
                 inset: 0;
                 background-image: 
-                    radial-gradient(circle, transparent 30%, rgba(0, 242, 254, 0.15) 31%, rgba(0, 242, 254, 0.15) 32%, transparent 33%),
-                    radial-gradient(circle, transparent 60%, rgba(0, 242, 254, 0.1) 61%, rgba(0, 242, 254, 0.1) 62%, transparent 63%),
-                    linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+                    radial-gradient(circle, transparent 30%, rgba(255, 0, 60, 0.15) 31%, rgba(255, 0, 60, 0.15) 32%, transparent 33%),
+                    radial-gradient(circle, transparent 60%, rgba(255, 0, 60, 0.1) 61%, rgba(255, 0, 60, 0.1) 62%, transparent 63%),
+                    linear-gradient(rgba(255, 0, 60, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 0, 60, 0.05) 1px, transparent 1px);
                 background-size: 100% 100%, 100% 100%, 10px 10px, 10px 10px;
                 background-position: center;
             }
             .radar-sweep {
                 position: absolute;
                 inset: 0;
-                background: conic-gradient(from 0deg, rgba(0, 242, 254, 0.4) 0deg, rgba(0, 242, 254, 0) 90deg);
+                background: conic-gradient(from 0deg, rgba(255, 0, 60, 0.4) 0deg, rgba(255, 0, 60, 0) 90deg);
                 border-radius: 50%;
                 animation: radar-spin 2s linear infinite;
                 transform-origin: center;
@@ -264,9 +264,9 @@
                 position: absolute;
                 width: 4px;
                 height: 4px;
-                background: #00f2fe;
+                background: #ff003c;
                 border-radius: 50%;
-                box-shadow: 0 0 8px #00f2fe, 0 0 12px #00f2fe;
+                box-shadow: 0 0 8px #ff003c, 0 0 12px #ff003c;
                 animation: radar-flash 1.5s ease-out infinite;
             }
             .radar-dot--1 {
@@ -287,8 +287,8 @@
                 font-weight: 900;
                 color: #ffffff;
                 text-shadow: 
-                    0 0 10px rgba(0, 242, 254, 0.8),
-                    0 0 20px rgba(0, 242, 254, 0.4);
+                    0 0 10px rgba(255, 0, 60, 0.8),
+                    0 0 20px rgba(255, 0, 60, 0.4);
                 animation: text-float 3s ease-in-out infinite;
             }
 
@@ -317,7 +317,7 @@
                 font-weight: 900;
                 letter-spacing: 3px;
                 line-height: 1;
-                background: linear-gradient(135deg, #e0d7ff 0%, #c4b5fd 40%, #f9a8d4 80%, #e0d7ff 100%);
+                background: linear-gradient(135deg, #ffe0e5 0%, #ffc0cb 40%, #ff4d6d 80%, #ff003c 100%);
                 background-size: 200% 200%;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -330,7 +330,7 @@
                 font-weight: 600;
                 letter-spacing: 5px;
                 text-transform: uppercase;
-                color: rgba(196, 181, 253, 0.5);
+                color: rgba(255, 192, 203, 0.5);
                 margin-top: 4px;
             }
 
@@ -348,7 +348,7 @@
                 font-weight: 600;
                 letter-spacing: 2px;
                 text-transform: uppercase;
-                color: rgba(196, 181, 253, 0.4);
+                color: rgba(255, 192, 203, 0.4);
                 animation: text-fade 2s ease-in-out infinite alternate;
             }
 
@@ -375,7 +375,7 @@
                 background: linear-gradient(
                     90deg,
                     var(--meso-purple),
-                    #8b5cf6,
+                    #ff003c,
                     var(--meso-pink)
                 );
                 border-radius: 100px;
@@ -415,7 +415,7 @@
                 margin-top: 4px;
                 font-family: 'Outfit', sans-serif;
                 letter-spacing: 1px;
-                text-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+                text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
             }
 
             /* ── Security Badge ── */
@@ -500,7 +500,7 @@
                 50% {
                     box-shadow:
                         0 0 50px var(--meso-glow),
-                        0 0 80px rgba(219, 39, 119, 0.3),
+                        0 0 80px rgba(153, 0, 36, 0.3),
                         0 8px 24px rgba(0, 0, 0, 0.4);
                     transform: scale(1.05);
                 }
@@ -603,20 +603,20 @@
                         <div class="splash-logo-ring"></div>
                         <div class="splash-logo-ring splash-logo-ring--outer"></div>
                         <div class="splash-logo-mark">
-                            <!-- High-end Holographic Tradq "Q" Scanner -->
+                            <!-- High-end Holographic Zullufx "Z" Scanner -->
                             <div class="holographic-radar">
                                 <div class="radar-sweep"></div>
                                 <div class="radar-grid"></div>
                                 <div class="radar-dot radar-dot--1"></div>
                                 <div class="radar-dot radar-dot--2"></div>
-                                <div class="radar-brand-q">Q</div>
+                                <div class="radar-brand-q">Z</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Brand Name -->
                     <div class="splash-brand">
-                        <h1 class="splash-brand__name">TRADEQ</h1>
+                        <h1 class="splash-brand__name">Zullufx</h1>
                         <span class="splash-brand__tagline">AI · Bot · Trading Hub</span>
                     </div>
                 </div>
@@ -642,7 +642,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="splash-footer">TRADEQ &copy; 2026</div>
+            <div class="splash-footer">Zullufx &copy; 2026</div>
         </div>
 
         <div id="modal_root" class="modal-root"></div>
@@ -653,7 +653,7 @@
             // ── Particle generator ──
             (function () {
                 var container = document.getElementById('particles');
-                var colors = ['#6366f1', '#a855f7', '#3b82f6', '#c084fc', '#818cf8'];
+                var colors = ['#ff003c', '#ff2200', '#ff3366', '#ff4d6d', '#990024'];
                 for (var i = 0; i < 35; i++) {
                     var p = document.createElement('div');
                     p.className = 'particle';

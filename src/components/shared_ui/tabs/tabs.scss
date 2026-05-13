@@ -109,18 +109,32 @@
             position: relative;
 
             &:after {
-                border-bottom: 2px solid var(--brand-red-coral);
+                border-bottom: 2px solid #ff003c;
                 content: '';
                 position: absolute;
                 left: 0;
                 display: block;
                 width: 100%;
+
+                .theme--dark & {
+                    border-bottom-color: #ff1a53;
+                    filter: drop-shadow(0 0 4px rgba(255, 0, 60, 0.8));
+                }
             }
         }
 
         &:not(.dc-tabs__active) {
             cursor: pointer;
             color: var(--text-general);
+            transition: color 0.2s ease, text-shadow 0.2s ease;
+
+            &:hover {
+                color: #ff003c;
+                .theme--dark & {
+                    color: #ff3366;
+                    text-shadow: 0 0 8px rgba(255, 0, 60, 0.4);
+                }
+            }
         }
 
         &:not(&--header-fit-content) {
@@ -131,6 +145,11 @@
     &__active {
         font-weight: 700;
         color: var(--text-prominent);
+        transition: color 0.2s ease, text-shadow 0.2s ease;
+
+        .theme--dark & {
+            text-shadow: 0 0 6px rgba(255, 0, 60, 0.3);
+        }
     }
 
     &__active-line {
@@ -142,8 +161,19 @@
 
         /* rtl:end:ignore */
         height: 2px;
-        background: var(--brand-red-coral);
-        transition: all ease-in-out 0.3s;
+        background: #ff003c;
+        transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+
+        // Premium Neon Red Glow optimized for dark screens
+        .theme--dark & {
+            background: #ff1a53;
+            box-shadow: 0 0 8px rgba(255, 0, 60, 0.8), 0 0 16px rgba(255, 0, 60, 0.4);
+        }
+
+        .theme--light & {
+            background: #ff003c;
+            box-shadow: none;
+        }
 
         &--top {
             bottom: -2px;

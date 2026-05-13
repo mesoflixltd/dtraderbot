@@ -14,12 +14,15 @@
         height: 60%;
         width: 0.6rem;
         display: inline-block;
+        background-color: #ff003c;
+        box-shadow: 0 0 6px rgba(255, 0, 60, 0.4);
 
         @include createBarspinnerAnimation(5, 1.2s, 0.1);
     }
 
     &--dark .barspinner__rect {
-        background-color: var(--brand-secondary);
+        background-color: #ff1a53;
+        box-shadow: 0 0 8px rgba(255, 0, 60, 0.7);
     }
 }
 
@@ -48,7 +51,7 @@
     &--fullscreen {
         width: 100vw;
         height: 100vh;
-
+ 
         @include desktop-screen {
             height: calc(100vh - #{$HEADER_HEIGHT} - #{$FOOTER_HEIGHT});
         }
@@ -62,7 +65,8 @@
         margin: 5rem auto;
 
         &--rect {
-            background-color: var(--brand-secondary);
+            background-color: #ff003c;
+            box-shadow: 0 0 6px rgba(255, 0, 60, 0.4);
         }
     }
 }

@@ -1,14 +1,14 @@
 {
-    "brand_name": "TRADEQ",
-    "brand_domain": "tradeqhub.com",
+    "brand_name": "Zullufx",
+    "brand_domain": "zullufx.co.ke",
     "brand_hostname": {
-        "staging": "tradeqhub.com",
-        "production": "tradeqhub.com"
+        "staging": "zullufx.co.ke",
+        "production": "zullufx.co.ke"
     },
-    "domain_name": "tradeqhub.com",
+    "domain_name": "zullufx.co.ke",
     "main_branch": "master",
     "colors": {
-        "primary": "#6366f1",
+        "primary": "#ff003c",
         "secondary": "#64748b",
         "tertiary": "#8b5cf6",
         "success": "#10b981",
@@ -59,17 +59,17 @@
         "css_variable_prefix": "--brand"
     },
     "platform": {
-        "name": "TRADEQ",
-        "app_id": "116391",
-        "client_id": "337zPatJc8aj5yrYRCZWx",
-        "oauth_redirect_uri": "https://tradeqhub.com/",
+        "name": "Zullufx",
+        "app_id": "92384",
+        "client_id": "33f2Crptq49vKiVjI3HJv",
+        "oauth_redirect_uri": "http://zullufx.co.ke/",
         "logo": {
             "type": "component",
             "component_name": "BrandLogo",
-            "alt_text": "TRADEQ",
+            "alt_text": "Zullufx",
             "link_url": "/",
             "show_text": false,
-            "text": "TRADEQ"
+            "text": "Zullufx"
         },
         "footer": {
             "enable_language_settings": false,
@@ -77,10 +77,10 @@
         },
         "hostname": {
             "production": {
-                "com": "tradeqhub.com"
+                "com": "zullufx.co.ke"
             },
             "staging": {
-                "com": "tradeqhub.com"
+                "com": "zullufx.co.ke"
             }
         },
         "auth2_url": {
