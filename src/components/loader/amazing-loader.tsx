@@ -32,7 +32,13 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
     }, []);
 
     return (
-        <div className='amazing-loader'>
+        <div
+            className='amazing-loader'
+            style={{
+                background: "radial-gradient(circle at center, rgba(2, 6, 23, 0.8) 0%, #020617 100%), url('/assets/images/trading_guru_bg.png') no-repeat center center",
+                backgroundSize: 'cover',
+            }}
+        >
             <div className='amazing-loader__background'>
                 <div className='amazing-loader__aurora amazing-loader__aurora--1'></div>
                 <div className='amazing-loader__aurora amazing-loader__aurora--2'></div>
