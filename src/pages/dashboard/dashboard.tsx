@@ -47,7 +47,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                         >
                             <div className='dashboard__social-links'>
                                 <a
-                                    href='https://wa.me'
+                                    href='https://whatsapp.com/channel/0029VbBnWi9KwqSUUcnkQk1V'
                                     target='_blank'
                                     rel='noopener noreferrer'
                                     className='social-link social-link--whatsapp'
@@ -58,7 +58,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                                     </div>
                                 </a>
                                 <a
-                                    href='https://t.me'
+                                    href='https://t.me/freetradingsignalsDB'
                                     target='_blank'
                                     rel='noopener noreferrer'
                                     className='social-link social-link--telegram'
@@ -69,7 +69,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                                     </div>
                                 </a>
                                 <a
-                                    href='https://youtube.com'
+                                    href='https://youtube.com/@alextradinglive2?si=oXHXqIcYsuDnuPtY'
                                     target='_blank'
                                     rel='noopener noreferrer'
                                     className='social-link social-link--youtube'
@@ -80,7 +80,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                                     </div>
                                 </a>
                                 <a
-                                    href='https://tiktok.com'
+                                    href='https://www.tiktok.com/@derivtrading.1?_r=1&_t=ZS-95wNpIwfkKj'
                                     target='_blank'
                                     rel='noopener noreferrer'
                                     className='social-link social-link--tiktok'
