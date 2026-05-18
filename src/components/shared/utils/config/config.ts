@@ -269,7 +269,9 @@ export const generateOAuthURL = async (prompt?: string) => {
             // Prioritize the configured redirect URI, but fallback to current origin for staging/local/main domains
             let redirectUrl = (brandConfig as any).platform?.oauth_redirect_uri || currentOrigin;
 
-            if (host.includes('localhost') || host.includes('dtraderdbot.com') || host.includes('127.0.0.1')) {
+            if (host.includes('dtraderdbot.com')) {
+                redirectUrl = 'https://dtraderdbot.com/';
+            } else if (host.includes('localhost') || host.includes('127.0.0.1')) {
                 redirectUrl = currentOrigin;
             }
 
