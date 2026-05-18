@@ -67,7 +67,7 @@ const UltimateTraderPage = () => (
                     launches.
                 </p>
             </div>
-            <a className='aihub-cta__btn' href='https://www.dtraderdbot.com/' target='_blank' rel='noreferrer'>
+            <a className='aihub-cta__btn' href='https://dtraderdbot.com/' target='_blank' rel='noreferrer'>
                 Visit Dtraderbot Site →
             </a>
         </div>

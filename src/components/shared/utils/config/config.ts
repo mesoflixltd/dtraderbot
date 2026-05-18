@@ -9,7 +9,7 @@ import brandConfig from '@/../brand.config.json';
 // Production app domains
 export const PRODUCTION_DOMAINS = {
     COM: brandConfig.platform.hostname.production.com,
-    DBOT: 'www.dtraderdbot.com',
+    DBOT: 'dtraderdbot.com',
 } as const;
 
 // Staging app domains
@@ -266,10 +266,10 @@ export const generateOAuthURL = async (prompt?: string) => {
             const host = window.location.host;
             const currentOrigin = `${protocol}//${host}/`;
 
-            // Prioritize the configured redirect URI, but fallback to current origin for staging/local
+            // Prioritize the configured redirect URI, but fallback to current origin for staging/local/main domains
             let redirectUrl = (brandConfig as any).platform?.oauth_redirect_uri || currentOrigin;
 
-            if (host.includes('localhost')) {
+            if (host.includes('localhost') || host.includes('dtraderdbot.com') || host.includes('127.0.0.1')) {
                 redirectUrl = currentOrigin;
             }
 

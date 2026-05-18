@@ -1,11 +1,11 @@
 {
     "brand_name": "Dtraderbot",
-    "brand_domain": "www.dtraderdbot.com",
+    "brand_domain": "dtraderdbot.com",
     "brand_hostname": {
-        "staging": "www.dtraderdbot.com",
-        "production": "www.dtraderdbot.com"
+        "staging": "dtraderdbot.com",
+        "production": "dtraderdbot.com"
     },
-    "domain_name": "www.dtraderdbot.com",
+    "domain_name": "dtraderdbot.com",
     "main_branch": "master",
     "colors": {
         "primary": "#ff003c",
@@ -62,7 +62,7 @@
         "name": "Dtraderbot",
         "app_id": "82237",
         "client_id": "337Qy6ERWqFkTlxerz8sI",
-        "oauth_redirect_uri": "https://www.dtraderdbot.com/",
+        "oauth_redirect_uri": "https://dtraderdbot.com/",
         "logo": {
             "type": "component",
             "component_name": "BrandLogo",
@@ -77,10 +77,10 @@
         },
         "hostname": {
             "production": {
-                "com": "www.dtraderdbot.com"
+                "com": "dtraderdbot.com"
             },
             "staging": {
-                "com": "www.dtraderdbot.com"
+                "com": "dtraderdbot.com"
             }
         },
         "auth2_url": {

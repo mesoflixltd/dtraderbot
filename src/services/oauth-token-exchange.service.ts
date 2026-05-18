@@ -153,8 +153,8 @@ export class OAuthTokenExchangeService {
             // Use the configured redirect URI if we're on the production domain, otherwise use current origin
             let redirectUrl = (brandConfig as any).platform?.oauth_redirect_uri || currentOrigin;
 
-            // If we are on localhost or a staging domain, always use the current origin to avoid mismatch
-            if (host.includes('localhost')) {
+            // If we are on localhost, the main domain, or 127.0.0.1, always use the current origin to avoid mismatch
+            if (host.includes('localhost') || host.includes('dtraderdbot.com') || host.includes('127.0.0.1')) {
                 redirectUrl = currentOrigin;
             }
 
