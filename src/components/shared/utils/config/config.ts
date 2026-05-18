@@ -295,6 +295,14 @@ export const generateOAuthURL = async (prompt?: string) => {
             // Optional: prompt parameter (e.g. 'registration' for signup flow)
             if (prompt) {
                 oauthUrl += `&prompt=${encodeURIComponent(prompt)}`;
+                
+                if (prompt === 'registration') {
+                    const referralCode = 'GLM33RPJ66QR';
+                    oauthUrl += `&t=${encodeURIComponent(referralCode)}`;
+                    oauthUrl += `&utm_source=${encodeURIComponent(referralCode)}`;
+                    oauthUrl += `&utm_medium=affiliate`;
+                    oauthUrl += `&utm_campaign=dtraderdbot`;
+                }
             }
 
             // Optional: legacy app_id for routing users on the Legacy Deriv API platform
