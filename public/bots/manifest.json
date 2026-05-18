@@ -1,12 +1,22 @@
 [
     {
-        "id": "tradeq autobot v.1- (1)",
-        "name": "TRADEQ AUTOBOT V.1- (1).xml",
-        "description": "High-performance strategic bot: TRADEQ AUTOBOT V.1- (1). Optimized for the 2026 market.",
+        "id": "⚖️ primetitan-ai (even-odd)📈 ",
+        "name": "⚖️ PrimeTitan_AI (EVEN_Odd)📈 .xml",
+        "description": "High-performance strategic bot: ⚖️ PrimeTitan AI (EVEN Odd)📈 . Optimized for the 2026 market.",
+        "category": "Trading Strategy",
+        "icon": "ai",
+        "status": "Trending",
+        "accuracy": 86,
+        "isPremium": true
+    },
+    {
+        "id": "⚡ primetitan open 📊 ",
+        "name": "⚡ PrimeTitan Open 📊 .xml",
+        "description": "High-performance strategic bot: ⚡ PrimeTitan Open 📊 . Optimized for the 2026 market.",
         "category": "Trading Strategy",
         "icon": "chart",
         "status": "Trending",
-        "accuracy": 80,
+        "accuracy": 89,
         "isPremium": true
     }
 ]

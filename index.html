@@ -4,17 +4,17 @@
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-        <meta name="title" content="Automate Your Trades | Zullufx" />
+        <meta name="title" content="Automate Your Trades | Dtraderbot" />
         <meta
             name="description"
-            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Zullufx."
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Dtraderbot."
         />
-        <meta property="og:title" content="Zullufx" />
+        <meta property="og:title" content="Dtraderbot" />
         <meta
             property="og:description"
-            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Zullufx."
+            content="Professional automated trading platform for derivatives. Build, test, and deploy advanced trading bots with Dtraderbot."
         />
-        <title>Automate Your Trades | Zullufx</title>
+        <title>Automate Your Trades | Dtraderbot</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -51,7 +51,8 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                background: #050510;
+                background: radial-gradient(circle at center, rgba(5, 5, 16, 0.8) 0%, #050510 100%), url('/assets/images/trading_guru_bg.png') no-repeat center center;
+                background-size: cover;
                 z-index: 9999;
                 transition:
                     opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
@@ -603,20 +604,20 @@
                         <div class="splash-logo-ring"></div>
                         <div class="splash-logo-ring splash-logo-ring--outer"></div>
                         <div class="splash-logo-mark">
-                            <!-- High-end Holographic Zullufx "Z" Scanner -->
+                            <!-- High-end Holographic Dtraderbot "D" Scanner -->
                             <div class="holographic-radar">
                                 <div class="radar-sweep"></div>
                                 <div class="radar-grid"></div>
                                 <div class="radar-dot radar-dot--1"></div>
                                 <div class="radar-dot radar-dot--2"></div>
-                                <div class="radar-brand-q">Z</div>
+                                <div class="radar-brand-q">D</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Brand Name -->
                     <div class="splash-brand">
-                        <h1 class="splash-brand__name">Zullufx</h1>
+                        <h1 class="splash-brand__name">Dtraderbot</h1>
                         <span class="splash-brand__tagline">AI · Bot · Trading Hub</span>
                     </div>
                 </div>
@@ -642,7 +643,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="splash-footer">Zullufx &copy; 2026</div>
+            <div class="splash-footer">Dtraderbot &copy; 2026</div>
         </div>
 
         <div id="modal_root" class="modal-root"></div>
@@ -685,7 +686,7 @@
                         el.textContent = messages[i];
                         el.style.opacity = '';
                     }, 300);
-                }, 1400);
+                }, 800);
                 window.__splashMsgInterval = iv;
             })();
 
@@ -697,7 +698,7 @@
                 var percentText = document.getElementById('splash-progress-percent');
                 
                 var percentage = 0;
-                var duration = 2400; // 2.4 seconds
+                var duration = 1000; // 1.0 second
                 var intervalTime = 30; // ms
                 var increment = 100 / (duration / intervalTime);
                 
@@ -740,7 +741,7 @@
                             document.body.style.overflow = '';
                         }, 900);
                     }
-                }, 2500);
+                }, 1200);
             });
         </script>
     </body>

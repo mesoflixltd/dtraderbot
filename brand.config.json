@@ -1,11 +1,11 @@
 {
-    "brand_name": "Zullufx",
-    "brand_domain": "www.zullu.co.ke",
+    "brand_name": "Dtraderbot",
+    "brand_domain": "www.dtraderdbot.com",
     "brand_hostname": {
-        "staging": "www.zullu.co.ke",
-        "production": "www.zullu.co.ke"
+        "staging": "www.dtraderdbot.com",
+        "production": "www.dtraderdbot.com"
     },
-    "domain_name": "www.zullu.co.ke",
+    "domain_name": "www.dtraderdbot.com",
     "main_branch": "master",
     "colors": {
         "primary": "#ff003c",
@@ -59,17 +59,17 @@
         "css_variable_prefix": "--brand"
     },
     "platform": {
-        "name": "Zullufx",
-        "app_id": "92384",
-        "client_id": "33f2Crptq49vKiVjI3HJv",
-        "oauth_redirect_uri": "https://www.zullu.co.ke/",
+        "name": "Dtraderbot",
+        "app_id": "82237",
+        "client_id": "337Qy6ERWqFkTlxerz8sI",
+        "oauth_redirect_uri": "https://www.dtraderdbot.com/",
         "logo": {
             "type": "component",
             "component_name": "BrandLogo",
-            "alt_text": "Zullufx",
+            "alt_text": "Dtraderbot",
             "link_url": "/",
             "show_text": false,
-            "text": "Zullufx"
+            "text": "Dtraderbot"
         },
         "footer": {
             "enable_language_settings": false,
@@ -77,10 +77,10 @@
         },
         "hostname": {
             "production": {
-                "com": "www.zullu.co.ke"
+                "com": "www.dtraderdbot.com"
             },
             "staging": {
-                "com": "www.zullu.co.ke"
+                "com": "www.dtraderdbot.com"
             }
         },
         "auth2_url": {

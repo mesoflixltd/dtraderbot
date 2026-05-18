@@ -46,10 +46,10 @@ export const BrandLogo = ({
                      textShadow: '0 1px 2px rgba(0,0,0,0.15)',
                  }}
              >
-                 Z
+                 D
              </div>
              <span style={{ fontWeight: 900, letterSpacing: '-0.02em', color: brandColor }}>
-                 Zullufx
+                 Dtraderbot
              </span>
          </div>
      );

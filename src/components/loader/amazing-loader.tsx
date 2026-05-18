@@ -11,7 +11,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        const duration = 2000; // 2 seconds
+        const duration = 1000; // 1 second
         const intervalTime = 30; // ms
         const increment = 100 / (duration / intervalTime);
 
@@ -44,7 +44,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
                 <div className='amazing-loader__glass-card'>
                     <div className='amazing-loader__logo-section'>
                         <div className='amazing-loader__brand-mark'>
-                            <span className='amazing-loader__o-letter'>Z</span>
+                            <span className='amazing-loader__o-letter'>D</span>
                             <div className='amazing-loader__ring'></div>
                             <div className='amazing-loader__ring amazing-loader__ring--outer'></div>
                             <div className='amazing-loader__scan-line'></div>
@@ -53,7 +53,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
 
                     <div className='amazing-loader__content'>
                         <div className='amazing-loader__brand-wrapper'>
-                            <h2 className='amazing-loader__brand-name'>Zullufx</h2>
+                            <h2 className='amazing-loader__brand-name'>Dtraderbot</h2>
                             <span className='amazing-loader__brand-suffix'>AI TRADING HUB</span>
                         </div>
 
@@ -98,7 +98,7 @@ const AmazingLoader: React.FC<AmazingLoaderProps> = ({ message, onSkip }) => {
                 )}
 
                 <div className='amazing-loader__footer'>
-                    <span className='amazing-loader__tagline'>Zullufx · AI-Powered Trading Infrastructure</span>
+                    <span className='amazing-loader__tagline'>Dtraderbot · AI-Powered Trading Infrastructure</span>
                 </div>
             </div>
         </div>

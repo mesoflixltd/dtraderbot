@@ -5,7 +5,7 @@ import { LabelPairedPlayCaptionBoldIcon } from '@deriv/quill-icons/LabelPaired';
 import './dtrader.scss';
 
 const DTraderRedirect = observer(() => {
-    const url = 'https://dtrader.zullu.co.ke/';
+    const url = 'https://www.trader.dtraderdbot.com/';
 
     const handleRedirect = () => {
         window.open(url, '_blank');
@@ -22,7 +22,7 @@ const DTraderRedirect = observer(() => {
             <div className='dtrader-redirect-card'>
                 <div className='dtrader-redirect-card__logo'>
                     <div className='logo-glowing-ring'>
-                        <span className='logo-text'>Z</span>
+                        <span className='logo-text'>D</span>
                     </div>
                 </div>
                 <h1 className='dtrader-redirect-card__title'>{localize('Opening DTrader...')}</h1>
@@ -45,7 +45,7 @@ const DTraderRedirect = observer(() => {
                 </button>
 
                 <div className='dtrader-redirect-card__footer'>
-                    <span>&copy; {new Date().getFullYear()} Zullufx. All rights reserved.</span>
+                    <span>&copy; {new Date().getFullYear()} Dtraderbot. All rights reserved.</span>
                 </div>
             </div>
         </div>

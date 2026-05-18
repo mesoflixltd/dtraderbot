@@ -4,7 +4,8 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: #020617; // Deep dark slate
+    background: radial-gradient(circle at center, rgba(2, 6, 23, 0.8) 0%, #020617 100%), url('/assets/images/trading_guru_bg.png') no-repeat center center;
+    background-size: cover;
     display: flex;
     align-items: center;
     justify-content: center;
