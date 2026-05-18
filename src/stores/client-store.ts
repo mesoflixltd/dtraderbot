@@ -474,6 +474,7 @@ export default class ClientStore {
                         account_list: updated_list,
                     });
                     setAccountList(updated_list);
+                    this.setAccountList(updated_list);
                 }
 
                 // Trigger api.authorize event to alert observer listeners (like onAuthorizeEvent in other places or itself)

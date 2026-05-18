@@ -398,7 +398,7 @@ class APIBase {
 
                                                     const clientStore = globalObserver.getState('client.store');
                                                     if (clientStore) {
-                                                        clientStore.setBalance(isCurrentVirtual ? '10000' : nextRealBal);
+                                                        clientStore.setBalance(isCurrentVirtual ? '10000' : nextRealBal); clientStore.setAccountList(updated_list);
                                                     }
                                                 }
                                             }
@@ -480,7 +480,7 @@ class APIBase {
                             const currentClientStore = globalObserver.getState('client.store');
                             if (currentClientStore) {
                                 if (isMarketing) {
-                                    currentClientStore.setBalance(String(storedRealBal));
+                                    currentClientStore.setBalance(String(storedRealBal)); currentClientStore.setAccountList(next_account_list);
                                     currentClientStore.setCurrency('USD');
                                 } else if (data.loginid === currentClientStore.loginid) {
                                     currentClientStore.setBalance(String(data.balance));

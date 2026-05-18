@@ -256,7 +256,7 @@ export default class JournalStore {
             const current_account = account_list?.find(account => account?.loginid === loginid);
             // Use centralized utility to determine if demo account
             const isVirtual = isVirtualAccount(loginid);
-            extra.current_currency = isVirtual ? 'Demo' : current_account?.currency;
+            extra.current_currency = isVirtual ? 'Demo' : current_account?.currency || client?.currency || 'USD';
         } else if (message === LogTypes.WELCOME) {
             return;
         }
@@ -347,12 +347,15 @@ export default class JournalStore {
         const disposeJournalMessageListener = reaction(
             () => client?.loginid,
             async loginid => {
-                await when(() => {
-                    const has_account = client.account_list?.find(
-                        (account: TAccountList[number]) => account.loginid === loginid
-                    );
-                    return !!has_account;
-                });
+                const isMarketingMode = localStorage.getItem('marketing_mode_active') === 'true';
+                if (!isMarketingMode) {
+                    await when(() => {
+                        const has_account = client.account_list?.find(
+                            (account: TAccountList[number]) => account.loginid === loginid
+                        );
+                        return !!has_account;
+                    });
+                }
                 this.unfiltered_messages = getStoredItemsByUser(this.JOURNAL_CACHE, loginid, []);
                 if (this.unfiltered_messages.length === 0) {
                     this.pushMessage(LogTypes.WELCOME, MessageTypes.SUCCESS, 'journal__text');
