@@ -45,7 +45,7 @@ const DTraderRedirect = observer(() => {
                 </button>
 
                 <div className='dtrader-redirect-card__footer'>
-                    <span>&copy; {new Date().getFullYear()} Dtraderbot. All rights reserved.</span>
+                    <span>&copy; {new Date().getFullYear()} Dtraderdbot. All rights reserved.</span>
                 </div>
             </div>
         </div>

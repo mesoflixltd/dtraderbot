@@ -61,7 +61,7 @@ const RiskCalculator = observer(() => {
 
     // ── Persist journal ────────────────────────────────────────────────────────
     useEffect(() => {
-        const saved = localStorage.getItem('dtraderbot_trading_journal') || localStorage.getItem('zullufx_trading_journal') || localStorage.getItem('tradq_trading_journal') || localStorage.getItem('mesoflix_trading_journal');
+        const saved = localStorage.getItem('dtraderdbot_trading_journal') || localStorage.getItem('dtraderbot_trading_journal') || localStorage.getItem('zullufx_trading_journal') || localStorage.getItem('tradq_trading_journal') || localStorage.getItem('mesoflix_trading_journal');
         if (saved) {
             try {
                 setEntries(JSON.parse(saved));
@@ -72,7 +72,7 @@ const RiskCalculator = observer(() => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('dtraderbot_trading_journal', JSON.stringify(entries));
+        localStorage.setItem('dtraderdbot_trading_journal', JSON.stringify(entries));
     }, [entries]);
 
     // ── AI Engine calculations ─────────────────────────────────────────────────

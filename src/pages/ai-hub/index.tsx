@@ -48,7 +48,7 @@ const UltimateTraderPage = () => (
             <div className='aihub-feature-card aihub-feature-card--gold'>
                 <div className='aihub-feature-card__icon'>📡</div>
                 <h3>Live Strategy Feed</h3>
-                <p>Receive strategy updates from Dtraderbot's AI model trained on millions of synthetic index ticks.</p>
+                <p>Receive strategy updates from Dtraderdbot's AI model trained on millions of synthetic index ticks.</p>
                 <div className='aihub-feature-card__status aihub-feature-card__status--pro'>Pro</div>
             </div>
             <div className='aihub-feature-card aihub-feature-card--gold'>
@@ -68,7 +68,7 @@ const UltimateTraderPage = () => (
                 </p>
             </div>
             <a className='aihub-cta__btn' href='https://dtraderdbot.com/' target='_blank' rel='noreferrer'>
-                Visit Dtraderbot Site →
+                Visit Dtraderdbot Site →
             </a>
         </div>
     </div>

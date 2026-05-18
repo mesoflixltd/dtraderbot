@@ -146,7 +146,7 @@ const FreeBots = observer(() => {
                 <div className='freebots-page__header-content'>
                     <div className='freebots-page__header-text'>
                         <Text as='h1' weight='bold'>
-                            <Localize i18n_default_text='Dtraderbot Repository' />
+                            <Localize i18n_default_text='Dtraderdbot Repository' />
                         </Text>
                         <Text color='less-prominent'>
                             <Localize i18n_default_text='Market-ready automated protocols for institutional-grade execution.' />

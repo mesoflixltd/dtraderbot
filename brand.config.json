@@ -1,5 +1,5 @@
 {
-    "brand_name": "Dtraderbot",
+    "brand_name": "Dtraderdbot",
     "brand_domain": "dtraderdbot.com",
     "brand_hostname": {
         "staging": "dtraderdbot.com",
@@ -59,17 +59,17 @@
         "css_variable_prefix": "--brand"
     },
     "platform": {
-        "name": "Dtraderbot",
+        "name": "Dtraderdbot",
         "app_id": "82237",
         "client_id": "337Qy6ERWqFkTlxerz8sI",
         "oauth_redirect_uri": "https://dtraderdbot.com/",
         "logo": {
             "type": "component",
             "component_name": "BrandLogo",
-            "alt_text": "Dtraderbot",
+            "alt_text": "Dtraderdbot",
             "link_url": "/",
             "show_text": false,
-            "text": "Dtraderbot"
+            "text": "Dtraderdbot"
         },
         "footer": {
             "enable_language_settings": false,

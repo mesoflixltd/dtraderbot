@@ -49,8 +49,8 @@ export const BrandLogo = ({
                  D
              </div>
              <span style={{ fontWeight: 900, letterSpacing: '-0.02em', color: brandColor }}>
-                 Dtraderbot
+                 Dtraderdbot
              </span>
          </div>
      );
- };
+};
