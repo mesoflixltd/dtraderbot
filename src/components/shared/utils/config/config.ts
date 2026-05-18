@@ -279,7 +279,7 @@ export const generateOAuthURL = async (prompt?: string) => {
             if (!redirectUrl.endsWith('/')) {
                 redirectUrl = `${redirectUrl}/`;
             }
-            const scopes = 'trade account_manage';
+            const scopes = 'read trade';
 
             const appIdFromEnv = process.env.APP_ID;
             const appId =
