@@ -22,9 +22,9 @@ export const BrandLogo = ({
              style={{
                  display: 'flex',
                  alignItems: 'center',
-                 gap: '10px',
+                 gap: isMobile ? '6px' : '10px',
                  fontWeight: 800,
-                 fontSize: isMobile ? '20px' : '22px',
+                 fontSize: isMobile ? '14px' : '22px',
                  color: brandColor,
                  letterSpacing: '-0.03em',
                  fontFamily: '"Outfit", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -32,23 +32,24 @@ export const BrandLogo = ({
          >
              <div
                  style={{
-                     width: isMobile ? '30px' : '34px',
-                     height: isMobile ? '30px' : '34px',
+                     width: isMobile ? '24px' : '34px',
+                     height: isMobile ? '24px' : '34px',
                      background: 'linear-gradient(135deg, #ff003c 0%, #990024 100%)', // Cyber neon red gradient
-                     borderRadius: '8px',
+                     borderRadius: '6px',
                      display: 'flex',
                      alignItems: 'center',
                      justifyContent: 'center',
                      color: '#ffffff',
-                     fontSize: isMobile ? '16px' : '19px',
+                     fontSize: isMobile ? '12px' : '19px',
                      fontWeight: 900,
                      boxShadow: '0 4px 12px rgba(255, 0, 60, 0.35)',
                      textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                     flexShrink: 0,
                  }}
              >
                  D
              </div>
-             <span style={{ fontWeight: 900, letterSpacing: '-0.02em', color: brandColor }}>
+             <span style={{ fontWeight: 900, letterSpacing: '-0.02em', color: brandColor }} className="brand-logo-title-text">
                  Dtraderdbot
              </span>
          </div>

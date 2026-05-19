@@ -14,9 +14,7 @@
         font-weight: 700;
 
         @include mobile-screen {
-            font-size: 0.9rem;
-            margin-left: 0.4rem;
-            padding: 0.2rem 0.5rem;
+            display: none;
         }
     }
 
