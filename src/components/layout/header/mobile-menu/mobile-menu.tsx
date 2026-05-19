@@ -1,6 +1,6 @@
 // Updated to use brand configuration for mobile menu elements visibility
 // Controls language settings and theme toggle via brand.config.json
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import brandConfig from '@/../brand.config.json';
 import useModalManager from '@/hooks/useModalManager';
 // [AI] Import useStore to check if menu has items
@@ -42,6 +42,17 @@ const MobileMenu = ({ onLogout }: TMobileMenuProps) => {
 
     // Check if menu has any items to determine if mobile menu should be shown
     const { hasMenuItems } = useMobileMenuConfig(client, onLogout, enableThemeToggle);
+
+    useEffect(() => {
+        if (isDrawerOpen) {
+            document.body.classList.add('mobile-menu-open');
+        } else {
+            document.body.classList.remove('mobile-menu-open');
+        }
+        return () => {
+            document.body.classList.remove('mobile-menu-open');
+        };
+    }, [isDrawerOpen]);
 
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => {

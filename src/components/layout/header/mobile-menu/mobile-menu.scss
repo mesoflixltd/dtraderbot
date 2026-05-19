@@ -151,3 +151,13 @@
         }
     }
 }
+
+// Safety global overrides for drawers and overlays to ensure they are on top of high z-index elements like Blockly
+.deriv-drawer,
+.deriv-drawer__container,
+.deriv-drawer__overlay,
+.deriv-modal,
+.deriv-modal__container,
+.deriv-modal-container {
+    z-index: 1000000 !important;
+}
