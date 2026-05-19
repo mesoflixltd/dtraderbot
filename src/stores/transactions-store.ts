@@ -58,11 +58,10 @@ export default class TransactionsStore {
 
     getTradeAccount(): string {
         const isMarketing = localStorage.getItem('marketing_mode_active') === 'true';
-        const active_loginid = this.core?.client?.loginid || localStorage.getItem('active_loginid');
-        if (isMarketing && active_loginid) {
-            return active_loginid;
+        if (isMarketing) {
+            return localStorage.getItem('active_loginid') || this.core?.client?.loginid || '';
         }
-        return this.core?.client?.loginid as string;
+        return (this.core?.client?.loginid || localStorage.getItem('active_loginid')) as string;
     }
 
     get transactions(): TTransaction[] {
